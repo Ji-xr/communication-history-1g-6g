@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>澜对白真实浏览器布局验收</title>
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../../assets/css/lan.css">
+  <link rel="stylesheet" href="../../assets/css/progression.css">
+  <style>
+    body { min-height: 100vh; margin: 0; padding: 24px; background: #07101e; color: #e6f1ff; }
+    #app { min-height: 60vh; }
+    #progressLanSlot { min-height: 150px; }
+    #results { white-space: pre-wrap; font: 13px/1.5 ui-monospace, monospace; }
+  </style>
+  <script>window.COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED = true;</script>
+  <script src="../../assets/js/lan-dialogue-2g.js"></script>
+  <script src="../../assets/js/lan-system.js"></script>
+</head>
+<body>
+  <main id="app" data-route="home"><div id="progressLanSlot" class="guided-lan-slot"></div></main>
+  <pre id="results">运行浏览器布局检查…</pre>
+  <script>
+    function measure(label) {
+      const box = document.getElementById('lanCompanion');
+      const rect = box.getBoundingClientRect();
+      const style = getComputedStyle(box);
+      return {
+        label,
+        dialogueId: window.CommsArchiveLan.debugSnapshot().activeDialogueId,
+        mode: box.dataset.mode,
+        phase: box.dataset.dialoguePhase,
+        surface: box.dataset.dialogueSurface || '',
+        parent: box.parentElement === document.body ? 'body' : box.parentElement.id,
+        position: style.position,
+        width: rect.width,
+        height: rect.height,
+        centerErrorX: Math.round((rect.left + rect.width / 2 - innerWidth / 2) * 100) / 100,
+        centerErrorY: Math.round((rect.top + rect.height / 2 - innerHeight / 2) * 100) / 100,
+        zIndex: style.zIndex,
+        modalZIndex: document.querySelector('.modal-backdrop') ? getComputedStyle(document.querySelector('.modal-backdrop')).zIndex : '',
+        lanAboveModal: document.querySelector('.modal-backdrop') ? box.contains(document.elementFromPoint(innerWidth / 2, innerHeight / 2)) : null,
+        duplicateCount: document.querySelectorAll('#lanCompanion').length
+      };
+    }
+    async function settleAnimation() {
+      const box = document.getElementById('lanCompanion');
+      await new Promise(resolve => setTimeout(resolve, 350));
+      // Some headless virtual clocks do not advance CSS animations. Dispatch
+      // the same completion event the real animation sends to LanSystem.
+      if (box.dataset.dialoguePhase === 'enter') box.dispatchEvent(new Event('animationend', { bubbles: true }));
+    }
+    window.addEventListener('load', async () => {
+      const lan = window.CommsArchiveLan;
+      const results = [];
+      lan.onExhibit('2G', 'exhibit.2g.unmapped');
+      results.push(measure('generic companion prompt'));
+      lan.skip();
+      lan.onRoute('chapter', { era: '2G' });
+      await settleAnimation();
+      results.push(measure('2G entrance story'));
+      lan.skip();
+      lan.onExhibit('2G', 'exhibit.2g.handset');
+      const modal = document.createElement('div');
+      modal.className = 'modal-backdrop';
+      modal.id = 'exhibitModalForLayerTest';
+      document.body.append(modal);
+      await settleAnimation();
+      results.push(measure('2G full exhibit explanation'));
+      const lines = lan.dialogueData.find(item => item.id === 'lan_2g_phone_001').text.split('\n').length;
+      for (let index = 0; index < lines; index++) lan.next();
+      results.push(measure('after exhibit explanation'));
+      const assertions = [
+        results[0].mode === 'companion' && results[0].position === 'static',
+        results[1].dialogueId === 'lan_2g_enter_001' && results[1].mode === 'dialogue' && results[1].position === 'fixed' && results[1].parent === 'body' && Math.abs(results[1].centerErrorX) <= 1 && Math.abs(results[1].centerErrorY) <= 1,
+        results[2].dialogueId === 'lan_2g_phone_001' && results[2].mode === 'dialogue' && results[2].surface === 'exhibit' && results[2].position === 'fixed' && results[2].parent === 'body' && results[2].zIndex === '120' && results[2].modalZIndex === '110' && results[2].lanAboveModal === true && Math.abs(results[2].centerErrorX) <= 1 && Math.abs(results[2].centerErrorY) <= 1,
+        results[3].mode === 'companion' && results[3].parent === 'progressLanSlot',
+        results.every(item => item.duplicateCount === 1)
+      ];
+      document.getElementById('results').textContent = JSON.stringify({ pass: assertions.every(Boolean), assertions, results }, null, 2);
+      document.body.dataset.layoutResults = JSON.stringify({ pass: assertions.every(Boolean), results });
+    });
+  </script>
+</body>
+</html>
