@@ -1,0 +1,53 @@
+/* 《通信简史》4G展厅对白与事件映射；调查为模拟测试情境。 */
+(function(root){
+  'use strict';
+  root.LanDialogues4G=[
+{id:'lan_4g_enter_001',era:'4G',location:'entrance',trigger:'ENTER_4G',emotion:'expecting',dialogueType:'story',storyLine:'main',text:'欢迎来到4G时代，时间来到2010年代。\n高速移动网络让视频、直播等服务更容易进入日常。\n更多人开始在移动中观看内容、分享现场。\n眼前的模拟测试记录，会让我们看看这类服务还面临什么挑战。',next:null,unlockCondition:'首次进入4G时代'},
+    {id:'lan_4g_phone_001',era:'4G',location:'exhibit',trigger:'VIEW_4G_PHONE',emotion:'curious',dialogueType:'optional',storyLine:'main',text:'手机已经不只是接收信息。\n它开始成为创造和分享内容的平台。',next:null,unlockCondition:'查看4G智能手机展品'},
+    {id:'lan_4g_video_001',era:'4G',location:'exhibit',trigger:'VIEW_4G_VIDEO',emotion:'expecting',dialogueType:'optional',storyLine:'main',text:'当网络速度提升，视频开始真正进入移动生活。\n清晰度和连续播放体验，也让人们对移动内容提出新的期待。',next:null,unlockCondition:'查看高清视频服务展品'},
+    {id:'lan_4g_live_001',era:'4G',location:'exhibit',trigger:'VIEW_4G_LIVE_DEVICE',emotion:'warm',dialogueType:'optional',storyLine:'experience',text:'过去，信息主要由少数人传播。\n现在，每个人都可以分享自己的视角。',next:null,unlockCondition:'查看移动直播展品'},
+    {id:'lan_4g_base_001',era:'4G',location:'exhibit',trigger:'VIEW_4G_BASE_STATION',emotion:'research',dialogueType:'optional',storyLine:'builder',text:'流畅体验背后，还需要足够的网络承载能力。\n热点区域的容量、传输路径与服务协同都会影响实际体验。',next:null,unlockCondition:'查看LTE网络设施展品'},
+    {id:'lan_4g_tech_001',era:'4G',location:'laboratory',trigger:'START_4G_TECH',emotion:'research',dialogueType:'hint',storyLine:'builder',text:'4G的重要变化，不只是速度提升。\n手机通过LTE无线网络和基站接入核心网络，再连接内容服务。\n大量实时内容因此更容易进入日常生活。',next:null,unlockCondition:'打开4G技术流程图'},
+    {id:'lan_4g_task_start_001',era:'4G',location:'task',trigger:'START_4G_TASK',emotion:'encourage',dialogueType:'hint',storyLine:'builder',text:'测试高清视频服务时，直播出现缓冲、延迟增加和清晰度下降。\n我们沿着网络容量、基站负载、数据路径和视频服务逐项调查。',next:null,unlockCondition:'进入4G建设调查'},
+    {id:'lan_4g_clue_capacity_001',era:'4G',location:'task',trigger:'CHECK_4G_NETWORK_CAPACITY',emotion:'thinking',dialogueType:'hint',storyLine:'builder',text:'活跃用户和数据流量增长时，网络资源会承受更大压力。\n降低画质能暂时减少数据需求，但不能独自解释所有卡顿。',next:null,unlockCondition:'检查网络容量'},
+    {id:'lan_4g_clue_load_001',era:'4G',location:'task',trigger:'CHECK_4G_BASE_LOAD',emotion:'research',dialogueType:'hint',storyLine:'builder',text:'测试区域同时使用网络的用户较多。\n热点区域的基站负载和资源调度会影响数据能否持续到达。',next:null,unlockCondition:'检查热点基站负载'},
+    {id:'lan_4g_clue_route_001',era:'4G',location:'task',trigger:'CHECK_4G_DATA_ROUTE',emotion:'thinking',dialogueType:'hint',storyLine:'builder',text:'数据从无线接入到视频服务要经过多个网络环节。\n路径中的拥堵或等待会造成缓冲和延迟。',next:null,unlockCondition:'检查数据传输路径'},
+    {id:'lan_4g_clue_service_001',era:'4G',location:'task',trigger:'CHECK_4G_VIDEO_SERVICE',emotion:'research',dialogueType:'hint',storyLine:'builder',text:'部分视频请求响应时间较长。\n服务侧的内容适配与响应效率也是端到端体验的一部分。',next:null,unlockCondition:'检查视频服务适配'},
+    {id:'lan_4g_reveal_001',era:'4G',location:'task-result',trigger:'REVEAL_4G_TASK',emotion:'thinking',dialogueType:'hint',storyLine:'builder',text:'几条线索共同说明，直播体验受到网络拥塞、热点负载、传输路径、终端解码与服务响应影响。\n在模拟测试中调整网络条件、选择合适画质并修正服务配置后，画面恢复流畅。',next:null,unlockCondition:'整合4G调查线索'},
+    {id:'lan_4g_task_complete_001',era:'4G',location:'task-result',trigger:'COMPLETE_4G_TASK',emotion:'success',dialogueType:'story',storyLine:'builder',text:'视频恢复流畅了。\n但你解决的不只是一次播放问题。\n你帮助见证的是一个高速内容时代的开始。',next:'lan_4g_archive_entry_001',unlockCondition:'完成4G建设调查'},
+    {id:'lan_4g_experience_start_001',era:'4G',location:'experience',trigger:'START_4G_EXPERIENCE',emotion:'nostalgia',dialogueType:'story',storyLine:'experience',text:'调查结束后，我们换一个角度。\n高速连接也改变了普通人观看、记录和分享生活的方式。',next:null,unlockCondition:'进入4G生活影响资料'},
+    {id:'lan_4g_experience_video_001',era:'4G',location:'experience',trigger:'EXPERIENCE_4G_VIDEO',emotion:'expecting',dialogueType:'optional',storyLine:'experience',text:'3G让世界进入手机。\n4G让世界开始被看见。',next:null,unlockCondition:'体验移动高清视频'},
+    {id:'lan_4g_experience_share_001',era:'4G',location:'experience',trigger:'EXPERIENCE_4G_SHARE',emotion:'warm',dialogueType:'optional',storyLine:'experience',text:'过去，人们记录生活。\n现在，人们开始即时分享生活。',next:null,unlockCondition:'体验上传照片'},
+    {id:'lan_4g_experience_live_001',era:'4G',location:'experience',trigger:'EXPERIENCE_4G_LIVE',emotion:'curious',dialogueType:'optional',storyLine:'experience',text:'通信改变的不只是速度。\n还有人与世界互动的方式。',next:null,unlockCondition:'体验移动直播'},
+    {id:'lan_4g_experience_social_001',era:'4G',location:'experience',trigger:'EXPERIENCE_4G_SOCIAL',emotion:'warm',dialogueType:'optional',storyLine:'experience',text:'每个人都可以成为信息创造者。\n内容传播从单向接收扩展为更多人的参与和分享。',next:null,unlockCondition:'体验社交互动'},
+    {id:'lan_4g_experience_complete_001',era:'4G',location:'experience-summary',trigger:'COMPLETE_4G_EXPERIENCE',emotion:'success',dialogueType:'story',storyLine:'experience',text:'我们看到了高速连接带来的日常变化。\n视频、照片、直播与社交内容，让更多人能够表达和分享。',next:null,unlockCondition:'完成全部4G体验节点'},
+    {id:'lan_4g_archive_entry_001',era:'4G',location:'archive',trigger:'ENTER_4G_ARCHIVE',emotion:'nostalgia',dialogueType:'story',storyLine:'archive',text:'4G时代的调查到达归档节点。\n网络与服务链路的协同，支撑了更多内容创造与分享进入日常。',next:null,unlockCondition:'完成4G建设调查与技术实验'},
+    {id:'lan_4g_archive_technology_001',era:'4G',location:'archive',trigger:'VIEW_4G_TECH_ARCHIVE',emotion:'research',dialogueType:'optional',storyLine:'archive',text:'4G改变的不只是通信速度。\n它也改变了信息传播的方式。\n实际体验仍取决于网络、终端与内容服务协同。',next:null,unlockCondition:'查看4G技术归档'},
+    {id:'lan_4g_archive_experience_001',era:'4G',location:'archive',trigger:'VIEW_4G_EXPERIENCE_ARCHIVE',emotion:'warm',dialogueType:'optional',storyLine:'archive',text:'每个人都可以成为内容创造者。\n移动宽带让观看、记录和分享更自然地融入日常生活。',next:null,unlockCondition:'查看4G体验归档'},
+    {id:'lan_4g_archive_complete_001',era:'4G',location:'archive',trigger:'ARCHIVE_4G_COMPLETE',emotion:'success',dialogueType:'story',storyLine:'archive',text:'4G时代档案记录完成。\n你把一次视频故障调查、技术发现和生活变化一起收入档案。\n以前我们记录网络速度，现在也开始记录高速连接怎样改变人们观看、记录和分享生活。',next:'lan_4g_unlock_5g_001',unlockCondition:'完成4G时代归档'},
+    {id:'lan_4g_unlock_5g_001',era:'4G',location:'transition',trigger:'UNLOCK_5G',emotion:'expecting',dialogueType:'story',storyLine:'main',text:'当连接越来越快，人们期待的不再只是人与人的交流。\n下一阶段，连接将进入更多应用领域。\n我们去看看5G如何支持人与物、物与物的协同。',next:'ENTER_ERA:5G',unlockCondition:'4G档案完成并开放5G'}
+  ];
+  root.LanTriggers4G=[
+    {id:'ENTER_4G',event:'ENTER_ERA',dialogueId:'lan_4g_enter_001',condition:{era:'4G',firstEnter:true},priority:1},
+    {id:'VIEW_4G_PHONE',event:'EXHIBIT_CLICK',dialogueId:'lan_4g_phone_001',condition:{era:'4G',exhibitId:'exhibit.4g.handset'},priority:2},
+    {id:'VIEW_4G_VIDEO',event:'EXHIBIT_CLICK',dialogueId:'lan_4g_video_001',condition:{era:'4G',exhibitId:'exhibit.4g.video'},priority:2},
+    {id:'VIEW_4G_LIVE_DEVICE',event:'EXHIBIT_CLICK',dialogueId:'lan_4g_live_001',condition:{era:'4G',exhibitId:'exhibit.4g.live'},priority:2},
+    {id:'VIEW_4G_BASE_STATION',event:'EXHIBIT_CLICK',dialogueId:'lan_4g_base_001',condition:{era:'4G',exhibitId:'exhibit.4g.lte'},priority:2},
+    {id:'START_4G_TECH',event:'TECH_START',dialogueId:'lan_4g_tech_001',condition:{era:'4G'},priority:1},
+    {id:'START_4G_TASK',event:'TASK_START',dialogueId:'lan_4g_task_start_001',condition:{era:'4G'},priority:1},
+    {id:'CHECK_4G_NETWORK_CAPACITY',event:'TASK_CLUE',dialogueId:'lan_4g_clue_capacity_001',condition:{era:'4G',clue:'network-capacity'},priority:2},
+    {id:'CHECK_4G_BASE_LOAD',event:'TASK_CLUE',dialogueId:'lan_4g_clue_load_001',condition:{era:'4G',clue:'base-load'},priority:2},
+    {id:'CHECK_4G_DATA_ROUTE',event:'TASK_CLUE',dialogueId:'lan_4g_clue_route_001',condition:{era:'4G',clue:'data-route'},priority:2},
+    {id:'CHECK_4G_VIDEO_SERVICE',event:'TASK_CLUE',dialogueId:'lan_4g_clue_service_001',condition:{era:'4G',clue:'video-service'},priority:2},
+    {id:'REVEAL_4G_TASK',event:'TASK_REVEAL',dialogueId:'lan_4g_reveal_001',condition:{era:'4G'},priority:1},
+    {id:'COMPLETE_4G_TASK',event:'TASK_COMPLETE',dialogueId:'lan_4g_task_complete_001',condition:{era:'4G'},priority:1},
+    {id:'START_4G_EXPERIENCE',event:'EXPERIENCE_START',dialogueId:'lan_4g_experience_start_001',condition:{era:'4G'},priority:1},
+    ...['VIDEO','SHARE','LIVE','SOCIAL'].map((name,index)=>({id:`EXPERIENCE_4G_${name}`,event:'EXPERIENCE_NODE',dialogueId:['lan_4g_experience_video_001','lan_4g_experience_share_001','lan_4g_experience_live_001','lan_4g_experience_social_001'][index],condition:{era:'4G',nodeId:`EXPERIENCE_4G_${name}`},priority:2})),
+    {id:'COMPLETE_4G_EXPERIENCE',event:'EXPERIENCE_MERGE',dialogueId:'lan_4g_experience_complete_001',condition:{era:'4G'},priority:1},
+    {id:'ENTER_4G_ARCHIVE',event:'ENTER_ARCHIVE_4G',dialogueId:'lan_4g_archive_entry_001',condition:{era:'4G'},priority:1},
+    {id:'VIEW_4G_TECH_ARCHIVE',event:'VIEW_ARCHIVE_SECTION_4G',dialogueId:'lan_4g_archive_technology_001',condition:{era:'4G',section:'technology'},priority:2},
+    {id:'VIEW_4G_EXPERIENCE_ARCHIVE',event:'VIEW_ARCHIVE_SECTION_4G',dialogueId:'lan_4g_archive_experience_001',condition:{era:'4G',section:'experience'},priority:2},
+    {id:'ARCHIVE_4G_COMPLETE',event:'ARCHIVE_4G_COMPLETE',dialogueId:'lan_4g_archive_complete_001',condition:{era:'4G'},priority:1},
+    {id:'UNLOCK_5G',event:'UNLOCK_5G',dialogueId:'lan_4g_unlock_5g_001',condition:{era:'4G',nextEra:'5G'},priority:1}
+  ];
+})(window);

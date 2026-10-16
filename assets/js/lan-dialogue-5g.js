@@ -1,0 +1,47 @@
+/* 《通信简史》5G展厅对白与事件映射；工业和城市任务均为模拟调查情境。 */
+(function(root){
+  'use strict';
+  root.LanDialogues5G=[
+{id:'lan_5g_enter_001',era:'5G',location:'entrance',trigger:'ENTER_5G',emotion:'expecting',dialogueType:'story',storyLine:'main',text:'欢迎来到5G时代。这里是当代通信持续演进的现场。\n连接对象正从人与人延伸到设备与系统。\n我们将观察一个需要多种设备协同完成的工业控制情境。',next:null,unlockCondition:'进入5G时代'},
+    {id:'lan_5g_city_001',era:'5G',location:'exhibit',trigger:'VIEW_5G_SMART_CITY',emotion:'curious',dialogueType:'optional',storyLine:'experience',text:'城市中的设备开始交换信息。\n通信正在成为城市运行的一部分。',next:null,unlockCondition:'查看智能城市控制终端'},
+    {id:'lan_5g_car_001',era:'5G',location:'exhibit',trigger:'VIEW_5G_AUTONOMOUS_CAR',emotion:'thinking',dialogueType:'optional',storyLine:'main',text:'对于自动驾驶等协同场景，及时的信息交换很重要。\n实际安全仍依赖车载系统、道路设施和多重保障。',next:null,unlockCondition:'查看自动驾驶车辆模型'},
+    {id:'lan_5g_robot_001',era:'5G',location:'exhibit',trigger:'VIEW_5G_INDUSTRIAL_ROBOT',emotion:'research',dialogueType:'optional',storyLine:'builder',text:'过去，机器常按预设程序执行。\n现在，联网设备可以交换状态并协同工作。\n可靠运行仍需要控制系统和异常保护。',next:null,unlockCondition:'查看工业机器人'},
+    {id:'lan_5g_sensor_001',era:'5G',location:'exhibit',trigger:'VIEW_5G_SENSOR',emotion:'curious',dialogueType:'optional',storyLine:'builder',text:'每一个传感器都可能成为网络中的节点。\n设备数量增加后，连接管理、数据处理和安全也更重要。',next:null,unlockCondition:'查看物联网传感器'},
+    {id:'lan_5g_tech_001',era:'5G',location:'laboratory',trigger:'START_5G_TECH',emotion:'research',dialogueType:'hint',storyLine:'builder',text:'一条典型的协作链路可以从设备与传感器开始，经由5G网络连接边缘计算和智能系统。\n实际部署会因场景而不同；低时延和大规模连接是面向应用的能力方向，不代表所有场景都自动达到确定性能。',next:null,unlockCondition:'打开5G技术流程资料'},
+    {id:'lan_5g_task_start_001',era:'5G',location:'task',trigger:'START_5G_TASK',emotion:'encourage',dialogueType:'hint',storyLine:'builder',text:'智慧城市测试中，路灯、车辆与环境传感器的状态出现不同步；工厂控制中心也记录到设备响应超时。\n这是一组模拟调查记录。我们从设备、网络、边缘计算和数据同步逐项排查。',next:null,unlockCondition:'进入5G建设调查'},
+    {id:'lan_5g_clue_device_001',era:'5G',location:'task',trigger:'CHECK_5G_DEVICE_CONNECTION',emotion:'thinking',dialogueType:'hint',storyLine:'builder',text:'部分设备连接状态与上报周期不一致。\n先核对设备在线状态和传感器反馈，再判断网络是否为唯一原因。',next:null,unlockCondition:'检查设备连接'},
+    {id:'lan_5g_clue_latency_001',era:'5G',location:'task',trigger:'CHECK_5G_LATENCY',emotion:'research',dialogueType:'hint',storyLine:'builder',text:'网络记录显示部分数据传输出现延迟，测试网络资源需要重新分配。\n低时延是5G面向部分应用的能力方向，实际时延仍取决于部署、负载和端到端系统。',next:null,unlockCondition:'检查网络延迟'},
+    {id:'lan_5g_clue_edge_001',era:'5G',location:'task',trigger:'CHECK_5G_EDGE_NODE',emotion:'thinking',dialogueType:'hint',storyLine:'builder',text:'边缘计算节点有任务排队，部分状态处理没有及时返回。\n网络及时送达数据后，计算和调度也要跟上。',next:null,unlockCondition:'检查边缘计算节点'},
+    {id:'lan_5g_clue_sync_001',era:'5G',location:'task',trigger:'CHECK_5G_DATA_SYNC',emotion:'research',dialogueType:'hint',storyLine:'builder',text:'平台中的部分设备状态晚于现场反馈。\n数据更新顺序与同步机制需要和网络、计算记录一起核对。',next:null,unlockCondition:'检查数据同步'},
+    {id:'lan_5g_reveal_001',era:'5G',location:'task-result',trigger:'REVEAL_5G_TASK',emotion:'thinking',dialogueType:'hint',storyLine:'builder',text:'调查显示，异常不是单台设备故障：设备连接状态、网络时延、边缘任务排队和数据同步共同影响了系统响应。\n调整模拟测试中的网络资源、校准设备反馈、整理边缘任务并修正同步流程后，状态逐步恢复一致。',next:null,unlockCondition:'整合5G调查线索'},
+    {id:'lan_5g_task_complete_001',era:'5G',location:'task-result',trigger:'COMPLETE_5G_TASK',emotion:'success',dialogueType:'story',storyLine:'builder',text:'问题解决了。\n但这次调查让我们看到，5G面对的不只是通信连接，而是整个系统之间的协同。\n这些模拟结果说明需要共同排查，并不代表某项应用已经普遍部署。',next:'lan_5g_archive_entry_001',unlockCondition:'完成5G建设调查'},
+    {id:'lan_5g_experience_start_001',era:'5G',location:'experience',trigger:'START_5G_EXPERIENCE',emotion:'warm',dialogueType:'story',storyLine:'experience',text:'现在换一个角度，看看连接能力如何进入生活与生产。\n下面是用于理解技术影响的场景记录，不表示这些服务在所有地区都已普遍部署。',next:null,unlockCondition:'进入5G生活影响资料'},
+    {id:'lan_5g_experience_traffic_001',era:'5G',location:'experience',trigger:'EXPERIENCE_5G_TRAFFIC',emotion:'curious',dialogueType:'optional',storyLine:'experience',text:'交通系统可以结合传感器和网络信息了解道路状态。\n通信提供信息交换基础，交通安全仍依赖完整系统设计。',next:null,unlockCondition:'体验智慧交通情境'},
+    {id:'lan_5g_experience_home_001',era:'5G',location:'experience',trigger:'EXPERIENCE_5G_HOME',emotion:'warm',dialogueType:'optional',storyLine:'experience',text:'家中的设备能够联网交换状态。\n是否便捷，还取决于互操作、隐私和安全设计。',next:null,unlockCondition:'体验智能家居情境'},
+    {id:'lan_5g_experience_medical_001',era:'5G',location:'experience',trigger:'EXPERIENCE_5G_MEDICAL',emotion:'thinking',dialogueType:'optional',storyLine:'experience',text:'通信可以支持远程医疗协作和信息传递。\n它是服务链的一部分，不能替代专业诊疗、设备可靠性和医疗规范。',next:null,unlockCondition:'体验远程医疗协作情境'},
+    {id:'lan_5g_experience_industry_001',era:'5G',location:'experience',trigger:'EXPERIENCE_5G_INDUSTRY',emotion:'research',dialogueType:'optional',storyLine:'experience',text:'联网设备共享状态后，可以为协同生产提供信息基础。\n具体效果仍需网络、控制系统、安全和异常保护共同验证。',next:null,unlockCondition:'体验工业协作情境'},
+    {id:'lan_5g_experience_complete_001',era:'5G',location:'experience-summary',trigger:'COMPLETE_5G_EXPERIENCE',emotion:'success',dialogueType:'story',storyLine:'experience',text:'我们从交通、家庭、医疗协作和工业场景看到了设备连接的不同方向。\n5G扩展了多场景连接的可能，真实应用仍由系统条件和部署情况决定。',next:null,unlockCondition:'完成全部5G体验节点'},
+    {id:'lan_5g_archive_entry_001',era:'5G',location:'archive',trigger:'ENTER_5G_ARCHIVE',emotion:'nostalgia',dialogueType:'story',storyLine:'archive',text:'5G时代调查来到归档节点。\n网络、设备、边缘计算与数据同步共同支持更多协同场景的探索。',next:null,unlockCondition:'完成5G建设调查与技术实验'},
+    {id:'lan_5g_archive_technology_001',era:'5G',location:'archive',trigger:'VIEW_5G_TECH_ARCHIVE',emotion:'research',dialogueType:'optional',storyLine:'archive',text:'5G面向增强移动宽带、低时延高可靠通信和海量机器类通信等使用场景。\n实际应用需要端到端网络、终端、边缘计算和控制系统共同设计。',next:null,unlockCondition:'查看5G技术归档'},
+    {id:'lan_5g_archive_experience_001',era:'5G',location:'archive',trigger:'VIEW_5G_EXPERIENCE_ARCHIVE',emotion:'warm',dialogueType:'optional',storyLine:'archive',text:'当通信连接设备与环境，普通用户感受到的可能是交通、家居和服务协同。\n这些是发展方向与应用场景，不意味着能力已处处普及。',next:null,unlockCondition:'查看5G体验归档'},
+    {id:'lan_5g_archive_complete_001',era:'5G',location:'archive',trigger:'ARCHIVE_5G_COMPLETE',emotion:'success',dialogueType:'story',storyLine:'archive',text:'5G时代档案记录完成。\n你把系统调查、设备连接线索和生活场景一同收入档案。',next:'lan_5g_unlock_6g_001',unlockCondition:'完成5G时代归档'},
+    {id:'lan_5g_unlock_6g_001',era:'5G',location:'transition',trigger:'UNLOCK_6G',emotion:'expecting',dialogueType:'story',storyLine:'main',text:'5G让世界中的设备开始连接。\n下一代通信研究将进一步探索现实感知与数字系统如何协同。\n下一站，我们去探索仍处研究发展阶段的6G。',next:'ENTER_ERA:6G',unlockCondition:'5G归档完成并开放6G'}
+  ];
+  root.LanTriggers5G=[
+    {id:'ENTER_5G',event:'ENTER_ERA',dialogueId:'lan_5g_enter_001',condition:{era:'5G',firstEnter:true},priority:1},
+    ...[['SMART_CITY','exhibit.5g.city','lan_5g_city_001'],['AUTONOMOUS_CAR','exhibit.5g.car','lan_5g_car_001'],['INDUSTRIAL_ROBOT','exhibit.5g.robot','lan_5g_robot_001'],['SENSOR','exhibit.5g.sensor','lan_5g_sensor_001']].map(([name,exhibitId,dialogueId])=>({id:`VIEW_5G_${name}`,event:'EXHIBIT_CLICK',dialogueId,condition:{era:'5G',exhibitId},priority:2})),
+    {id:'START_5G_TECH',event:'TECH_START',dialogueId:'lan_5g_tech_001',condition:{era:'5G'},priority:1},
+    {id:'START_5G_TASK',event:'TASK_START',dialogueId:'lan_5g_task_start_001',condition:{era:'5G'},priority:1},
+    ...[['DEVICE_CONNECTION','device-connection','lan_5g_clue_device_001'],['LATENCY','latency','lan_5g_clue_latency_001'],['EDGE_NODE','edge-node','lan_5g_clue_edge_001'],['DATA_SYNC','data-sync','lan_5g_clue_sync_001']].map(([name,clue,dialogueId])=>({id:`CHECK_5G_${name}`,event:'TASK_CLUE',dialogueId,condition:{era:'5G',clue},priority:2})),
+    {id:'REVEAL_5G_TASK',event:'TASK_REVEAL',dialogueId:'lan_5g_reveal_001',condition:{era:'5G'},priority:1},
+    {id:'COMPLETE_5G_TASK',event:'TASK_COMPLETE',dialogueId:'lan_5g_task_complete_001',condition:{era:'5G'},priority:1},
+    {id:'START_5G_EXPERIENCE',event:'EXPERIENCE_START',dialogueId:'lan_5g_experience_start_001',condition:{era:'5G'},priority:1},
+    ...['TRAFFIC','HOME','MEDICAL','INDUSTRY'].map((name,index)=>({id:`EXPERIENCE_5G_${name}`,event:'EXPERIENCE_NODE',dialogueId:['lan_5g_experience_traffic_001','lan_5g_experience_home_001','lan_5g_experience_medical_001','lan_5g_experience_industry_001'][index],condition:{era:'5G',nodeId:`EXPERIENCE_5G_${name}`},priority:2})),
+    {id:'COMPLETE_5G_EXPERIENCE',event:'EXPERIENCE_MERGE',dialogueId:'lan_5g_experience_complete_001',condition:{era:'5G'},priority:1},
+    {id:'ENTER_5G_ARCHIVE',event:'ENTER_ARCHIVE_5G',dialogueId:'lan_5g_archive_entry_001',condition:{era:'5G'},priority:1},
+    {id:'VIEW_5G_TECH_ARCHIVE',event:'VIEW_ARCHIVE_SECTION_5G',dialogueId:'lan_5g_archive_technology_001',condition:{era:'5G',section:'technology'},priority:2},
+    {id:'VIEW_5G_EXPERIENCE_ARCHIVE',event:'VIEW_ARCHIVE_SECTION_5G',dialogueId:'lan_5g_archive_experience_001',condition:{era:'5G',section:'experience'},priority:2},
+    {id:'ARCHIVE_5G_COMPLETE',event:'ARCHIVE_5G_COMPLETE',dialogueId:'lan_5g_archive_complete_001',condition:{era:'5G'},priority:1},
+    {id:'UNLOCK_6G',event:'UNLOCK_6G',dialogueId:'lan_5g_unlock_6g_001',condition:{era:'5G',nextEra:'6G'},priority:1}
+  ];
+})(window);
