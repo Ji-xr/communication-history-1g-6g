@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050b19"><meta name="description" content="通信简史：从1G到6G。穿越六个通信时代，探索移动通信如何改变人与信息的连接。">
+  <title>通信简史：从1G到6G</title><script>window.COMMS_ARCHIVE_3D_DISABLED=true;window.CommsArchive3DReady=false;window.CommsArchive3DStatus={status:'disabled',mode:'2d',stage:'competition-2d',reason:null};window.COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=true;</script><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23060d1d'/%3E%3Ccircle cx='32' cy='32' r='21' fill='none' stroke='%2363e8ff' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23f5cf83'/%3E%3Cpath d='M32 4v11M32 49v11M4 32h11M49 32h11' stroke='%23a58bff' stroke-width='2'/%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="assets/css/gallery3d.css"><link rel="stylesheet" href="assets/css/history-media.css"><link rel="stylesheet" href="assets/css/lan.css"><link rel="stylesheet" href="assets/css/progression.css"><link rel="stylesheet" href="assets/css/audio-system.css">
+</head>
+<body>
+<div class="stars" aria-hidden="true"></div><header class="topbar"><a class="brand" href="#home" data-nav="home"><span class="brand-mark">⟡</span><span>通信简史：从1G到6G<small>HISTORY OF MOBILE COMMUNICATIONS</small></span></a><nav><button id="homeNavButton" data-nav="home">首页</button><button id="eraRouteButton" data-nav="eras">时代航线</button><button id="archiveNavButton" data-nav="archive">文明档案</button><button id="knowledgeSearchButton" data-nav="search">通信知识搜索</button><button id="audioSettingsToggle" type="button" aria-haspopup="dialog">体验设置</button></nav><div class="top-progress"><span id="progressText">0 / 6 已完成</span><i><b id="progressBar"></b></i></div></header>
+<main id="app" aria-live="polite"></main>
+<section id="archive3d" aria-label="通信简史：从1G到6G三维时空长廊" hidden>
+  <div id="threeMount"></div>
+  <div class="gallery-hud gallery-top"><div><span class="eyebrow">IMMERSIVE EXHIBITION</span><strong>通信简史：从1G到6G <small>时空长廊</small></strong></div><button class="btn secondary" onclick="close3DGallery()">退出展厅</button></div>
+  <div id="galleryStatus" class="gallery-status" hidden></div>
+  <div id="galleryInfo" class="gallery-info" hidden></div>
+  <nav id="reviewTimeline" class="review-timeline" aria-label="六代时间线"></nav>
+  <aside id="reviewGuide" class="review-guide" aria-live="polite" hidden></aside>
+  <div id="exhibitHint" class="exhibit-hint" hidden></div>
+  <div class="gallery-hint"><span>拖动鼠标旋转 · 滚轮缩放 · 点击展品查看</span><span>键盘：方向键旋转 · + / − 缩放 · Enter选择</span><span>手机：单指拖动旋转 · 双指缩放 · 点地面移动视角</span></div>
+</section>
+<div id="modalRoot"></div>
+<div id="saveStatus" class="save-status" role="status" aria-live="polite" hidden></div>
+<div id="imageViewerRoot"></div>
+<footer>通信简史：从1G到6G <span>·</span> 交互式科普体验 <span>·</span> 6G展区为未来情境设计</footer>
+<input id="importFile" type="file" accept="application/json,.json" hidden>
+<script src="assets/js/lan-character-profile.js"></script>
+<script src="assets/js/content-model.js"></script>
+<script src="assets/js/lan-dialogue-1g.js"></script>
+<script src="assets/js/lan-dialogue-2g.js"></script>
+<script src="assets/js/lan-dialogue-3g.js"></script>
+<script src="assets/js/era-archive-3g.js"></script>
+<script src="assets/js/lan-dialogue-3g-archive.js"></script>
+<script src="assets/js/lan-dialogue-4g.js"></script>
+<script src="assets/js/era-archive-4g.js"></script>
+<script src="assets/js/lan-dialogue-5g.js"></script>
+<script src="assets/js/era-archive-5g.js"></script>
+<script src="assets/js/lan-dialogue-6g.js"></script>
+<script src="assets/js/era-archive-6g.js"></script>
+<script src="assets/js/demo-manager.js"></script>
+<script src="assets/js/interaction-debugger.js"></script>
+<script src="assets/js/lan-system.js"></script>
+<script src="assets/js/audio-system.js"></script>
+<script src="assets/js/progression-manager.js"></script>
+<script src="assets/js/quiz-data.js"></script>
+<script src="assets/js/viewer-state.js"></script>
+<script src="assets/js/knowledge-search.js"></script>
+<script src="app.js"></script>
+<script src="assets/js/runtime-content.js"></script>
+<script src="assets/js/demo-app.js"></script>
+<script src="assets/js/system-health-check.js"></script>
+<!-- archive3d.js and Three.js assets are preserved but intentionally not loaded in the stable competition build. -->
+</body></html>
