@@ -1,0 +1,400 @@
+/* Mobile reading layer. All rules are scoped below 768px; desktop styles remain untouched. */
+@media (max-width: 767px) {
+  .page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 30px clamp(12px, 4vw, 16px) calc(154px + env(safe-area-inset-bottom));
+  }
+
+  .page h1,
+  .page h2,
+  .page h3,
+  .page p,
+  .page li,
+  .page label,
+  .page summary,
+  .page a,
+  .page strong,
+  .page span,
+  .page small,
+  .page code {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .page h1 { font-size: clamp(2rem, 8vw, 2.5rem); line-height: 1.18; letter-spacing: -.04em; }
+  .page h2 { font-size: clamp(1.5rem, 6vw, 1.85rem); line-height: 1.25; }
+  .page h3 { font-size: 1.2rem; line-height: 1.4; }
+  .page p,
+  .guided-main p,
+  .story-card p,
+  .archive-record p,
+  .feedback,
+  .answer,
+  .exhibit-body,
+  .hall-entry p,
+  .hall-experience p,
+  .hall-transition p,
+  .hall-exhibit-card p,
+  .technology-note p,
+  .quiz-review p {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  .page .muted,
+  .guided-node-kicker,
+  .guided-restore-note,
+  .archive-readiness,
+  .knowledge-result-context,
+  .technical-source-links {
+    font-size: .9rem;
+    line-height: 1.65;
+  }
+
+  .hero,
+  .chapter-head,
+  .prologue-grid {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-copy,
+  .hero-art,
+  .chapter-head > *,
+  .prologue-grid > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .hero-art { overflow: hidden; }
+  .home-primary-actions { align-items: stretch; flex-direction: column; }
+  .home-primary-actions .btn { width: 100%; min-height: 48px; }
+
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .options,
+  .story-grid,
+  .technology-note-grid,
+  .hall-exhibit-grid,
+  .archive-exhibit-grid,
+  .media-grid,
+  .archive-return-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card,
+  .task-panel,
+  .story-card,
+  .archive-record,
+  .archive-source-card,
+  .archive-voice-summary,
+  .evidence-card,
+  .hall-entry,
+  .hall-experience,
+  .hall-transition,
+  .hall-exhibit-card,
+  .technology-note,
+  .guided-section,
+  .guided-locked-note,
+  .guided-unlocked-note,
+  .guided-original,
+  .quiz-perfect,
+  .quiz-review article,
+  .knowledge-result-context {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .task-panel,
+  .story-card,
+  .archive-record,
+  .archive-source-card,
+  .archive-voice-summary,
+  .evidence-card,
+  .hall-entry,
+  .hall-experience,
+  .hall-transition,
+  .hall-exhibit-card,
+  .technology-note,
+  .guided-section,
+  .guided-original,
+  .quiz-perfect,
+  .quiz-review article {
+    padding: 16px;
+  }
+
+  .option,
+  .quiz-option {
+    min-width: 0;
+    min-height: 64px;
+    padding: 14px;
+    font-size: 1rem;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+  }
+
+  .section-head,
+  .media-heading,
+  .hall-zone-heading {
+    min-width: 0;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .route-summary { align-items: stretch; flex-direction: column; gap: 10px; }
+  .record-row,
+  .quiz-record { min-width: 0; grid-template-columns: minmax(0, 1fr); gap: 7px; }
+  .record-row > *,
+  .quiz-record > * { min-width: 0; grid-column: 1; overflow-wrap: anywhere; }
+  .quiz-record button { min-width: 44px; min-height: 44px; justify-self: start; }
+  .final-achievement-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+
+  .guided-page { padding: 22px clamp(12px, 4vw, 16px) calc(154px + env(safe-area-inset-bottom)); }
+  .guided-head { display: block; }
+  .guided-head > .btn { margin: 8px 0; }
+  .guided-layout { min-width: 0; grid-template-columns: minmax(0, 1fr); gap: 11px; }
+  .guided-rail { position: static; min-width: 0; padding: 12px; }
+  .guided-era-list { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; }
+  .guided-era-button { display: grid; justify-items: center; gap: 3px; min-width: 0; min-height: 48px; padding: 6px 2px; }
+  .guided-era-button small { margin: 0; font-size: .68rem; }
+  .guided-node-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .guided-node-button { min-width: 0; min-height: 44px; padding: 8px; font-size: .875rem; line-height: 1.4; }
+  .guided-main { min-width: 0; min-height: 0; padding: 17px 14px; }
+  .guided-lan-slot { min-width: 0; padding: 8px; }
+  .guided-main .options { grid-template-columns: minmax(0, 1fr); }
+  .guided-main .guided-actions .btn,
+  .guided-footer-actions .btn { flex: 1 1 100%; min-height: 44px; }
+
+  .chapter-step-navigation { align-items: stretch; flex-direction: column-reverse; gap: 12px; }
+  .chapter-step-next { align-items: stretch; flex-direction: column-reverse; gap: 8px; }
+  .chapter-step-status { text-align: left; }
+  .chapter-step-navigation .btn { width: 100%; min-height: 48px; }
+
+  .history-media,
+  .media-grid,
+  .media-figure,
+  .exhibit-body,
+  .exhibit-content { min-width: 0; max-width: 100%; }
+  .history-media { padding: 14px; }
+  .media-figure > img,
+  .exhibit-image {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 58vh;
+    max-height: min(58dvh, 460px);
+    object-fit: contain;
+  }
+  .media-figure figcaption,
+  .exhibit-caption,
+  .thumbnail-caption,
+  .thumbnail-meta { min-width: 0; font-size: .875rem; line-height: 1.6; overflow-wrap: anywhere; }
+  .media-figure figcaption { padding: 12px; }
+  .exhibit-tabs { gap: 6px; }
+  .exhibit-tab { min-width: 0; min-height: 44px; padding: 8px 6px; font-size: .875rem; overflow-wrap: anywhere; }
+  .exhibit-controls { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .exhibit-controls .btn,
+  .task-reference .btn { width: 100%; min-height: 44px; }
+  .exhibit-thumbnail { min-width: 0; max-width: 100%; }
+  .exhibit-thumbnail img { max-width: 100%; object-fit: contain; }
+  .image-viewer { padding: calc(12px + env(safe-area-inset-top)) 10px calc(12px + env(safe-area-inset-bottom)); }
+  .image-viewer img { width: auto; max-width: 100%; max-height: 82dvh; object-fit: contain; }
+
+  .modal-backdrop,
+  .demo-route-backdrop { padding: env(safe-area-inset-top) 0 0; }
+  .modal,
+  .demo-route-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 8px);
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 8px);
+    margin: 0 auto 0;
+    padding: 16px 14px calc(18px + env(safe-area-inset-bottom));
+    border-radius: 16px 16px 0 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .modal-head { min-width: 0; align-items: flex-start; gap: 10px; }
+  .modal-head > * { min-width: 0; overflow-wrap: anywhere; }
+  .demo-route-mode-grid { grid-template-columns: minmax(0, 1fr); }
+  .demo-route-choices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .demo-route-close { min-width: 44px; min-height: 44px; }
+  .health-panel {
+    top: auto;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    width: calc(100vw - 24px);
+    max-height: 72vh;
+    max-height: min(72dvh, 680px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+  }
+
+  .btn,
+  .quiet,
+  .close,
+  .topbar nav button,
+  .exhibit-tab,
+  .guided-era-button,
+  .guided-node-button,
+  .quiz-option,
+  .image-viewer button,
+  .health-close,
+  .lan-companion[data-mode="dialogue"] .lan-actions button,
+  .lan-companion[data-mode="history"] .lan-history-controls button {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+  .topbar nav button { padding-inline: 9px; }
+  input,
+  textarea,
+  select { max-width: 100%; font-size: 16px; }
+
+  #lanCompanion[data-mode="dialogue"],
+  #lanCompanion[data-mode="history"] {
+    left: 50%;
+    top: 50%;
+    top: calc(50% + (env(safe-area-inset-top) - env(safe-area-inset-bottom)) / 2);
+    right: auto;
+    bottom: auto;
+    width: calc(100vw - 24px);
+    width: calc(100vw - env(safe-area-inset-left) - env(safe-area-inset-right) - 24px);
+    max-width: 760px;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);
+    padding: clamp(14px, 4vw, 18px);
+    border-radius: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  #lanCompanion[data-mode="dialogue"] .lan-head { gap: 9px; }
+  #lanCompanion[data-mode="dialogue"] .lan-portrait { width: 48px; height: 48px; flex-basis: 48px; }
+  #lanCompanion[data-mode="dialogue"] .lan-caption {
+    max-height: 40vh;
+    max-height: min(40dvh, 320px);
+    margin: 12px 0;
+    padding: 14px;
+    font-size: clamp(1rem, 4.2vw, 1.08rem);
+    line-height: 1.75;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+  }
+  #lanCompanion[data-mode="dialogue"] .lan-actions { justify-content: stretch; gap: 8px; flex-wrap: wrap; }
+  #lanCompanion[data-mode="dialogue"] .lan-actions button { flex: 1 1 auto; min-width: 0; }
+  #lanCompanion[data-mode="dialogue"] .lan-footnote { font-size: .875rem; line-height: 1.5; }
+  #lanCompanion[data-mode="history"] .lan-history-reader blockquote { font-size: 1rem; line-height: 1.75; }
+
+  #lanCompanion[data-mode="companion"] {
+    left: auto;
+    right: 10px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    width: min(380px, calc(100vw - 20px));
+    height: auto;
+    min-height: 136px;
+    max-height: min(30dvh, 184px);
+    padding: 8px 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  #lanCompanion[data-mode="companion"] .lan-caption { font-size: .875rem; line-height: 1.45; }
+  #lanCompanion[data-mode="companion"] .lan-actions .lan-skip { min-width: 44px; min-height: 44px; font-size: .75rem; }
+  .chapter-step-next>.btn{box-sizing:border-box;flex:0 1 auto;width:100%;min-width:0;max-width:100%;min-height:48px;padding-inline:14px;white-space:normal;overflow:visible;overflow-wrap:anywhere;line-height:1.35}
+  .sixg-research-check-list{grid-template-columns:minmax(0,1fr)}
+  .sixg-research-check{width:100%;min-height:0}
+  .sixg-research-check small{font-size:.9rem}
+
+  /* Collapse the five desktop destinations into an explicit, keyboard-operable menu. */
+  #mobileNavToggle {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid #7996bd4d;
+    border-radius: 9px;
+    background: #112139a8;
+    color: var(--text);
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .topbar {
+    height: auto;
+    min-height: 68px;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 10px clamp(12px, 4vw, 16px);
+  }
+  .brand { min-width: 0; flex: 1 1 0; white-space: normal; }
+  .brand > span:last-child { min-width: 0; font-size: 15px; line-height: 1.3; }
+  .topbar nav,
+  .topbar nav.is-open {
+    min-width: 0;
+    flex: 1 0 100%;
+    order: 3;
+    overflow: visible;
+  }
+  .topbar nav:not(.is-open) { display: none; }
+  .topbar nav.is-open { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .topbar nav button {
+    min-width: 0;
+    min-height: 48px;
+    padding: 8px;
+    font-size: 16px;
+    line-height: 1.35;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .topbar nav button:last-child { grid-column: 1 / -1; }
+  .page p,
+  .page li,
+  .page .lead,
+  .guided-main p,
+  .story-card p,
+  .archive-record p,
+  .feedback,
+  .answer,
+  .exhibit-body,
+  .knowledge-result p { font-size: 16px; }
+  .page .muted,
+  .knowledge-result-meta,
+  .knowledge-match-reason { font-size: 14px; }
+  .knowledge-search-input-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  .knowledge-search-input-row input,
+  .knowledge-search-input-row .btn { min-width: 0; min-height: 48px; }
+  .knowledge-suggestions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .knowledge-suggestion { min-height: 44px; max-width: 100%; padding: 9px 12px; font-size: 15px; }
+  .knowledge-pagination { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 7px; align-items: center; }
+  .knowledge-pagination > .btn { min-width: 0; min-height: 44px; padding: 8px; white-space: normal; }
+  .knowledge-page-list { grid-column: 1 / -1; grid-row: 2; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px; }
+  .knowledge-page-status { grid-column: 2; grid-row: 1; text-align: center; white-space: nowrap; font-size: 14px; }
+}
+
+@media (max-width: 560px) {
+  .grid,
+  .final-achievement-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 430px) {
+  .final-achievement-grid { grid-template-columns: minmax(0, 1fr); }
+  .home-page .hero-art { max-width: 100%; }
+  .brand small { display: none; }
+  .guided-rail { padding: 10px; }
+  .guided-node-list { grid-template-columns: minmax(0, 1fr); }
+  .guided-node-button { font-size: .9rem; }
+  .history-media { padding: 12px; }
+  .modal,
+  .demo-route-modal { padding-inline: 12px; }
+  .knowledge-search-input-row { grid-template-columns: minmax(0, 1fr); }
+  .knowledge-search-input-row .btn { width: 100%; }
+}
+

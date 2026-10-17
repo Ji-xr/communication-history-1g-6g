@@ -22,10 +22,12 @@
     taskComplete: ['记录完成了。你找到的不只是答案，还有它为什么成立的证据。'],
     archive: ['每张证据卡都连着一次调查。想复核展品或流程图，点关联资料就能继续。'],
     era: {
-      '1G': ['欢迎来到通信历史的第一页。', '这里，人们正尝试让声音摆脱固定电话线。'],
+      // Keep the legacy entrance ID for saved dialogue history, but do not
+      // replay the formal arrival greeting when returning to the 1G chapter.
+      '1G': ['欢迎回来。早期移动通话的线索还在这里，我们可以继续探索。'],
       '2G': ['你发现了吗？通信开始不只是传递声音，也开始记录人与人的关系。'],
       '3G': ['手机逐渐不只是电话，也成为通往互联网信息的小窗口。'],
-      '4G': ['速度提升以后，人们开始分享生活。通信也改变了每个人表达自己的方式。'],
+      '4G': ['移动宽带发展以后，人们更方便地分享生活。通信也改变了每个人表达自己的方式。'],
       '5G': ['这一次，被连接的不只是人。机器、城市和产业也开始加入更多通信应用场景。'],
       '6G': ['欢迎来到未来通信研究情境。这里展示的是探索方向，不是已经普遍商用的能力。']
     },
@@ -33,7 +35,7 @@
       '3G': ['以前我们记录网络速度，现在我开始理解，手机连接互联网也改变了人们获取信息、看见彼此的方式。'],
       '5G': ['连接越来越多，但我们不能忘记，连接最终要服务于人。设备与系统可靠协作，才能让技术真正回应生活中的需要。']
     },
-    ending: ['六代调查已经完成，技术线索和人的体验都补进了档案。', '我曾经认为，通信历史记录的是技术进步。但和你一起经历这些时代后，我发现……', '真正被连接的，是人与人之间想被听见、被看见、被理解的瞬间。我们把这份档案命名为《连接的文明：人类通信六代记录》。']
+    ending: ['从1G—5G的历史回顾到6G的未来研究展望，我们把模拟调查与人的体验一同整理入档。', '我曾经认为，通信历史记录的是技术进步。但和你一起经历这些时代后，我发现……', '真正被连接的，是人与人之间想被听见、被看见、被理解的瞬间。我们把这份档案命名为《连接的文明：人类通信六代记录》。']
   };
   const DIALOGUE_TYPES = ['story', 'hint', 'optional', 'choice'];
   const STORY_LINES = ['main', 'builder', 'experience', 'archive'];
@@ -75,13 +77,16 @@
   [...(root.LanDialogues1G || []), ...(root.LanDialogues2G || []), ...(root.LanDialogues3G || []), ...(root.LanArchiveDialogues3G || []), ...(root.LanDialogues4G || []), ...(root.LanDialogues5G || []), ...(root.LanDialogues6G || [])].forEach((item) => dialogueData.push(normalizeDialogue(item)));
   for (let index = 0; index < dialogueData.length; index++) dialogueData[index] = normalizeDialogue(dialogueData[index]);
 
-  const blankMemory=()=>({completedEras:[],completedTasks:[],collectedEvidence:[],quizRecords:[],eraArchives:[],viewedDialogues:[],skippedDialogues:[],completedEvents:[],completedTriggers:[],completedExperienceNodes:[],dialogueHistory:[],currentDialogue:'',currentDialogueLine:0,lastDialogue:'',dialogueVersion:'1.0',eraProgress:{},lanUI:{position:'bottom-right',x:0,y:0},settings:{audio:{enabled:true,volume:70},display:{lanMode:'auto'}}});
+  const blankMemory=()=>({completedEras:[],completedTasks:[],collectedEvidence:[],quizRecords:[],eraArchives:[],viewedDialogues:[],skippedDialogues:[],completedEvents:[],completedTriggers:[],completedExperienceNodes:[],dialogueHistory:[],currentDialogue:'',currentDialogueLine:0,lastDialogue:'',dialogueVersion:'1.0',eraProgress:{},lanUI:{position:'bottom-right',x:0,y:0},settings:{audio:{enabled:false,volume:70},display:{lanMode:'auto'}}});
+  const JOURNEY_ARRAY_FIELDS=['completedEras','completedTasks','collectedEvidence','quizRecords','eraArchives','viewedDialogues','skippedDialogues','completedEvents','completedTriggers','completedExperienceNodes','dialogueHistory'];
+  const JOURNEY_STRING_FIELDS=['currentDialogue','lastDialogue','dialogueVersion'];
+  const JOURNEY_SCALAR_FIELDS=['currentDialogueLine'];
   const LanDisplayMode={mode:'companion',preference:'auto'};
   root.LanDisplayMode=LanDisplayMode;
   const lanDialoguePhase={phase:'exit',sequenceId:null};
   root.lanDialoguePhase=lanDialoguePhase;
   const LAN_CORNERS=['bottom-right','bottom-left','top-left','top-right'];
-  let mounted = false, queue = [], queueIndex = 0, queueDisplayMode = 'companion', collapsed = false, collapseAfterDialogue = false, lastRoute = '', historyCursor = -1, historyLines = [], historyReturnMode='companion', continueDialoguePresentation=false, lastAdvanceInputAt=0, settings = readPrefs(), history = readHistory(), memory = readMemory(), model = null;
+  let mounted = false, queue = [], queueIndex = 0, queueDisplayMode = 'companion', collapsed = false, collapseAfterDialogue = false, lastRoute = '', historyCursor = -1, historyLines = [], historyReturnMode='companion', continueDialoguePresentation=false, lastAdvanceInputAt=0, pausedSpeechIdentity=null, settings = readPrefs(), history = readHistory(), memory = readMemory(), model = null;
   LanDisplayMode.preference=memory.settings.display.lanMode;
   function storageKey(key) { return root.DemoManager?.storageKey?.(key) || key; }
   function storageGet(key) { return localStorage.getItem(storageKey(key)); }
@@ -89,8 +94,42 @@
   function readPrefs() { try { return { voice: false, ...(JSON.parse(storageGet(PREF_KEY) || '{}')) }; } catch (_) { return { voice: false }; } }
   function readHistory() { try { const value = JSON.parse(storageGet(HISTORY_KEY) || '[]'); return Array.isArray(value) ? value.slice(-80) : []; } catch (_) { return []; } }
   function persistHistory(entry) { history.push(entry); history = history.slice(-80); try { storageSet(HISTORY_KEY, JSON.stringify(history)); } catch (_) {} }
-  function readMemory(){try{const stored=JSON.parse(storageGet(MEMORY_KEY)||'{}'),base=blankMemory();for(const key of Object.keys(base)){if(key==='lanUI'||key==='settings')continue;if(Array.isArray(base[key]))base[key]=Array.isArray(stored[key])?stored[key]:[];else if(typeof base[key]==='string')base[key]=typeof stored[key]==='string'?stored[key]:(key==='dialogueVersion'?base[key]:'');else if(typeof base[key]==='number')base[key]=Number.isInteger(stored[key])&&stored[key]>=0?stored[key]:0}base.eraProgress=stored.eraProgress&&typeof stored.eraProgress==='object'&&!Array.isArray(stored.eraProgress)?stored.eraProgress:{};const ui=stored.lanUI&&typeof stored.lanUI==='object'&&!Array.isArray(stored.lanUI)?stored.lanUI:{};base.lanUI={position:LAN_CORNERS.includes(ui.position)||ui.position==='custom'?ui.position:'bottom-right',x:Number.isFinite(ui.x)?ui.x:0,y:Number.isFinite(ui.y)?ui.y:0};const savedSettings=stored.settings&&typeof stored.settings==='object'?stored.settings:{},audio=savedSettings.audio&&typeof savedSettings.audio==='object'?savedSettings.audio:{},display=savedSettings.display&&typeof savedSettings.display==='object'?savedSettings.display:{};base.settings={audio:{enabled:typeof audio.enabled==='boolean'?audio.enabled:true,volume:Number.isFinite(audio.volume)?Math.max(0,Math.min(100,audio.volume)):70},display:{lanMode:['auto','always','minimal'].includes(display.lanMode)?display.lanMode:'auto'}};if(!base.completedTriggers.length&&base.completedEvents.length)base.completedTriggers=base.completedEvents.filter(id=>String(id).startsWith('trigger_'));if(!base.currentDialogue&&base.lastDialogue)base.currentDialogue=base.lastDialogue;if(!base.lastDialogue&&base.currentDialogue)base.lastDialogue=base.currentDialogue;return base}catch(_){return blankMemory()}}
+  function readMemory(){try{const stored=JSON.parse(storageGet(MEMORY_KEY)||'{}'),base=blankMemory();for(const key of Object.keys(base)){if(key==='lanUI'||key==='settings')continue;if(Array.isArray(base[key]))base[key]=Array.isArray(stored[key])?stored[key]:[];else if(typeof base[key]==='string')base[key]=typeof stored[key]==='string'?stored[key]:(key==='dialogueVersion'?base[key]:'');else if(typeof base[key]==='number')base[key]=Number.isInteger(stored[key])&&stored[key]>=0?stored[key]:0}base.eraProgress=stored.eraProgress&&typeof stored.eraProgress==='object'&&!Array.isArray(stored.eraProgress)?stored.eraProgress:{};const ui=stored.lanUI&&typeof stored.lanUI==='object'&&!Array.isArray(stored.lanUI)?stored.lanUI:{};base.lanUI={position:LAN_CORNERS.includes(ui.position)||ui.position==='custom'?ui.position:'bottom-right',x:Number.isFinite(ui.x)?ui.x:0,y:Number.isFinite(ui.y)?ui.y:0};const savedSettings=stored.settings&&typeof stored.settings==='object'?stored.settings:{},audio=savedSettings.audio&&typeof savedSettings.audio==='object'?savedSettings.audio:{},display=savedSettings.display&&typeof savedSettings.display==='object'?savedSettings.display:{};base.settings={audio:{enabled:typeof audio.enabled==='boolean'?audio.enabled:false,volume:Number.isFinite(audio.volume)?Math.max(0,Math.min(100,audio.volume)):70},display:{lanMode:['auto','always','minimal'].includes(display.lanMode)?display.lanMode:'auto'}};if(!base.completedTriggers.length&&base.completedEvents.length)base.completedTriggers=base.completedEvents.filter(id=>String(id).startsWith('trigger_'));if(!base.currentDialogue&&base.lastDialogue)base.currentDialogue=base.lastDialogue;if(!base.lastDialogue&&base.currentDialogue)base.lastDialogue=base.currentDialogue;return base}catch(_){return blankMemory()}}
   function saveMemory(){try{storageSet(MEMORY_KEY,JSON.stringify(memory))}catch(_){}}
+  function createEmptyJourneyData(){const data={};for(const key of JOURNEY_ARRAY_FIELDS)data[key]=[];for(const key of JOURNEY_STRING_FIELDS)data[key]=key==='dialogueVersion'?'1.0':'';for(const key of JOURNEY_SCALAR_FIELDS)data[key]=0;data.eraProgress={};return{version:1,memory:data,history:[]}}
+  function exportJourneyData(){const data={};for(const key of JOURNEY_ARRAY_FIELDS)data[key]=JSON.parse(JSON.stringify(memory[key]||[]));for(const key of JOURNEY_STRING_FIELDS)data[key]=String(memory[key]||'');for(const key of JOURNEY_SCALAR_FIELDS)data[key]=Math.max(0,Number(memory[key])||0);data.eraProgress=JSON.parse(JSON.stringify(memory.eraProgress||{}));return{version:1,memory:data,history:JSON.parse(JSON.stringify(history||[]))}}
+  function validateJourneyData(data){if(!data||data.version!==1||!data.memory||typeof data.memory!=='object'||Array.isArray(data.memory)||!Array.isArray(data.history))return false;for(const key of JOURNEY_ARRAY_FIELDS){if(!Array.isArray(data.memory[key]))return false;const objectList=['quizRecords','eraArchives','dialogueHistory'].includes(key);if(objectList&&data.memory[key].some(item=>!item||typeof item!=='object'||Array.isArray(item)))return false;if(!objectList&&data.memory[key].some(item=>typeof item!=='string'))return false}for(const key of JOURNEY_STRING_FIELDS)if(typeof data.memory[key]!=='string')return false;for(const key of JOURNEY_SCALAR_FIELDS)if(!Number.isInteger(data.memory[key])||data.memory[key]<0)return false;if(!data.memory.eraProgress||typeof data.memory.eraProgress!=='object'||Array.isArray(data.memory.eraProgress))return false;return data.history.every(item=>item&&typeof item==='object'&&!Array.isArray(item))}
+  function importJourneyData(data){if(root.DemoManager?.isActive?.()&&typeof root.DemoManager.storageKey!=='function')return false;if(!validateJourneyData(data))return false;const nextMemory=blankMemory();nextMemory.settings=JSON.parse(JSON.stringify(memory.settings||nextMemory.settings));nextMemory.lanUI={...(memory.lanUI||nextMemory.lanUI)};for(const key of JOURNEY_ARRAY_FIELDS)nextMemory[key]=JSON.parse(JSON.stringify(data.memory[key]));for(const key of JOURNEY_STRING_FIELDS)nextMemory[key]=data.memory[key];for(const key of JOURNEY_SCALAR_FIELDS)nextMemory[key]=data.memory[key];nextMemory.eraProgress=JSON.parse(JSON.stringify(data.memory.eraProgress));const nextHistory=JSON.parse(JSON.stringify(data.history.slice(-80))),memoryKey=storageKey(MEMORY_KEY),historyKey=storageKey(HISTORY_KEY);let previousMemory=null,previousHistory=null;try{previousMemory=localStorage.getItem(memoryKey);previousHistory=localStorage.getItem(historyKey);localStorage.setItem(memoryKey,JSON.stringify(nextMemory));localStorage.setItem(historyKey,JSON.stringify(nextHistory))}catch(error){try{if(previousMemory===null)localStorage.removeItem(memoryKey);else localStorage.setItem(memoryKey,previousMemory)}catch(_){}try{if(previousHistory===null)localStorage.removeItem(historyKey);else localStorage.setItem(historyKey,previousHistory)}catch(_){}root.InteractionDebugger?.record('LAN_JOURNEY_IMPORT_FAILED','CommsArchiveLan.importJourneyData',{reason:error?.message||String(error)});return false}const active=queue[queueIndex];if('speechSynthesis'in window)window.speechSynthesis.cancel();queue=[];queueIndex=0;queueDisplayMode='companion';collapsed=false;collapseAfterDialogue=false;continueDialoguePresentation=false;lastAdvanceInputAt=0;historyLines=[];historyCursor=-1;historyReturnMode='companion';history=nextHistory;memory=nextMemory;LanDisplayMode.preference=memory.settings.display.lanMode;lastRoute='';pausedSpeechIdentity=null;setDialoguePhase('exit',active?.id||null);setDisplayMode(LanDisplayMode.preference==='minimal'?'hidden':'companion');const box=makeRoot(),caption=box.querySelector('#lanCaption');if(caption)caption.textContent='';syncCardPrompt(box,null);syncCollapseControl(box);refreshHistory();return true}
+  function resetJourneyState(){
+    if(root.DemoManager?.isActive?.())return false;
+    const nextMemory=blankMemory();
+    nextMemory.settings=JSON.parse(JSON.stringify(memory.settings||nextMemory.settings));
+    nextMemory.lanUI={...(memory.lanUI||nextMemory.lanUI)};
+    const memoryKey=storageKey(MEMORY_KEY),historyKey=storageKey(HISTORY_KEY);
+    let previousMemory=null,previousHistory=null;
+    try{
+      previousMemory=localStorage.getItem(memoryKey);
+      previousHistory=localStorage.getItem(historyKey);
+      localStorage.setItem(memoryKey,JSON.stringify(nextMemory));
+      localStorage.setItem(historyKey,'[]');
+    }catch(error){
+      try{if(previousMemory===null)localStorage.removeItem(memoryKey);else localStorage.setItem(memoryKey,previousMemory)}catch(_){}
+      try{if(previousHistory===null)localStorage.removeItem(historyKey);else localStorage.setItem(historyKey,previousHistory)}catch(_){}
+      root.InteractionDebugger?.record('LAN_JOURNEY_RESET_FAILED','CommsArchiveLan.resetJourneyState',{reason:error?.message||String(error)});
+      return false;
+    }
+    const active=queue[queueIndex];
+    if('speechSynthesis'in window)window.speechSynthesis.cancel();pausedSpeechIdentity=null;
+    queue=[];queueIndex=0;queueDisplayMode='companion';collapsed=false;collapseAfterDialogue=false;
+    continueDialoguePresentation=false;lastAdvanceInputAt=0;historyLines=[];historyCursor=-1;historyReturnMode='companion';
+    history=[];memory=nextMemory;LanDisplayMode.preference=memory.settings.display.lanMode;lastRoute='';
+    setDialoguePhase('exit',active?.id||null);
+    setDisplayMode(LanDisplayMode.preference==='minimal'?'hidden':'companion');
+    const box=makeRoot(),caption=box.querySelector('#lanCaption');if(caption)caption.textContent='';
+    syncCardPrompt(box,null);syncCollapseControl(box);refreshHistory();
+    root.InteractionDebugger?.record('LAN_JOURNEY_RESET','CommsArchiveLan.resetJourneyState',{cancelledDialogueId:active?.id||'',queueLength:queue.length,lanControlsReleased:true,preservedSettings:true,preservedDemoStorage:true});
+    return true;
+  }
   function recordDialogueAction(id,action,meta={}){if(!id)return;if(action==='view'&&!memory.viewedDialogues.includes(id))memory.viewedDialogues.push(id);if(action==='skip'&&!memory.skippedDialogues.includes(id))memory.skippedDialogues.push(id);const source=find(id)||history.slice().reverse().find(item=>item.id===id),timestamp=new Date().toISOString();memory.dialogueHistory.push({id,action,time:timestamp,dialogueId:id,era:meta.era||source?.era||null,index:Number.isInteger(meta.index)?meta.index:0,viewed:action==='view',timestamp});memory.dialogueHistory=memory.dialogueHistory.slice(-200);saveMemory()}
   const allEraTriggers=[...(root.LanTriggers1G||[]),...(root.LanTriggers2G||[]),...(root.LanTriggers3G||[]),...(root.LanArchiveTriggers3G||[]),...(root.LanTriggers4G||[]),...(root.LanTriggers5G||[]),...(root.LanTriggers6G||[])];
   const experienceZonesDisabled=root.COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED===true;
@@ -122,13 +161,16 @@
   function priorityDialogue(entry){
     const location=String(entry?.location||'').trim().toLowerCase(),trigger=String(entry?.trigger||'').trim(),storyLine=String(entry?.storyLine||'').trim().toLowerCase();
     if(entry?.presentationMode==='dialogue'||isFullExhibitExplanation(entry))return true;
-    if([entry?.dialogueType,entry?.presentation,entry?.type].includes('story')||entry?.isStory===true||CENTRAL_DIALOGUE_LOCATIONS.has(location))return true;
+    if([entry?.dialogueType,entry?.presentation,entry?.type].includes('story')||entry?.isStory===true)return true;
+    if(entry?.next||storyLine==='experience'||storyLine==='archive')return true;
+    // Explicit companion metadata describes short operational hints and must
+    // override broad node-location/storyline fallbacks. Formal story above
+    // remains central even when a caller requests the companion presentation.
     if(entry?.presentationMode==='companion')return false;
+    if(CENTRAL_DIALOGUE_LOCATIONS.has(location))return true;
     if(location==='home'&&/first-visit|welcome|prologue/i.test(`${entry?.id||''} ${trigger}`))return true;
-    if(storyLine==='experience'||storyLine==='archive')return true;
     // Linked lines and research/investigation storylines stay in the central
     // presentation even when legacy dialogue records omit their type metadata.
-    if(entry?.next)return true;
     if(storyLine==='builder')return true;
     const triggerTokens=trigger.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
     if(triggerTokens.some(token=>['enter','entrance','start','complete','reveal','discover','analysis','research','archive','unlock','ending','transition','final','task','check','clue','investigation','technology','tech','laboratory','lab'].includes(token)))return true;
@@ -141,7 +183,9 @@
     if (LanDisplayMode.mode === 'companion' && LanDisplayMode.preference === 'minimal') LanDisplayMode.mode = 'hidden';
     const box = makeRoot();
     const centered = ['dialogue', 'history'].includes(LanDisplayMode.mode);
-    if(centered&&isFullExhibitExplanation(activeLine))box.dataset.dialogueSurface='exhibit';
+    const modalOpen=!!document.getElementById('modalRoot')?.innerHTML;
+    if(centered&&activeLine&&modalOpen)box.dataset.dialogueSurface='modal';
+    else if(centered&&isFullExhibitExplanation(activeLine))box.dataset.dialogueSurface='exhibit';
     else delete box.dataset.dialogueSurface;
     if(box.dataset.mode!==LanDisplayMode.mode)box.dataset.mode = LanDisplayMode.mode;
     box.classList.toggle('lan-dialogue-center', centered);
@@ -185,7 +229,7 @@
   function expandDialogue(){collapsed=false;if(queue.length)queueDisplayMode='dialogue';setDisplayMode('dialogue')}
   function hideDialogue(){if(queue.length&&(queueDisplayMode==='dialogue'||priorityDialogue(queue[queueIndex])))return false;setDialoguePhase('exit',lanDialoguePhase.sequenceId);setDisplayMode('hidden');return true}
   function beginLanDrag(box,handle){if(!handle?.addEventListener||!document.addEventListener)return;handle.addEventListener('pointerdown',event=>{if(LanDisplayMode.mode==='dialogue'||event.target?.closest?.('button'))return;const rect=box.getBoundingClientRect(),startX=event.clientX,startY=event.clientY;let left=rect.left,top=rect.top,moved=false;const move=moveEvent=>{const dx=moveEvent.clientX-startX,dy=moveEvent.clientY-startY;if(!moved&&Math.hypot(dx,dy)<=6)return;moved=true;moveEvent.preventDefault?.();left=Math.max(8,Math.min((window.innerWidth||rect.width)-rect.width-8,rect.left+dx));top=Math.max(8,Math.min((window.innerHeight||rect.height)-rect.height-8,rect.top+dy));box.dataset.position='custom';if(box.style){box.style.left=`${left}px`;box.style.top=`${top}px`;box.style.right='auto';box.style.bottom='auto'}};const end=()=>{document.removeEventListener?.('pointermove',move);document.removeEventListener?.('pointerup',end);document.removeEventListener?.('pointercancel',end);if(moved){box.dataset.ignoreCardActivationUntil=String(Date.now()+350);saveLanPosition('custom',left,top)}};document.addEventListener('pointermove',move);document.addEventListener('pointerup',end,{once:true});document.addEventListener('pointercancel',end,{once:true})})}
-  function syncCardPrompt(box,entry=queue[queueIndex]||null){const hasDialogue=!!entry,choiceRequired=!!entry&&(entry.dialogueType==='choice'||entry.requiresChoice===true);box.dataset.hasDialogue=String(hasDialogue);box.dataset.choiceRequired=String(choiceRequired);box.dataset.clickAdvance=String(hasDialogue&&!choiceRequired);const hint=box.querySelector('#lanCardHint');if(hint)hint.textContent=hasDialogue?(choiceRequired?'请先完成下方选择':'点击卡片继续'):'点击卡片查看澜提示'}
+  function syncCardPrompt(box,entry=queue[queueIndex]||null){const hasDialogue=!!entry,choiceRequired=!!entry&&(entry.dialogueType==='choice'||entry.requiresChoice===true);box.dataset.hasDialogue=String(hasDialogue);box.dataset.choiceRequired=String(choiceRequired);box.dataset.clickAdvance=String(hasDialogue&&!choiceRequired);const hint=box.querySelector('#lanCardHint');if(hint)hint.textContent=hasDialogue?(choiceRequired?'请先完成下方选择':'点击卡片继续'):'点击卡片查看澜提示';const continueButton=box.querySelector('#lanContinueButton');if(continueButton){continueButton.hidden=!hasDialogue||choiceRequired;continueButton.textContent=queueIndex===queue.length-1&&!entry?.next?'结束对白':'继续对白'}}
   function syncCollapseControl(box=makeRoot()){const button=box.querySelector('.lan-collapse');if(!button)return;button.textContent=collapseAfterDialogue?'结束后收起':'收为卡片';button.setAttribute('aria-label',collapseAfterDialogue?'取消对白结束后收起':'对白结束后收起为澜陪伴卡片');button.setAttribute('aria-pressed',String(collapseAfterDialogue))}
   const emotionColors={curious:'#6fdced',thinking:'#9bb8ef',research:'#7fc8ff',expecting:'#b09bff',nostalgia:'#d6bd83',warm:'#f0c98d',encourage:'#78ddb8',success:'#82e0b5',happy:'#83dfc9'};
   const LanEmotionController={set(emotion,box=makeRoot()){const normalized=normalizeEmotion(emotion);box.dataset.emotion=normalized;const portrait=box.querySelector('.lan-portrait');if(portrait){portrait.dataset.emotion=normalized;portrait.style?.setProperty?.('--lan-emotion-color',emotionColors[normalized]||'#9bb8ef')}const label=box.querySelector('#lanEmotion');if(label)label.textContent=emotionLabel(normalized);return normalized}};
@@ -201,7 +245,7 @@
     }
     box = document.createElement('aside'); box.id = 'lanCompanion'; box.className = 'lan-companion lan-companion-card';
     box.setAttribute('aria-label', '澜：时空通信伙伴'); box.setAttribute('role','group'); box.tabIndex=0; box.dataset.mode=LanDisplayMode.mode; box.dataset.dialoguePhase=lanDialoguePhase.phase; box.dataset.position=memory.lanUI.position;
-    box.innerHTML = `<div class="lan-head"><div class="lan-drag-area" aria-label="拖动澜陪伴卡片" title="拖动以调整位置"><div class="lan-portrait lan-avatar"><img src="assets/images/Lan/lan_portrait_ai.png" alt="澜的原创AI概念形象；非历史资料" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden>澜</span><i></i></div><div class="lan-ident"><strong>澜 <small>通信科研人员</small></strong><span id="lanEmotion">陪伴中</span></div></div><button class="lan-history-open" type="button" aria-label="浏览已看过的澜对白" onclick="CommsArchiveLan.toggleHistory()">对白记录</button><button class="lan-collapse" type="button" aria-label="收起为澜陪伴卡片" onclick="CommsArchiveLan.toggleCollapse()">收为卡片</button><button class="lan-open" type="button" onclick="CommsArchiveLan.expandDialogue()">查看澜提示</button><button class="lan-position-toggle" type="button" aria-label="切换澜卡片角落位置" onclick="CommsArchiveLan.moveCardToNextCorner()">换角落</button><button class="lan-hide" type="button" aria-label="暂时隐藏澜卡片" onclick="CommsArchiveLan.hideDialogue()">隐藏 ×</button></div><div class="lan-caption" id="lanCaption" role="status" aria-live="polite" aria-atomic="true">你好，穿越者。需要查看资料时，我就在这里。</div><div class="lan-actions"><span class="lan-card-hint" id="lanCardHint" aria-live="polite">点击卡片查看澜提示</span><button type="button" class="lan-skip" onclick="CommsArchiveLan.skip()">跳过</button><button type="button" id="lanRevisitButton" onclick="CommsArchiveLan.replayLastSkipped()" hidden>重看已跳过提示</button><button type="button" id="lanVoiceToggle" onclick="CommsArchiveLan.toggleVoice()">语音：关</button><button type="button" onclick="CommsArchiveLan.readCurrent()">朗读本句</button><button type="button" onclick="CommsArchiveLan.toggleHistory()">对白记录</button></div><div id="lanHistory" class="lan-history" hidden></div><div class="lan-footnote" id="lanVoiceNote">字幕始终显示；可选用浏览器系统语音朗读。</div>`;
+    box.innerHTML = `<div class="lan-head"><div class="lan-drag-area" aria-label="拖动澜陪伴卡片" title="拖动以调整位置"><div class="lan-portrait lan-avatar"><img src="assets/images/Lan/lan_portrait_ai.png" alt="澜的原创AI概念形象；非历史资料" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden>澜</span><i></i></div><div class="lan-ident"><strong>澜 <small>通信科研人员</small></strong><span id="lanEmotion">陪伴中</span></div></div><button class="lan-history-open" type="button" aria-label="浏览已看过的澜对白" onclick="CommsArchiveLan.toggleHistory()">对白记录</button><button class="lan-collapse" type="button" aria-label="收起为澜陪伴卡片" onclick="CommsArchiveLan.toggleCollapse()">收为卡片</button><button class="lan-open" type="button" onclick="CommsArchiveLan.expandDialogue()">查看澜提示</button><button class="lan-position-toggle" type="button" aria-label="切换澜卡片角落位置" onclick="CommsArchiveLan.moveCardToNextCorner()">换角落</button><button class="lan-hide" type="button" aria-label="暂时隐藏澜卡片" onclick="CommsArchiveLan.hideDialogue()">隐藏 ×</button></div><div class="lan-caption" id="lanCaption" role="status" aria-live="polite" aria-atomic="true">你好，穿越者。需要查看资料时，我就在这里。</div><div class="lan-actions"><span class="lan-card-hint" id="lanCardHint" aria-live="polite">点击卡片查看澜提示</span><button type="button" id="lanContinueButton" onclick="CommsArchiveLan.continueDialogue()" hidden>继续对白</button><button type="button" class="lan-skip" onclick="CommsArchiveLan.skip()">跳过</button><button type="button" id="lanRevisitButton" onclick="CommsArchiveLan.replayLastSkipped()" hidden>重看已跳过提示</button><button type="button" id="lanVoiceToggle" onclick="CommsArchiveLan.toggleVoice()">语音：关</button><button type="button" onclick="CommsArchiveLan.readCurrent()">朗读本句</button><button type="button" onclick="CommsArchiveLan.toggleHistory()">对白记录</button></div><div id="lanHistory" class="lan-history" hidden></div><div class="lan-footnote" id="lanVoiceNote">字幕始终显示；可选用浏览器系统语音朗读。</div>`;
     applySavedLanPosition(box); beginLanDrag(box,box.querySelector('.lan-drag-area'));
     box.addEventListener?.('animationend',event=>{if(event.target===box&&lanDialoguePhase.phase==='enter')setDialoguePhase('talking',lanDialoguePhase.sequenceId)});
     box.addEventListener?.('click',event=>{if(['hidden','history'].includes(LanDisplayMode.mode)||event.target?.closest?.('button,a,input,select,textarea,[data-lan-no-advance]'))return;if(Date.now()<Number(box.dataset.ignoreCardActivationUntil||0))return;const active=queue[queueIndex];if(active){if(active.dialogueType==='choice'||active.requiresChoice===true)return;advanceFromUser();return}const routeParts=lastRoute.split(':');if(checkGuidedDialogueState({route:routeParts[0],era:routeParts[1]}).ok)return;if(LanDisplayMode.mode==='companion')expandDialogue()});
@@ -226,9 +270,12 @@
     if (shouldSpeak && settings.voice) speak(line);
   }
   function speak(text) {
-    if (!('speechSynthesis' in window) || !text) return;
-    window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'zh-CN'; utterance.rate = root.DemoManager?.isActive?.() ? root.DemoManager.dialogueSpeed : .96; window.speechSynthesis.speak(utterance);
+    if (!('speechSynthesis' in window) || !text || root.document?.visibilityState === 'hidden') return false;
+    pausedSpeechIdentity=null;window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'zh-CN'; utterance.rate = root.DemoManager?.isActive?.() ? root.DemoManager.dialogueSpeed : .96; window.speechSynthesis.speak(utterance);return true;
   }
+  function handleSpeechVisibility(){if(!('speechSynthesis'in window))return;if(root.document?.visibilityState==='hidden'){const active=queue[queueIndex];pausedSpeechIdentity=active?`${active.id}:${active.lineIndex||0}`:null;if(pausedSpeechIdentity)window.speechSynthesis.pause();else window.speechSynthesis.cancel();return}const active=queue[queueIndex],identity=active?`${active.id}:${active.lineIndex||0}`:null;if(pausedSpeechIdentity&&settings.voice&&identity===pausedSpeechIdentity)window.speechSynthesis.resume();else if(pausedSpeechIdentity)window.speechSynthesis.cancel();pausedSpeechIdentity=null}
+  function stopSpeechForPageHide(){pausedSpeechIdentity=null;if('speechSynthesis'in window)window.speechSynthesis.cancel()}
+  root.document?.addEventListener?.('visibilitychange',handleSpeechVisibility);root.addEventListener?.('pagehide',stopSpeechForPageHide);
   function show(dialogue, meta = {}, displayModeOverride = null, options = {}) {
     const entry = { ...normalizeDialogue({ ...dialogue, ...meta, id: dialogue.id || meta.id || 'lan.free', era: dialogue.era || meta.era || null, location: dialogue.location || meta.location || 'companion', trigger: dialogue.trigger || meta.trigger || 'interaction', dialogue: dialogue.dialogue ?? dialogue.text ?? '' }), time: new Date().toISOString() };
     const lines = Array.isArray(entry.dialogue) ? entry.dialogue : String(entry.dialogue||'').split(/\n+/).map((line)=>line.trim()).filter(Boolean);
@@ -252,10 +299,10 @@
     const requestedMode=['dialogue','companion'].includes(displayModeOverride)?displayModeOverride:null;
     queueDisplayMode=criticalDialogue?'dialogue':(preservePresentation&&LanDisplayMode.mode==='dialogue'?'dialogue':requestedMode||'companion');
     const resumable = isEraLine(entry.id);
-    queueIndex = resumable && memory.currentDialogue === entry.id ? Math.min(memory.currentDialogueLine, queue.length - 1) : 0;root.InteractionDebugger?.record('LAN_DIALOGUE_START','CommsArchiveLan.show',{dialogueId:entry.id,era:entry.era,isPlaying:queue.length>0,currentLine:queueIndex+1,lineCount:queue.length,dialogueType:entry.dialogueType,location:entry.location,trigger:entry.trigger,presentationMode:queueDisplayMode,presentationReason:priorityDialogue(entry)?'formal-story':'companion'});
+    queueIndex = resumable && memory.currentDialogue === entry.id && Number.isInteger(memory.currentDialogueLine) ? Math.max(0, Math.min(memory.currentDialogueLine, queue.length - 1)) : 0;root.InteractionDebugger?.record('LAN_DIALOGUE_START','CommsArchiveLan.show',{dialogueId:entry.id,era:entry.era,isPlaying:queue.length>0,currentLine:queueIndex+1,lineCount:queue.length,dialogueType:entry.dialogueType,location:entry.location,trigger:entry.trigger,presentationMode:queueDisplayMode,presentationReason:priorityDialogue(entry)?'formal-story':'companion'});
     if (resumable) { memory.currentDialogue = entry.id; memory.currentDialogueLine = queueIndex; memory.lastDialogue=entry.id; saveMemory(); }
     collapsed = false;setDialoguePhase(preservePresentation&&queueDisplayMode===LanDisplayMode.mode?'talking':'enter',entry.id);
-    persistHistory(entry); updateWidget(queue[0], true); refreshHistory();window.AudioSystem?.playEffect('dialogue');return true;
+    persistHistory(entry); updateWidget(queue[queueIndex], true); refreshHistory();window.AudioSystem?.playEffect('dialogue');return true;
   }
   function find(id) { const entry=activeDialogueData.find((item) => item.id === id) || model?.getLanDialogue?.(id) || null;return experienceZonesDisabled&&isExperienceDialogue(entry)?null:entry; }
   function advanceFromUser(){const now=Date.now();if(now-lastAdvanceInputAt<160)return false;lastAdvanceInputAt=now;return next()}
@@ -531,6 +578,8 @@
     const box=makeRoot();box.classList.toggle('is-collapsed',collapsed);const caption=box.querySelector('#lanCaption');if(caption)caption.textContent='';const revisit=box.querySelector('#lanRevisitButton');if(revisit)revisit.hidden=memory.skippedDialogues.length===0;setDisplayMode('companion');syncCardPrompt(box,null);syncCollapseControl(box);
   }
   function dismissRouteDialogue(location){const active=queue[queueIndex];if(!active||active.location!==location)return false;queue=[];queueIndex=0;queueDisplayMode='companion';continueDialoguePresentation=false;collapseAfterDialogue=false;if(memory.currentDialogue===active.id){memory.currentDialogue='';memory.currentDialogueLine=0}if(memory.lastDialogue===active.id)memory.lastDialogue='';saveMemory();returnToCompanion(active.id);return true}
+  function isNavigationBlocking(){return queue.length>0&&(queueDisplayMode==='dialogue'||priorityDialogue(queue[queueIndex]))}
+  function releaseNonBlockingDialogue(){const active=queue[queueIndex];if(!active||isNavigationBlocking())return false;if(!memory.completedEvents.includes(active.id))memory.completedEvents.push(active.id);return dismissRouteDialogue(active.location)}
   function skip() {
     if (!queue.length) return;
     const active = queue[queueIndex];
@@ -567,7 +616,7 @@
     else expandDialogue();
     return true;
   }
-  function toggleVoice() { settings.voice = !settings.voice; try { storageSet(PREF_KEY, JSON.stringify(settings)); } catch (_) {} updateWidget(queue[queueIndex] || { dialogue: '语音设置已更新。' }, false); }
+  function toggleVoice() { settings.voice = !settings.voice; if(!settings.voice){pausedSpeechIdentity=null;if('speechSynthesis'in window)window.speechSynthesis.cancel()} try { storageSet(PREF_KEY, JSON.stringify(settings)); } catch (_) {} updateWidget(queue[queueIndex] || { dialogue: '语音设置已更新。' }, false); }
   function readCurrent() { const text = queue[queueIndex]?.dialogue || document.querySelector('#lanCaption')?.textContent; if (!('speechSynthesis' in window)) { document.querySelector('#lanVoiceNote').textContent = '此浏览器不支持系统语音，字幕仍可阅读。'; return; } speak(text); }
   function openPrologue() { trigger('lan.prologue.first-travel'); }
   function onExhibit(era, exhibitId) { window.AudioSystem?.playEffect('exhibit');const context={era,exhibitId},rule=matchingEventRule('EXHIBIT_CLICK',context);if(rule)return dispatchEvent('EXHIBIT_CLICK',context);return freshCustom('lan.exhibit.open', era, 'exhibit', 'open-details', 'thinking', journeyLines.exhibit, { relatedExhibit: exhibitId, presentationMode:'companion' }); }
@@ -651,7 +700,7 @@
     onRoute(currentRoute, { era: null, completed: [] });
   }
   function reloadStorageContext() { settings = readPrefs(); history = readHistory(); memory = readMemory(); LanDisplayMode.preference=memory.settings.display.lanMode; queue = []; queueIndex = 0; queueDisplayMode='companion';continueDialoguePresentation=false;collapseAfterDialogue=false;historyLines = []; historyCursor = -1; setDialoguePhase('exit',lanDialoguePhase.sequenceId);setDisplayMode(LanDisplayMode.preference==='minimal'?'hidden':'companion');refreshHistory(); return true; }
-  root.CommsArchiveLan = { character, dialogueData, LanDisplayMode, LanEmotionController, dialogueNavigator:LanDialogueNavigator, expandDialogue, hideDialogue, moveCardToNextCorner, setDisplayMode, setDisplayPreference, normalizeDialogue, normalizeEmotion, normalizeTrigger, getExperienceStory, getEraArchives, attach, trigger, dispatchEvent, setEmotion, checkGuidedDialogueState, completeExperienceNode, collectBuilderEvidence6G, completeEraArchive3G, completeEraArchive4G, completeEraArchive5G, completeEraArchive6G, ensureCompletedTaskRecord, experienceStories, experienceZonesDisabled, experienceStory3G:experienceZonesDisabled?null:root.ExperienceStory3G, onRoute, dismissRouteDialogue, onExhibit, onTaskStart, onTaskComplete, onGallerySelect, onQuizPerfect, onQuizRecord, onEvidenceCollected, onTransitFailure, triggerAt, triggers:LanTrigger, LanCharacter:character, LanDialogue:dialogueData, reloadStorageContext, get LanMemory(){return JSON.parse(JSON.stringify(memory))}, get currentDialogue(){return queue[queueIndex]||null}, debugSnapshot(){const active=queue[queueIndex]||null;return {isPlaying:queue.length>0,activeDialogueId:active?.id||'',persistedCurrentDialogue:memory.currentDialogue||'',lineIndex:queueIndex,queueLength:queue.length,displayMode:LanDisplayMode.mode,...presentationDiagnostics(),lanControlsReleased:queue.length===0,inputLock:false}}, openPrologue, next, skip, replayLastSkipped, toggleCollapse, toggleVoice, readCurrent, toggleHistory, closeHistory, previousHistoryLine, nextHistoryLine, jumpToHistory, install, get history() { return history.slice() }, get mounted() { return mounted } };
+  root.CommsArchiveLan = { character, dialogueData, LanDisplayMode, LanEmotionController, dialogueNavigator:LanDialogueNavigator, expandDialogue, hideDialogue, moveCardToNextCorner, setDisplayMode, setDisplayPreference, normalizeDialogue, normalizeEmotion, normalizeTrigger, getExperienceStory, getEraArchives, attach, trigger, dispatchEvent, setEmotion, checkGuidedDialogueState, resetJourneyState, createEmptyJourneyData, exportJourneyData, validateJourneyData, importJourneyData, completeExperienceNode, collectBuilderEvidence6G, completeEraArchive3G, completeEraArchive4G, completeEraArchive5G, completeEraArchive6G, ensureCompletedTaskRecord, experienceStories, experienceZonesDisabled, experienceStory3G:experienceZonesDisabled?null:root.ExperienceStory3G, onRoute, dismissRouteDialogue, releaseNonBlockingDialogue, onExhibit, onTaskStart, onTaskComplete, onGallerySelect, onQuizPerfect, onQuizRecord, onEvidenceCollected, onTransitFailure, triggerAt, triggers:LanTrigger, LanCharacter:character, LanDialogue:dialogueData, reloadStorageContext, get LanMemory(){return JSON.parse(JSON.stringify(memory))}, get currentDialogue(){return queue[queueIndex]||null}, debugSnapshot(){const active=queue[queueIndex]||null;return {isPlaying:queue.length>0,isBlocking:isNavigationBlocking(),activeDialogueId:active?.id||'',persistedCurrentDialogue:memory.currentDialogue||'',lineIndex:queueIndex,queueLength:queue.length,displayMode:LanDisplayMode.mode,...presentationDiagnostics(),lanControlsReleased:!isNavigationBlocking(),inputLock:isNavigationBlocking()}}, openPrologue, continueDialogue:advanceFromUser, next, skip, replayLastSkipped, toggleCollapse, toggleVoice, readCurrent, toggleHistory, closeHistory, previousHistoryLine, nextHistoryLine, jumpToHistory, install, get history() { return history.slice() }, get mounted() { return mounted } };
   root.LanSystem = root.CommsArchiveLan;
 })(window);
 

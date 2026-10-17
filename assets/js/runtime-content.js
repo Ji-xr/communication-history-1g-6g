@@ -7,14 +7,14 @@
   const photoSources = {
     '1G': {
       file: '1g-dynatac.jpg', title: 'Motorola DynaTAC 8000X', type: '真实产品照片（后期拍摄）',
-      note: '1984年型号的实物照片，原照片摄于2008年；不是20世纪80年代现场照片。',
+      note: '图源将这件DynaTAC 8000X实物描述为1984年产品；照片摄于2008年，不代表型号首次发布于1984年，也不是当年的现场照片。',
       credit: 'Redrum0486', license: 'CC BY-SA 3.0',
       source: 'https://commons.wikimedia.org/wiki/File:DynaTAC8000X.jpg',
       licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
     },
     '2G': {
       file: '2g-nokia-2110i.jpg', title: 'Nokia 2110i GSM移动电话', type: '真实产品照片（后期拍摄）',
-      note: 'GSM终端产品照片；资料页将型号对应至1995年，照片上传于2010年。',
+      note: 'GSM终端产品照片，上传于2010年；照片上传时间不等于型号发布时间。',
       credit: 'Argus fin', license: 'CC BY-SA 3.0',
       source: 'https://commons.wikimedia.org/wiki/File:Nokia_2110i.jpg',
       licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/'
@@ -27,8 +27,8 @@
       licenseUrl: 'https://commons.wikimedia.org/wiki/File:Nokia_6630.jpg'
     },
     '4G': {
-      file: '4g-atrix.jpg', title: 'Motorola Atrix 4G智能手机', type: '真实产品照片（后期拍摄）',
-      note: '4G终端产品照片，拍摄于2011年；用于说明产品形态，不代表所有网络体验。',
+      file: '4g-atrix.jpg', title: 'Motorola Atrix 4G（HSPA+，非LTE）', type: '真实产品照片（后期拍摄）',
+      note: '2011年产品照片。原版Atrix 4G使用HSPA+，并非LTE终端；名称中的4G反映当时的商业命名，不能用这张照片证明LTE硬件。',
       credit: 'ETC@USC', license: 'CC BY-SA 2.0',
       source: 'https://commons.wikimedia.org/wiki/File:Motorola_Atrix_4G.jpg',
       licenseUrl: 'https://creativecommons.org/licenses/by-sa/2.0/'
@@ -48,15 +48,15 @@
     '3G': ['手机与浏览器', '3G无线接入', '移动数据网络', '互联网服务'],
     '4G': ['智能手机与视频', 'LTE无线接入', '移动宽带网络', '视频服务'],
     '5G': ['传感器与设备', '5G网络连接', '工业控制系统', '协同设备运行'],
-    '6G': ['现实环境与感知', '通信数据传递', '智能分析验证', '数字模型更新']
+    '6G': ['模拟环境与感知', '通信数据传递', '智能分析验证', '数字模型更新']
   };
   const flowNotes = {
     '1G': '项目原创简化示意：移动终端经无线链路接入蜂窝基站，再连接电话网络；实际网络结构因系统而异。',
     '2G': '项目原创简化示意：数字终端通过移动网络提交短信，由服务中心转发至接收端。',
-    '3G': '项目原创简化示意：手机经3G无线接入和移动数据网络访问互联网服务；终端与服务也影响显示体验。',
+    '3G': '项目原创简化示意：手机经3G无线接入和移动数据网络访问互联网服务。此前GPRS等已提供移动数据服务；3G进一步提高承载能力，终端与服务也影响体验。',
     '4G': '项目原创简化示意：LTE移动宽带连接终端与视频服务；播放质量还受网络、终端解码和服务响应影响。',
-    '5G': '项目原创简化示意：设备状态经通信网络到达控制系统并形成协作；真实架构随应用和部署而异。',
-    '6G': '项目原创未来研究情境示意：感知、通信、分析和数字模型可能协同；6G仍处于研究发展阶段。'
+    '5G': '项目原创简化示意：设备状态经通信网络到达控制系统；5G不自动保证工业安全、零时延或正确控制，真实效果取决于网络部署、控制系统及安全设计。',
+    '6G': '项目原创未来研究情境示意：6G仍处于研究、标准制定与技术验证阶段。这里展示传感器数据处理链，不等同于无线接口的通信感知融合实现，也不是IMT-2030性能实测。'
   };
 
   try {

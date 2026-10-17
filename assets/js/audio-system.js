@@ -1,31 +1,28 @@
-/* 《通信简史》本地程序生成氛围音；不加载外部音频或历史录音。 */
+/* 《通信简史》可选短提示音；不创建持续播放的背景振荡器。 */
 (function (root) {
   'use strict';
-  const MEMORY_KEY = 'commsArchive.lanMemory.v1';
+  const LEGACY_MEMORY_KEY = 'commsArchive.lanMemory.v1';
+  const AUDIO_PREFS_KEY = 'commsArchive.audioPreferences.v2';
   const UI_PREFS_KEY = 'commsArchive.experienceSettings.v1';
-  const themes = {
-    archive_hall: [110, 164.81, 'sine'],
-    era_1g: [98, 146.83, 'triangle'],
-    era_2g: [110, 164.81, 'sine'],
-    era_3g: [123.47, 185, 'sine'],
-    era_4g: [130.81, 196, 'triangle'],
-    era_5g: [146.83, 220, 'sine'],
-    era_6g: [164.81, 246.94, 'sine']
-  };
-  let state = readSettings(), uiPrefs = readUiPrefs(), context = null, master = null, voices = [], panel = null, statusNode = null, returnFocus = null;
+  const AUDIO_PREFS_VERSION = 2;
+  const COOLDOWN_MS = { archive: 1800, complete: 450, dialogue: 180, exhibit: 220, click: 120 };
+  let state = readSettings(), uiPrefs = readUiPrefs(), context = null, master = null, panel = null, statusNode = null, returnFocus = null;
   let firstClickBound = false, userGestureSeen = false;
+  const activeSources = new Set(), lastEffectAt = new Map(), playedKeys = new Set();
   function storageKey(key) { return root.DemoManager?.storageKey?.(key) || key; }
-  function storageGet(key) { return localStorage.getItem(storageKey(key)); }
-  function storageSet(key, value) { return localStorage.setItem(storageKey(key), value); }
+  function storageGet(key) { return root.localStorage.getItem(storageKey(key)); }
+  function storageSet(key, value) { return root.localStorage.setItem(storageKey(key), value); }
+  function clamp(value, fallback = 70) { const number = Number(value); return Number.isFinite(number) ? Math.max(0, Math.min(100, number)) : fallback; }
 
   function readSettings() {
     try {
-      const stored = JSON.parse(storageGet(MEMORY_KEY) || '{}');
-      const audio = stored?.settings?.audio || {};
-      return { enabled: typeof audio.enabled === 'boolean' ? audio.enabled : true,
-        volume: Number.isFinite(audio.volume) ? Math.max(0, Math.min(100, audio.volume)) : 70,
-        currentTrack: 'archive_hall', era: null };
-    } catch (_) { return { enabled: true, volume: 70, currentTrack: 'archive_hall', era: null }; }
+      const current = JSON.parse(storageGet(AUDIO_PREFS_KEY) || 'null');
+      if (current?.version === AUDIO_PREFS_VERSION) return { enabled: current.enabled === true, volume: clamp(current.volume), currentTrack: 'archive_hall', era: null };
+      // Legacy enabled=true also enabled an ambient bed. Do not silently turn that into effects.
+      // Keep the user's former volume, but require an explicit opt-in to the new short effects.
+      const legacy = JSON.parse(storageGet(LEGACY_MEMORY_KEY) || '{}')?.settings?.audio || {};
+      return { enabled: false, volume: clamp(legacy.volume), currentTrack: 'archive_hall', era: null };
+    } catch (_) { return { enabled: false, volume: 70, currentTrack: 'archive_hall', era: null }; }
   }
   function readUiPrefs() {
     const defaults = { brightness: 100, lanMode: 'auto', operationHints: true };
@@ -65,76 +62,82 @@
     uiPrefs.operationHints = !!enabled; persistUiPrefs(); applyUiPrefs();
   }
   function persist() {
-    try {
-      const stored = JSON.parse(storageGet(MEMORY_KEY) || '{}');
-      stored.settings = stored.settings && typeof stored.settings === 'object' ? stored.settings : {};
-      stored.settings.audio = { enabled: state.enabled, volume: state.volume };
-      storageSet(MEMORY_KEY, JSON.stringify(stored));
-    } catch (_) { setStatus('声音设置无法保存；可继续探索。'); }
+    try { storageSet(AUDIO_PREFS_KEY, JSON.stringify({ version: AUDIO_PREFS_VERSION, enabled: state.enabled, volume: state.volume })); return true; }
+    catch (_) { setStatus('声音设置无法保存；可继续探索。'); return false; }
   }
   function setStatus(message) { if (statusNode) statusNode.textContent = message; }
+  function audioIsHidden() { return root.document?.visibilityState === 'hidden'; }
+  function applyMasterLevel() { if (master && context) master.gain.setTargetAtTime(state.enabled ? state.volume / 100 : 0, context.currentTime, .015); }
   function createContext() {
-    if (!userGestureSeen) return null;
+    if (!userGestureSeen || !state.enabled || audioIsHidden()) return null;
     if (context) return context;
     const Context = root.AudioContext || root.webkitAudioContext;
-    if (!Context) { setStatus('此浏览器不支持本地音效；不影响探索。'); return null; }
+    if (!Context) { setStatus('此浏览器不支持本地提示音；不影响探索。'); return null; }
     try {
-      context = new Context(); master = context.createGain(); master.gain.value = 0; master.connect(context.destination);
-      const first = context.createOscillator(), second = context.createOscillator();
-      const firstGain = context.createGain(), secondGain = context.createGain();
-      firstGain.gain.value = .52; secondGain.gain.value = .22;
-      first.connect(firstGain); second.connect(secondGain); firstGain.connect(master); secondGain.connect(master);
-      first.start(); second.start(); voices = [{ oscillator: first, gain: firstGain }, { oscillator: second, gain: secondGain }];
-      applyTheme(); return context;
-    } catch (_) { context = null; master = null; voices = []; setStatus('音效不可用，不影响探索。'); return null; }
-  }
-  function applyTheme() {
-    if (!context || voices.length < 2) return;
-    const theme = themes[state.currentTrack] || themes.archive_hall;
-    const now = context.currentTime;
-    voices[0].oscillator.type = theme[2]; voices[1].oscillator.type = 'sine';
-    voices[0].oscillator.frequency.setTargetAtTime(theme[0], now, .9);
-    voices[1].oscillator.frequency.setTargetAtTime(theme[1], now, 1.2);
-    master.gain.cancelScheduledValues(now);
-    master.gain.setTargetAtTime(state.enabled ? state.volume / 100 * .035 : 0, now, .8);
+      context = new Context(); master = context.createGain(); master.gain.value = state.volume / 100; master.connect(context.destination);
+      return context;
+    } catch (_) { context = null; master = null; setStatus('提示音不可用，不影响探索。'); return null; }
   }
   async function activate() {
-    if (!state.enabled || !userGestureSeen) return false;
+    if (!state.enabled || !userGestureSeen || audioIsHidden()) return false;
     const audio = createContext(); if (!audio) return false;
-    try { if (audio.state === 'suspended') await audio.resume(); applyTheme(); setStatus('本地程序生成的轻柔氛围音已开启。'); return true; }
-    catch (_) { setStatus('音效不可用，不影响探索。'); return false; }
+    try { if (audio.state === 'suspended') await audio.resume(); applyMasterLevel(); setStatus('短提示音已开启。'); return true; }
+    catch (_) { setStatus('提示音不可用，不影响探索。'); return false; }
+  }
+  function stopActiveEffects() {
+    for (const source of [...activeSources]) {
+      try { source.stop(); } catch (_) {}
+      try { source.disconnect(); } catch (_) {}
+    }
+    activeSources.clear();
+  }
+  function suspendForBackground() {
+    stopActiveEffects();
+    if (context?.state === 'running') context.suspend().catch(() => {});
   }
   function setEnabled(enabled) {
     state.enabled = !!enabled; persist();
-    if (!state.enabled) { if (context) { applyTheme(); if (context.state === 'running') context.suspend().catch(() => {}); } setStatus('氛围音已关闭。'); }
+    if (!state.enabled) { stopActiveEffects(); applyMasterLevel(); if (context?.state === 'running') context.suspend().catch(() => {}); setStatus('提示音已关闭。'); }
     else if (userGestureSeen) activate();
-    else setStatus('氛围音将在首次点击后启动。');
+    else setStatus('提示音已开启；首次点击后播放。');
     syncControls();
   }
   function setVolume(value) {
-    const number = Number(value); state.volume = Number.isFinite(number) ? Math.max(0, Math.min(100, number)) : 70;
-    persist(); if (context) { if (context.state === 'suspended' && state.enabled) context.resume().catch(() => {}); applyTheme(); }
-    syncControls();
+    state.volume = clamp(value); persist(); applyMasterLevel(); syncControls();
   }
   function setEra(era) {
     state.era = /^([1-6])G$/.test(String(era || '')) ? String(era).toUpperCase() : null;
     state.currentTrack = state.era ? `era_${state.era.toLowerCase()}` : 'archive_hall';
-    if (context && state.enabled) { if (context.state === 'suspended') context.resume().catch(() => {}); applyTheme(); }
   }
-  function playEffect(kind = 'click') {
-    if (!userGestureSeen || !state.enabled || !createContext() || context.state !== 'running') return false;
-    const patterns = { dialogue: [523.25, 659.25], exhibit: [392, 523.25], complete: [523.25, 659.25, 783.99], archive: [659.25, 783.99, 987.77], click: [440] };
-    const notes = patterns[kind] || patterns.click;
+  function emitEffect(audio, notes) {
+    if (audio !== context || !state.enabled || audioIsHidden() || audio.state !== 'running') return false;
+    applyMasterLevel();
+    const now = audio.currentTime;
     try {
-      const now = context.currentTime, gain = context.createGain(); gain.gain.value = 1; gain.connect(master);
       notes.forEach((frequency, index) => {
-        const oscillator = context.createOscillator(), noteGain = context.createGain();
-        const start = now + index * .095; oscillator.type = 'sine'; oscillator.frequency.value = frequency;
-        noteGain.gain.setValueAtTime(0, start); noteGain.gain.linearRampToValueAtTime(.11, start + .018); noteGain.gain.exponentialRampToValueAtTime(.001, start + .25);
-        oscillator.connect(noteGain); noteGain.connect(gain); oscillator.start(start); oscillator.stop(start + .27);
+        const oscillator = audio.createOscillator(), noteGain = audio.createGain();
+        const start = now + index * .075, end = start + .2;
+        oscillator.type = 'sine'; oscillator.frequency.value = frequency;
+        noteGain.gain.setValueAtTime(0, start); noteGain.gain.linearRampToValueAtTime(.13, start + .016); noteGain.gain.exponentialRampToValueAtTime(.001, end);
+        oscillator.connect(noteGain); noteGain.connect(master); activeSources.add(oscillator);
+        oscillator.onended = () => { activeSources.delete(oscillator); try { oscillator.disconnect(); noteGain.disconnect(); } catch (_) {} };
+        oscillator.start(start); oscillator.stop(end + .01);
       });
       return true;
-    } catch (_) { setStatus('提示音不可用；不影响探索。'); return false; }
+    } catch (_) { stopActiveEffects(); setStatus('提示音不可用；不影响探索。'); return false; }
+  }
+  function playEffect(kind = 'click', options = {}) {
+    if (!userGestureSeen || !state.enabled || audioIsHidden()) return false;
+    const patterns = { dialogue: [523.25, 659.25], exhibit: [392, 523.25], complete: [523.25, 659.25, 783.99], archive: [659.25, 783.99, 987.77], click: [440] };
+    const name = patterns[kind] ? kind : 'click', now = Date.now(), key = typeof options?.key === 'string' ? options.key : '';
+    if (key && playedKeys.has(key)) return false;
+    if (now - (lastEffectAt.get(name) || 0) < (COOLDOWN_MS[name] || 180)) return false;
+    if (key) { playedKeys.add(key); if (playedKeys.size > 500) playedKeys.clear(); }
+    lastEffectAt.set(name, now);
+    const audio = createContext(); if (!audio) return false;
+    if (audio.state === 'running') return emitEffect(audio, patterns[name]);
+    audio.resume().then(() => emitEffect(audio, patterns[name])).catch(() => setStatus('提示音不可用；不影响探索。'));
+    return true;
   }
   function syncControls() {
     if (!panel) return;
@@ -148,13 +151,13 @@
     if (lanMode) lanMode.value = uiPrefs.lanMode;
     if (hints) { hints.checked = uiPrefs.operationHints; hints.setAttribute('aria-checked', String(uiPrefs.operationHints)); }
   }
-  function openSettings() { if (!panel) return; returnFocus = root.document.activeElement; panel.hidden = false; panel.querySelector('.audio-settings-close')?.focus?.(); if (state.enabled && userGestureSeen) activate(); }
+  function openSettings() { if (!panel) return; returnFocus = root.document.activeElement; panel.hidden = false; panel.querySelector('.audio-settings-close')?.focus?.(); }
   function closeSettings() { if (panel) panel.hidden = true; returnFocus?.focus?.(); returnFocus=null; }
   function buildSettings() {
     if (panel || !root.document?.body) return;
     panel = root.document.createElement('section'); panel.id = 'audioSettings'; panel.className = 'audio-settings'; panel.hidden = true;
     panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true'); panel.setAttribute('aria-labelledby', 'audioSettingsTitle');
-    panel.innerHTML = `<div class="audio-settings-card"><button type="button" class="audio-settings-close" aria-label="关闭体验设置">×</button><span class="eyebrow">EXPERIENCE SETTINGS</span><h2 id="audioSettingsTitle">体验设置</h2><section class="settings-group"><h3>声音</h3><label class="audio-toggle"><input id="audioEnabled" type="checkbox"><span>开启展厅氛围音与提示音</span></label><label class="audio-volume-label" for="audioVolume">音量 <output id="audioVolumeValue">70%</output></label><input id="audioVolume" type="range" min="0" max="100" step="1"><p class="audio-note">氛围音和提示音由浏览器实时合成，不是历史现场录音。浏览器需在用户操作后播放声音。</p></section><section class="settings-group"><h3>显示与陪伴</h3><label class="audio-volume-label" for="displayBrightness">网站亮度 <output id="displayBrightnessValue">100%</output></label><input id="displayBrightness" type="range" min="80" max="120" step="1"><label class="setting-select-label" for="lanDisplayMode">澜显示模式</label><select id="lanDisplayMode"><option value="auto">自动</option><option value="always">始终陪伴</option><option value="minimal">简洁模式</option></select><label class="audio-toggle setting-hints-toggle"><input id="operationHints" type="checkbox"><span>显示操作提示</span></label></section><p id="audioStatus" class="audio-status" role="status" aria-live="polite"></p></div>`;
+    panel.innerHTML = `<div class="audio-settings-card"><button type="button" class="audio-settings-close" aria-label="关闭体验设置">×</button><span class="eyebrow">EXPERIENCE SETTINGS</span><h2 id="audioSettingsTitle">体验设置</h2><section class="settings-group"><h3>声音</h3><label class="audio-toggle"><input id="audioEnabled" type="checkbox"><span>开启短提示音</span></label><label class="audio-volume-label" for="audioVolume">音量 <output id="audioVolumeValue">70%</output></label><input id="audioVolume" type="range" min="0" max="100" step="1"><p class="audio-note">首次访问默认静音。提示音由浏览器实时合成，不是历史现场录音；只在启用后播放短音效。</p></section><section class="settings-group"><h3>显示与陪伴</h3><label class="audio-volume-label" for="displayBrightness">网站亮度 <output id="displayBrightnessValue">100%</output></label><input id="displayBrightness" type="range" min="80" max="120" step="1"><label class="setting-select-label" for="lanDisplayMode">澜显示模式</label><select id="lanDisplayMode"><option value="auto">自动</option><option value="always">始终陪伴</option><option value="minimal">简洁模式</option></select><label class="audio-toggle setting-hints-toggle"><input id="operationHints" type="checkbox"><span>显示操作提示</span></label></section><p id="audioStatus" class="audio-status" role="status" aria-live="polite"></p></div>`;
     root.document.body.append(panel); statusNode = panel.querySelector('#audioStatus');
     panel.querySelector('.audio-settings-close').addEventListener('click', closeSettings);
     panel.addEventListener('click', event => { if (event.target === panel) closeSettings(); });
@@ -177,8 +180,18 @@
       root.document.addEventListener('click', unlock, true);
     }
   }
-  function init() { buildSettings(); applyUiPrefs(); if (state.enabled) setStatus('氛围音将在首次点击后开始播放。'); }
-  function reloadSettings() { state = readSettings(); uiPrefs = readUiPrefs(); applyUiPrefs(); if (context) { applyTheme(); if (state.enabled && context.state === 'suspended') context.resume().catch(() => {}); if (!state.enabled && context.state === 'running') context.suspend().catch(() => {}); } return { ...state, ...uiPrefs }; }
+  function init() {
+    buildSettings(); applyUiPrefs();
+    if (root.document?.addEventListener) root.document.addEventListener('visibilitychange', () => { if (audioIsHidden()) suspendForBackground(); });
+    root.addEventListener?.('pagehide', suspendForBackground);
+  }
+  function reloadSettings() {
+    state = readSettings(); uiPrefs = readUiPrefs(); applyUiPrefs();
+    if (!state.enabled) { stopActiveEffects(); if (context?.state === 'running') context.suspend().catch(() => {}); }
+    else if (context && userGestureSeen && !audioIsHidden() && context.state === 'suspended') context.resume().then(applyMasterLevel).catch(() => {});
+    else applyMasterLevel();
+    return { ...state, ...uiPrefs };
+  }
   const AudioSystem = { init, openSettings, closeSettings, setEnabled, setVolume, setEra, playEffect, reloadSettings, setBrightness, setLanMode, setOperationHints,
     get state() { return { ...state, ...uiPrefs }; } };
   root.AudioSystem = AudioSystem;

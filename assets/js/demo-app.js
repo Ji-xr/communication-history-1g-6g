@@ -194,8 +194,8 @@
     return result;
   };
   const originalCompleteEra = root.completeEra;
-  if (originalCompleteEra) root.completeEra = function () {
-    const era=eras[eraIndex]?.id,result=originalCompleteEra();
+  if (originalCompleteEra) root.completeEra = function (...args) {
+    const era=eras[eraIndex]?.id,result=originalCompleteEra.apply(this,args);
     if(result&&active()){
       if(era==='1G'&&root.DemoManager.state.currentStep==='oneg'){root.DemoManager.setStep('fourg');say('1G档案已封存。下一步进入4G技术实验室。')}
       else if(era==='4G'&&root.DemoManager.state.currentStep==='fourg'){root.DemoManager.setStep('fiveg');say('4G档案已封存。下一步查看5G协同通信展品。')}

@@ -60,3 +60,4 @@ body.lan-dialogue-active::before{content:"";position:fixed;inset:0;z-index:89;ba
 
 /* 展品讲解与详情弹层同屏时，澜的中央讲解需要位于详情弹层之上。 */
 #lanCompanion[data-mode="dialogue"][data-dialogue-surface="exhibit"]{z-index:120}
+#lanCompanion[data-mode="dialogue"][data-dialogue-surface="modal"]{z-index:120}

@@ -6,7 +6,28 @@
 })(typeof window !== 'undefined' ? window : null, function (root) {
   'use strict';
   const CATEGORIES = ['全部分类', '技术原理', '设备展品', '历史资料', '应用场景'];
-  const normalize = value => String(value || '').toLocaleLowerCase().replace(/\s+/g, ' ').trim();
+  const PAGE_SIZE = 7;
+  const MAX_QUERY_LENGTH = 80;
+  const SYNONYM_GROUPS = Object.freeze([
+    { id: 'latency', label: '时延', terms: ['延时', '时延', 'latency'] },
+    { id: 'sms', label: '短信', terms: ['短信', 'SMS'] },
+    { id: 'base-station', label: '基站', terms: ['基站', '蜂窝基站', 'base station'] },
+    { id: 'coverage', label: '无线覆盖', terms: ['无线覆盖', '手机信号覆盖', 'wireless coverage'] },
+    { id: 'mobile-internet', label: '移动互联网', terms: ['移动互联网', '手机上网', 'mobile internet'] },
+    { id: 'ai', label: '人工智能', terms: ['人工智能', 'AI', 'artificial intelligence'] },
+    { id: 'digital-twin', label: '数字孪生', terms: ['数字孪生', 'digital twin'] },
+    { id: 'low-latency', label: '低时延', terms: ['低时延', '低延迟', 'low latency'] }
+  ]);
+  const RECOMMENDED_QUESTIONS = Object.freeze([
+    { era: '1G', question: '1G为什么容易受到覆盖限制？', query: '1G 覆盖', topic: 'coverage' },
+    { era: '2G', question: '2G为什么可以发送短信？', query: '2G 短信', topic: 'sms' },
+    { era: '3G', question: '3G与移动互联网有什么关系？', query: '3G 移动互联网', topic: 'mobile-internet' },
+    { era: '4G', question: '4G为什么推动视频应用普及？', query: '4G 视频', topic: 'video' },
+    { era: '5G', question: '5G的低时延意味着什么？', query: '5G 低时延', topic: 'low-latency' },
+    { era: '6G', question: '6G研究中的通信感知融合是什么？', query: '6G 通信感知融合', topic: 'sensing' }
+  ]);
+  const normalize = value => String(value || '').normalize('NFKC').toLocaleLowerCase().replace(/\s+/g, ' ').trim();
+  const viewState = { query: '', era: '', category: '', page: 1, pageSize: PAGE_SIZE, scrollY: 0, restoreScroll: false };
   function records(model) {
     if (!model) return [];
     const eras = new Map((model.eras || []).map(item => [item.eraId || item.id, item]));
@@ -18,7 +39,7 @@
     (model.eras || []).forEach(era => {
       rows.push({
         id: `era.${era.eraId || era.id}`, eraId: era.eraId || era.id, title: `${era.eraId || era.id} · ${era.title}`,
-        kind: '历史资料', category: '历史资料', summary: [era.background, era.exhibition?.mainProblem, era.exhibition?.historicalSignificance, era.summary?.historicalImpact].filter(Boolean).join(' '),
+        kind: (era.eraId || era.id) === '6G' ? '未来研究展望' : '历史资料', category: '历史资料', summary: [era.background, era.exhibition?.mainProblem, era.exhibition?.historicalSignificance, era.summary?.historicalImpact].filter(Boolean).join(' '),
         searchText: [era.eraId, era.title, era.theme, era.timeRange, era.background, era.exhibition?.mainProblem, era.exhibition?.historicalSignificance, era.summary?.technicalAchievement].join(' ')
       });
     });
@@ -101,38 +122,171 @@
       };
     });
   }
-  function search(model, { query = '', era = '', category = '' } = {}) {
-    const terms = normalize(query).split(' ').filter(Boolean);
-    return records(model).filter(item => (!era || item.eraId === era) && (!category || category === '全部分类' || item.category === category) && terms.every(term => normalize(`${item.title} ${item.summary} ${item.searchText}`).includes(term)));
-  }
   function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]); }
-  function renderPage() {
-    const eras = root?.CommsArchiveContent?.eras || [];
-    return `<section class="page knowledge-search-page"><div class="eyebrow">LOCAL ARCHIVE SEARCH</div><h2>通信知识搜索</h2><p class="lead">搜索六代历史资料、展品和技术原理。内容来自现有通信简史资料库，可离线使用。</p><div class="card knowledge-search-panel"><label for="knowledgeSearchInput">关键词</label><input id="knowledgeSearchInput" type="search" placeholder="试试：短信、基站、LTE、数字孪生" autocomplete="off" oninput="CommsArchiveKnowledgeSearch.updateResults()"><div class="knowledge-search-filters"><label>时代<select id="knowledgeEraFilter" onchange="CommsArchiveKnowledgeSearch.updateResults()"><option value="">全部时代</option>${eras.map(item => `<option value="${escapeHtml(item.eraId || item.id)}">${escapeHtml(item.eraId || item.id)} · ${escapeHtml(item.title)}</option>`).join('')}</select></label><label>分类<select id="knowledgeCategoryFilter" onchange="CommsArchiveKnowledgeSearch.updateResults()">${CATEGORIES.map(item => `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`).join('')}</select></label></div><p id="knowledgeSearchCount" class="muted" role="status">输入关键词，或选择时代与分类浏览。</p><div id="knowledgeResults" class="knowledge-results"></div><p id="knowledgeSearchNotice" class="knowledge-search-notice" role="status"></p></div><section class="knowledge-challenge-entry"><div><span class="eyebrow">知识巩固</span><h3>知识挑战</h3><p class="muted">完成现有10题问答，查看得分、徽章与历史记录。</p></div><button class="btn secondary" onclick="go('quiz')">进入知识挑战 →</button></section><div class="actions"><button class="btn ghost" onclick="go('ask')">打开离线问答</button><button class="btn ghost" onclick="go('eras')">前往时代航线</button></div></section>`;
+  function escapeRegex(value) { return String(value).replace(/[.*+?^$()|[\]\\{}]/g, '\\$&'); }
+  function queryGroups(query) {
+    let remainder = normalize(String(query).slice(0, MAX_QUERY_LENGTH));
+    const groups = [];
+    const aliases = SYNONYM_GROUPS.flatMap(group => group.terms.map(term => ({ group, term }))).sort((a, b) => b.term.length - a.term.length);
+    for (const { group, term } of aliases) {
+      const ascii = /^[a-z0-9 ]+$/i.test(term);
+      const pattern = new RegExp((ascii ? '\\b' : '') + escapeRegex(normalize(term)) + (ascii ? '\\b' : ''), 'gi');
+      pattern.lastIndex = 0;
+      if (pattern.test(remainder)) {
+        pattern.lastIndex = 0;
+        remainder = remainder.replace(pattern, ' ');
+        if (!groups.some(item => item.id === group.id)) groups.push({ id: group.id, label: group.label, queryTerm: term, variants: group.terms });
+      }
+    }
+    remainder = remainder.replace(/为什么|为何|怎么样|怎么|如何|意味着|有什么|有哪些|是什么|请问|介绍一下|的|与|和|及|吗|呢|在|对|是/gi, ' ')
+      .replace(/[？?！!，,。；;：:、（）()【】\[\]{}"“”'‘’]/g, ' ');
+    for (const token of (remainder.match(/[a-z0-9]+|[\u3400-\u9fff]+/gi) || []).map(normalize).filter(Boolean)) {
+      if (/^[\u3400-\u9fff]+$/u.test(token) && token.length > 2) {
+        const chars = [...token], variants = [token];
+        for (let size = Math.min(4, chars.length - 1); size >= 2; size--) {
+          for (let i = 0; i <= chars.length - size; i++) variants.push(chars.slice(i, i + size).join(''));
+        }
+        groups.push({ id: 'text:' + token, label: token, queryTerm: token, variants: [...new Set(variants)] });
+      } else groups.push({ id: 'text:' + token, label: token, queryTerm: token, variants: [token] });
+    }
+    return groups;
   }
-  function updateResults() {
-    const input = root?.document?.querySelector('#knowledgeSearchInput');
-    const era = root.document.querySelector('#knowledgeEraFilter')?.value || '';
-    const category = root.document.querySelector('#knowledgeCategoryFilter')?.value || '';
+  function containsTerm(haystack, needle) {
+    const text = normalize(haystack), term = normalize(needle);
+    if (!term) return false;
+    if (/^[a-z0-9 ]+$/i.test(term)) return new RegExp('\\b' + escapeRegex(term).replace(/\s+/g, '\\s+') + '\\b', 'i').test(text);
+    return text.includes(term);
+  }
+  function search(model, { query = '', era = '', category = '' } = {}) {
+    const cleanQuery = String(query).slice(0, MAX_QUERY_LENGTH), groups = queryGroups(cleanQuery), fullQuery = normalize(cleanQuery);
+    return records(model).map((item, index) => {
+      if ((era && item.eraId !== era) || (category && category !== '全部分类' && item.category !== category)) return null;
+      const title = normalize(item.title), summary = normalize(item.summary), all = normalize(item.title + ' ' + item.summary + ' ' + item.searchText);
+      let score = fullQuery && title === fullQuery ? 1000 : fullQuery && title.includes(fullQuery) ? 500 : 0;
+      const reasons = [], highlightTerms = [];
+      for (const group of groups) {
+        let match = group.variants.find(term => containsTerm(title, term)), location = 'title';
+        if (!match) { match = group.variants.find(term => containsTerm(summary, term)); location = 'summary'; }
+        if (!match) { match = group.variants.find(term => containsTerm(all, term)); location = 'body'; }
+        if (!match) return null;
+        const synonym = normalize(match) !== normalize(group.queryTerm);
+        score += location === 'title' ? (synonym ? 34 : 55) : location === 'summary' ? (synonym ? 14 : 25) : (synonym ? 8 : 16);
+        if (synonym && !group.id.startsWith('text:')) reasons.push('关联术语：“' + group.queryTerm + '”与资料中的“' + match + '”为同义表达');
+        else if (location === 'title') reasons.push('标题匹配“' + match + '”');
+        else reasons.push((location === 'summary' ? '摘要' : '正文') + '匹配“' + match + '”');
+        highlightTerms.push(match);
+      }
+      if (groups.length && !reasons.length) reasons.push('关键词匹配');
+      return { ...item, relevanceScore: score, matchReasons: [...new Set(reasons)], highlightTerms: [...new Set(highlightTerms)], _order: index };
+    }).filter(Boolean).sort((a, b) => b.relevanceScore - a.relevanceScore || a._order - b._order).map(({ _order, ...item }) => item);
+  }
+  function highlightText(value, terms = []) {
+    const text = String(value ?? ''), safeTerms = [...new Set(terms.map(String).filter(Boolean))].sort((a, b) => b.length - a.length);
+    if (!safeTerms.length) return escapeHtml(text);
+    const pattern = new RegExp(safeTerms.map(escapeRegex).join('|'), 'gi');
+    let output = '', cursor = 0;
+    for (const match of text.matchAll(pattern)) {
+      output += escapeHtml(text.slice(cursor, match.index)) + '<mark>' + escapeHtml(match[0]) + '</mark>';
+      cursor = match.index + match[0].length;
+    }
+    return output + escapeHtml(text.slice(cursor));
+  }
+  function getRecommendations(query = '', model = root?.CommsArchiveContent) {
+    if (!normalize(query)) return [...RECOMMENDED_QUESTIONS];
+    const matchedEras = new Set(search(model, { query }).map(row => row.eraId).filter(Boolean));
+    const groups = new Set(queryGroups(query).map(group => group.id));
+    const related = RECOMMENDED_QUESTIONS.filter(item => matchedEras.has(item.era) || groups.has(item.topic));
+    return related.length ? related : [...RECOMMENDED_QUESTIONS];
+  }
+  function recommendationMarkup(query = '') {
+    return getRecommendations(query).map((item, index) => '<button type="button" class="knowledge-suggestion" onclick="CommsArchiveKnowledgeSearch.selectRecommendation(' + index + ')" aria-label="搜索推荐问题：' + escapeHtml(item.question) + '">' + escapeHtml(item.question) + '</button>').join('');
+  }
+  function renderResult(item) {
+    const context = [
+      item.technicalKeywords.length ? '<p><b>技术关键词：</b>' + item.technicalKeywords.map(escapeHtml).join(' · ') + '</p>' : '',
+      item.relatedExhibits.length ? '<p><b>相关展品：</b>' + item.relatedExhibits.map(escapeHtml).join('、') + '</p>' : '',
+      item.relatedArchives.length ? '<p><b>相关档案：</b>' + item.relatedArchives.map(escapeHtml).join('、') + '</p>' : '',
+      item.relatedExperience ? '<p><b>时代体验：</b>' + escapeHtml(item.relatedExperience) + '</p>' : '',
+      item.lanRecord ? '<p><b>澜的研究记录：</b>' + escapeHtml(Array.isArray(item.lanRecord) ? item.lanRecord.join(' ') : item.lanRecord) + '</p>' : ''
+    ].filter(Boolean).join('');
+    const reasons = item.matchReasons?.length ? '<p class="knowledge-match-reason"><b>匹配依据：</b>' + item.matchReasons.map(escapeHtml).join('；') + '</p>' : '';
+    return '<article class="knowledge-result"><div class="knowledge-result-meta"><span class="status">' + escapeHtml(item.eraId) + '</span><span>' + escapeHtml(item.category) + '</span><span>' + escapeHtml(item.kind) + '</span></div><h3>' + highlightText(item.title, item.highlightTerms) + '</h3><p>' + highlightText(item.summary || '现有资料中未附加更长说明。', item.highlightTerms) + '</p>' + reasons + (context ? '<div class="knowledge-result-context">' + context + '</div>' : '') + '<button class="btn secondary" data-record-id="' + escapeHtml(item.id) + '" data-era-id="' + escapeHtml(item.eraId) + '" onclick="CommsArchiveKnowledgeSearch.openResultFromButton(this)">' + (item.exhibitId ? '查看展品详情' : item.kind === '技术原理' ? '查看技术原理' : '查看' + escapeHtml(item.eraId) + '时代资料') + ' →</button></article>';
+  }
+  function pageNumbers(total, current) {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const values = [1];
+    if (current > 3) values.push('…');
+    for (let page = Math.max(2, current - 1); page <= Math.min(total - 1, current + 1); page++) values.push(page);
+    if (current < total - 2) values.push('…');
+    values.push(total);
+    return values;
+  }
+  function paginationMarkup(total, page) {
+    const pages = Math.ceil(total / PAGE_SIZE);
+    if (pages <= 1) return '';
+    return '<nav class="knowledge-pagination" aria-label="搜索结果分页"><button type="button" class="btn ghost" ' + (page <= 1 ? 'disabled' : '') + ' onclick="CommsArchiveKnowledgeSearch.setPage(' + (page - 1) + ')">上一页</button><div class="knowledge-page-list">' + pageNumbers(pages, page).map(value => value === '…' ? '<span aria-hidden="true">…</span>' : '<button type="button" class="quiet" ' + (value === page ? 'aria-current="page"' : '') + ' onclick="CommsArchiveKnowledgeSearch.setPage(' + value + ')" aria-label="第 ' + value + ' 页">' + value + '</button>').join('') + '</div><span class="knowledge-page-status">' + page + ' / ' + pages + '</span><button type="button" class="btn ghost" ' + (page >= pages ? 'disabled' : '') + ' onclick="CommsArchiveKnowledgeSearch.setPage(' + (page + 1) + ')">下一页</button></nav>';
+  }
+  function resultsMarkup(results, page = 1) {
+    if (!results.length) return '<div class="empty card"><h3>没有找到相关通信记录</h3><p>试试“时延”“SMS”“基站”“手机上网”或“数字孪生”，也可以移除筛选条件。</p></div>';
+    const start = (page - 1) * PAGE_SIZE;
+    return results.slice(start, start + PAGE_SIZE).map(renderResult).join('') + paginationMarkup(results.length, page);
+  }
+  function renderPage() {
+    const eras = root?.CommsArchiveContent?.eras || [], results = search(root?.CommsArchiveContent, viewState);
+    viewState.page = Math.min(viewState.page, Math.max(1, Math.ceil(results.length / PAGE_SIZE)));
+    const selected = (id, value) => id === value ? ' selected' : '';
+    const categories = CATEGORIES.map(item => '<option value="' + escapeHtml(item) + '"' + selected(item, viewState.category) + '>' + escapeHtml(item) + '</option>').join('');
+    const eraOptions = eras.map(item => '<option value="' + escapeHtml(item.eraId || item.id) + '"' + selected(item.eraId || item.id, viewState.era) + '>' + escapeHtml(item.eraId || item.id) + ' · ' + escapeHtml(item.title) + '</option>').join('');
+    const count = results.length + ' 条资料' + (viewState.query ? ' · 关键词“' + escapeHtml(viewState.query) + '”' : '');
+    const markup = '<section class="page knowledge-search-page"><div class="eyebrow">LOCAL ARCHIVE SEARCH</div><h2>通信知识搜索</h2><p class="lead">搜索六代历史资料、展品和技术原理。内容来自现有通信简史资料库，可离线使用。</p><div class="card knowledge-search-panel"><form class="knowledge-search-form" onsubmit="CommsArchiveKnowledgeSearch.submitSearch(event)"><label for="knowledgeSearchInput">关键词</label><div class="knowledge-search-input-row"><input id="knowledgeSearchInput" type="search" maxlength="' + MAX_QUERY_LENGTH + '" value="' + escapeHtml(viewState.query) + '" placeholder="试试：短信、基站、LTE、数字孪生" autocomplete="off" oninput="CommsArchiveKnowledgeSearch.updateResults()"><button class="btn secondary" type="submit">搜索</button></div></form><div id="knowledgeSuggestions" class="knowledge-suggestions" aria-label="推荐问题">' + recommendationMarkup(viewState.query) + '</div><div class="knowledge-search-filters"><label>时代<select id="knowledgeEraFilter" onchange="CommsArchiveKnowledgeSearch.updateResults()"><option value="">全部时代</option>' + eraOptions + '</select></label><label>分类<select id="knowledgeCategoryFilter" onchange="CommsArchiveKnowledgeSearch.updateResults()">' + categories + '</select></label></div><p id="knowledgeSearchCount" class="muted" role="status">' + count + '</p><div id="knowledgeResults" class="knowledge-results">' + resultsMarkup(results, viewState.page) + '</div><p id="knowledgeSearchNotice" class="knowledge-search-notice" role="status"></p></div><section class="knowledge-challenge-entry"><div><span class="eyebrow">知识巩固</span><h3>知识挑战</h3><p class="muted">完成现有10题问答，查看得分、徽章与历史记录。</p></div><button class="btn secondary" onclick="go(\'quiz\')">进入知识挑战 →</button></section><div class="actions"><button class="btn ghost" onclick="go(\'ask\')">打开离线问答</button><button class="btn ghost" onclick="go(\'eras\')">前往时代航线</button></div></section>';
+    if (viewState.restoreScroll) {
+      const y = viewState.scrollY; viewState.restoreScroll = false;
+      root?.setTimeout?.(() => root.scrollTo?.(0, y), 80);
+    }
+    return markup;
+  }
+  function updateResults({ focusResults = false } = {}) {
+    const document = root?.document, input = document?.querySelector('#knowledgeSearchInput');
+    const era = document?.querySelector('#knowledgeEraFilter')?.value || '';
+    const category = document?.querySelector('#knowledgeCategoryFilter')?.value || '';
+    if (input && input.value.length > MAX_QUERY_LENGTH) input.value = input.value.slice(0, MAX_QUERY_LENGTH);
     const query = input?.value || '';
-    const results = search(root.CommsArchiveContent, { query, era, category });
-    const target = root.document.querySelector('#knowledgeResults');
-    const count = root.document.querySelector('#knowledgeSearchCount');
-    const notice = root.document.querySelector('#knowledgeSearchNotice');
-    if (!target) return results;
-    if (count) count.textContent = `${results.length} 条资料${query.trim() ? ` · 关键词“${query.trim()}”` : ''}`;
-    if (notice) notice.textContent = '';
-    target.innerHTML = results.length ? results.slice(0, 60).map(item => {
-      const context = [
-        item.technicalKeywords.length ? `<p><b>技术关键词：</b>${item.technicalKeywords.map(escapeHtml).join(' · ')}</p>` : '',
-        item.relatedExhibits.length ? `<p><b>相关展品：</b>${item.relatedExhibits.map(escapeHtml).join('、')}</p>` : '',
-        item.relatedArchives.length ? `<p><b>相关档案：</b>${item.relatedArchives.map(escapeHtml).join('、')}</p>` : '',
-        item.relatedExperience ? `<p><b>时代体验：</b>${escapeHtml(item.relatedExperience)}</p>` : '',
-        item.lanRecord ? `<p><b>澜的研究记录：</b>${escapeHtml(Array.isArray(item.lanRecord) ? item.lanRecord.join(' ') : item.lanRecord)}</p>` : ''
-      ].filter(Boolean).join('');
-      return `<article class="knowledge-result"><div class="knowledge-result-meta"><span class="status">${escapeHtml(item.eraId)}</span><span>${escapeHtml(item.category)}</span><span>${escapeHtml(item.kind)}</span></div><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.summary || '现有资料中未附加更长说明。')}</p>${context ? `<div class="knowledge-result-context">${context}</div>` : ''}<button class="btn secondary" onclick="CommsArchiveKnowledgeSearch.openResult('${escapeHtml(item.id)}','${escapeHtml(item.eraId)}')">${item.exhibitId ? '查看展品详情' : item.kind === '技术原理' ? '查看技术原理' : `查看${escapeHtml(item.eraId)}时代资料`} →</button></article>`;
-    }).join('') : '<div class="empty card"><h3>没有找到相关通信记录</h3><p>试试“5G”“短信”“移动电话”“基站”或“人工智能”，也可以更换时代和分类。</p></div>';
+    if (query !== viewState.query || era !== viewState.era || category !== viewState.category) viewState.page = 1;
+    Object.assign(viewState, { query, era, category });
+    const results = search(root?.CommsArchiveContent, viewState);
+    viewState.page = Math.min(viewState.page, Math.max(1, Math.ceil(results.length / PAGE_SIZE)));
+    const target = document?.querySelector('#knowledgeResults'), count = document?.querySelector('#knowledgeSearchCount');
+    const notice = document?.querySelector('#knowledgeSearchNotice'), suggestions = document?.querySelector('#knowledgeSuggestions');
+    if (count) count.textContent = results.length + ' 条资料' + (query.trim() ? ' · 关键词“' + query.trim() + '”' : '');
+    if (notice) notice.textContent = results.length ? '' : '可以换用推荐问题中的术语，或清除时代与分类筛选。';
+    if (target) target.innerHTML = resultsMarkup(results, viewState.page);
+    if (suggestions) suggestions.innerHTML = recommendationMarkup(query);
+    if (focusResults) target?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
     return results;
+  }
+  function submitSearch(event) { event?.preventDefault?.(); return updateResults({ focusResults: true }); }
+  function selectRecommendation(index) {
+    const item = getRecommendations(viewState.query)[index], input = root?.document?.querySelector('#knowledgeSearchInput');
+    if (!item || !input) return false;
+    input.value = item.query;
+    const era = root?.document?.querySelector('#knowledgeEraFilter'), category = root?.document?.querySelector('#knowledgeCategoryFilter');
+    if (era) era.value = '';
+    if (category) category.value = '';
+    Object.assign(viewState, { query: item.query, era: '', category: '', page: 1 });
+    updateResults({ focusResults: true }); input.focus?.(); return true;
+  }
+  function setPage(page) {
+    const requested = Number(page);
+    if (!Number.isInteger(requested) || requested < 1) return false;
+    const input = root?.document?.querySelector('#knowledgeSearchInput');
+    viewState.query = input?.value || viewState.query;
+    viewState.era = root?.document?.querySelector('#knowledgeEraFilter')?.value || '';
+    viewState.category = root?.document?.querySelector('#knowledgeCategoryFilter')?.value || '';
+    const totalPages = Math.ceil(search(root?.CommsArchiveContent, viewState).length / PAGE_SIZE);
+    if (requested > totalPages || totalPages <= 1) return false;
+    viewState.page = requested; updateResults();
+    root?.document?.querySelector('#knowledgeResults')?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+    return true;
   }
   function openEra(eraId) {
     const notice = root?.document?.querySelector('#knowledgeSearchNotice');
@@ -145,7 +299,10 @@
   }
   function openResult(recordId, eraId) {
     const row = records(root?.CommsArchiveContent).find(item => item.id === recordId);
+    const searchScrollY = root?.scrollY || 0;
     if (!row || !openEra(eraId)) return false;
+    viewState.scrollY = searchScrollY;
+    viewState.restoreScroll = true;
     if (row.exhibitId && typeof root.showExhibitDetails === 'function') { root.showExhibitDetails(eraId, 'search', row.exhibitId); return true; }
     root.setTimeout?.(() => {
       const target = row.kind === '技术原理' ? root.document.querySelector('.history-diagram,.diagram-wrap') : row.kind === '时代问题调查' ? root.document.querySelector('.task-panel') : root.document.querySelector('.history-media');
@@ -153,5 +310,14 @@
     }, 80);
     return true;
   }
-  return { CATEGORIES, records, search, renderPage, updateResults, openEra, openResult };
+  function openResultFromButton(button) {
+    if (!button?.dataset) return false;
+    return openResult(button.dataset.recordId, button.dataset.eraId);
+  }
+  return {
+    CATEGORIES, PAGE_SIZE, SYNONYM_GROUPS, RECOMMENDED_QUESTIONS,
+    records, search, queryGroups, highlightText, getRecommendations, renderPage,
+    updateResults, submitSearch, selectRecommendation, setPage, openEra, openResult, openResultFromButton,
+    get state() { return { ...viewState }; }
+  };
 });

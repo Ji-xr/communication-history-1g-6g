@@ -224,7 +224,7 @@
         id: evidenceResultId,
         evidenceId: evidenceResultId, eraId: id, sourceTaskId: investigationId,
         era: id, taskId: investigationId,
-        type: '任务结果', name: `${id}调查结果档案`, description: era.achievement,
+        type: '任务结果', name: `${id}调查结果档案`, description: `项目教学模拟的调查记录：${era.achievement}`,
         imageIds: media.photo ? [photoId] : [flowImageId],
         exhibitIds: [links.exhibitId], archiveLocation: `archive#${evidenceResultId}`
       });
@@ -279,12 +279,12 @@
     addLanDialogue('lan.task.start', null, 'task', 'start-investigation', 'thinking', '先别急着下结论。挑一条线索，我们一起看看它能说明什么。');
     addLanDialogue('lan.task.complete', null, 'task', 'complete-investigation', 'happy', '记录完成了。你找到的不只是答案，还有它为什么成立的证据。');
     addLanDialogue('lan.archive.open', null, 'archive', 'open', 'companion', '每张证据卡都连着一次调查。想回去复核展品或流程图，点关联资料就能继续。');
-    addLanDialogue('lan.6g.identity-reveal', '6G', 'ending', 'journey-complete', 'nostalgic', ['六代调查已经完成，技术线索和人的体验都补进了档案。', '我曾经认为，通信历史记录的是技术进步。但和你一起经历这些时代后，我发现……', '真正被连接的，是人与人之间想被听见、被看见、被理解的瞬间。我们把这份档案命名为《连接的文明：人类通信六代记录》。']);
+    addLanDialogue('lan.6g.identity-reveal', '6G', 'ending', 'journey-complete', 'nostalgic', ['从1G—5G的历史回顾到6G的未来研究展望，我们把模拟调查与人的体验一同整理入档。', '我曾经认为，通信历史记录的是技术进步。但和你一起经历这些时代后，我发现……', '真正被连接的，是人与人之间想被听见、被看见、被理解的瞬间。我们把这份档案命名为《连接的文明：人类通信六代记录》。']);
     const eraGreetings = {
-      '1G': ['欢迎来到通信历史的第一页。', '这里的人们第一次尝试，把声音带离固定电话线。'],
+      '1G': ['欢迎来到通信历史的第一页。', '蜂窝移动电话正逐步走向商用；更早已有移动无线电话。'],
       '2G': ['你发现了吗？', '通信开始不只是传递声音，也开始记录人与人的关系。'],
-      '3G': ['手机第一次不只是电话。', '它开始变成一个通往世界的小窗口。'],
-      '4G': ['速度提升以后，人们开始分享生活。', '通信也改变了每个人表达自己的方式。'],
+      '3G': ['3G进一步提升移动数据承载能力。', '它开始变成一个通往世界的小窗口。'],
+      '4G': ['移动宽带发展以后，人们更方便地分享生活。', '通信也改变了每个人表达自己的方式。'],
       '5G': ['这一次，被连接的不只是人。', '机器、城市和产业也开始加入更多通信应用场景。'],
       '6G': ['欢迎来到未来通信研究情境。这里展示的是探索方向，不是已经普遍商用的能力。']
     };
