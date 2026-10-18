@@ -6,6 +6,7 @@
   const originalEnterEra = root.enterEra;
   let pendingRouteIds = [];
   function active() { return root.DemoManager?.isActive?.() === true; }
+  function loadNormalizedQuizSession() { return normalizeQuizSession(quizStore?.loadSession?.() || null); }
   function say(message) { root.DemoGuide?.setMessage(message); }
   function addCompletedThrough(era) {
     const ids = ['1G', '2G', '3G', '4G', '5G', '6G'];
@@ -113,7 +114,7 @@
     state = clean; route = isRecommended ? 'prologue' : 'eras'; eraIndex = 0; taskStep = 0; selected = null; secondSelected = null; understandingSelected = null; designResponse = '';
     reviewGuideActive = false; reviewGuideStage = 0;
     rebindProgression(); root.CommsArchiveLan?.reloadStorageContext?.(); root.AudioSystem?.reloadSettings?.();
-    try { quizSession = quizStore?.loadSession?.() || null; } catch (_) { quizSession = null; quizStorageOk = false; }
+    try { quizSession = loadNormalizedQuizSession(); } catch (_) { quizSession = null; quizStorageOk = false; }
     render(); root.DemoGuide.start(); if (isRecommended) root.CommsArchiveLan?.openPrologue();
     else root.DemoGuide.setMessage(mode === 'random' ? '随机短路线已准备好。可点击下方路线时代直接进入，也可在时代航线中改选任意一代。' : '演示模式已开放1G—6G所有时代入口，可直接选择任意展厅。');
     return true;
@@ -132,7 +133,7 @@
     root.DemoManager.exit();
     state = loadState(); route = 'home'; eraIndex = 0; taskStep = 0; selected = null; secondSelected = null;
     rebindProgression(); root.CommsArchiveLan?.reloadStorageContext?.(); root.AudioSystem?.reloadSettings?.();
-    quizSession = quizStore?.loadSession?.() || null;
+    quizSession = loadNormalizedQuizSession();
     render(); return true;
   }
 

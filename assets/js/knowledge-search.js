@@ -53,7 +53,7 @@
       });
     });
     (model.flows || []).forEach(item => rows.push({
-      id: `flow.${item.flowId}`, eraId: item.eraId, title: `${item.eraId} 技术流程与原理`, kind: '技术原理', category: '技术原理',
+      id: `flow.${item.flowId}`, flowId: item.flowId, eraId: item.eraId, title: `${item.eraId} 技术流程与原理`, kind: '技术原理', category: '技术原理',
       summary: item.explanation || (item.theme || []).join(' · '),
       searchText: [item.eraId, (item.theme || []).join(' '), (item.steps || []).map(step => step.label).join(' '), item.explanation].join(' ')
     }));
@@ -299,15 +299,36 @@
   }
   function openResult(recordId, eraId) {
     const row = records(root?.CommsArchiveContent).find(item => item.id === recordId);
-    const searchScrollY = root?.scrollY || 0;
-    if (!row || !openEra(eraId)) return false;
-    viewState.scrollY = searchScrollY;
-    viewState.restoreScroll = true;
-    if (row.exhibitId && typeof root.showExhibitDetails === 'function') { root.showExhibitDetails(eraId, 'search', row.exhibitId); return true; }
-    root.setTimeout?.(() => {
-      const target = row.kind === '技术原理' ? root.document.querySelector('.history-diagram,.diagram-wrap') : row.kind === '时代问题调查' ? root.document.querySelector('.task-panel') : root.document.querySelector('.history-media');
-      target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 80);
+    if (!row || row.eraId !== eraId) {
+      const notice = root?.document?.querySelector('#knowledgeSearchNotice');
+      if (notice) notice.textContent = !row ? '未找到这条知识资料，请重新搜索。' : '资料与时代编号不匹配，请重新选择搜索结果。';
+      return false;
+    }
+    if (row.kind === '技术原理') {
+      const opened = typeof root.openTechnicalFlowFromSearch === 'function' && root.openTechnicalFlowFromSearch(eraId, row.flowId);
+      if (!opened) {
+        const notice = root?.document?.querySelector('#knowledgeSearchNotice');
+        if (notice) notice.textContent = '无法打开对应技术原理资料，请检查时代与流程编号关联。';
+      }
+      return !!opened;
+    }
+    if (row.exhibitId && typeof root.showExhibitDetails === 'function') {
+      root.showExhibitDetails(eraId, 'search', row.exhibitId);
+      return true;
+    }
+    if (typeof root.modal !== 'function') {
+      const notice = root?.document?.querySelector('#knowledgeSearchNotice');
+      if (notice) notice.textContent = '资料已找到，但当前页面无法打开只读详情。请刷新页面后重试。';
+      return false;
+    }
+    const details = [
+      row.technicalKeywords?.length ? '<p><b>技术关键词：</b>' + row.technicalKeywords.map(escapeHtml).join(' · ') + '</p>' : '',
+      row.relatedExhibits?.length ? '<p><b>相关展品：</b>' + row.relatedExhibits.map(escapeHtml).join('、') + '</p>' : '',
+      row.relatedArchives?.length ? '<p><b>相关档案：</b>' + row.relatedArchives.map(escapeHtml).join('、') + '</p>' : '',
+      row.relatedExperience ? '<p><b>时代体验：</b>' + escapeHtml(row.relatedExperience) + '</p>' : '',
+      row.lanRecord ? '<p><b>澜的研究记录：</b>' + escapeHtml(Array.isArray(row.lanRecord) ? row.lanRecord.join(' ') : row.lanRecord) + '</p>' : ''
+    ].filter(Boolean).join('');
+    root.modal('<div class="eyebrow">LOCAL ARCHIVE SEARCH · ' + escapeHtml(eraId) + '</div><h2>' + escapeHtml(row.title) + '</h2><p class="muted">' + escapeHtml(row.category) + ' · ' + escapeHtml(row.kind) + '</p><p>' + escapeHtml(row.summary || '现有资料中未附加更长说明。') + '</p>' + details + '<p class="muted">此处为知识搜索中的只读资料，不会改变时代探索进度。</p><div class="exhibit-controls"><button class="btn secondary" onclick="closeModal()">关闭详情</button></div>');
     return true;
   }
   function openResultFromButton(button) {
