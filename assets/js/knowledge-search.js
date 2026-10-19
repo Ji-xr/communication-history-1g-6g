@@ -243,7 +243,7 @@
       const y = viewState.scrollY; viewState.restoreScroll = false;
       root?.setTimeout?.(() => root.scrollTo?.(0, y), 80);
     }
-    return markup;
+    return markup.replace('<div class="card knowledge-search-panel">', '<div class="actions knowledge-search-return"><button class="btn ghost" type="button" onclick="returnFromKnowledgeSearch()">← 返回搜索前页面</button></div><div class="card knowledge-search-panel">');
   }
   function updateResults({ focusResults = false } = {}) {
     const document = root?.document, input = document?.querySelector('#knowledgeSearchInput');

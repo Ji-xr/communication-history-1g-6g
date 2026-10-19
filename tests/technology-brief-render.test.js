@@ -76,6 +76,7 @@ function configureHarness({ era = '1G', progression, state, demo = false } = {})
     progressionEraAllowed: () => ({ ok: true, reason: '' }),
     progressionBlock(result) { throw new Error(result?.reason || 'progression blocked'); },
     ensureEraInvestigationEvidence() { return true; },
+    archiveReadinessMessage(readiness) { return readiness?.reason || ''; },
     escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char])); },
     mediaAssets: {},
     window: {

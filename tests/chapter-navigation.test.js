@@ -127,11 +127,17 @@ test('1G至6G五节点的实际按钮回调逐步推进，阻断原因清晰，�
     assert.equal(harness.lanEvents.at(-1)?.[1]?.era, era);
     markup = currentMarkup(ctx);
     assert.match(markup, new RegExp(expectedLabels.investigation));
-    assert.match(markup, /至少一条建设调查线索/);
+    if (era === '6G') assert.match(markup, /补齐以下研究检查/);
+    else assert.match(markup, /至少一条建设调查线索/);
     assert.equal(clickGenerated(markup, ctx), false, '未调查时显示阻断原因');
-    assert.match(notices.at(-1), /建设调查线索/);
+    assert.match(notices.at(-1), era === '6G' ? /研究检查/ : /建设调查线索/);
 
     state.tasks[era] = { selected: 0, step: 1, understandingCompleted: false };
+    if (era === '6G') {
+      const required = ['evidence_6g_delay', 'evidence_6g_sensor', 'evidence_6g_ai', 'evidence_6g_twin'];
+      state.evidence.push(...required.map(evidenceId => ({ evidenceId, eraId: '6G' })));
+      progression.state.evidence.push(...required);
+    }
     assert.equal(progression.completeInvestigation({ holdCurrent: true }).ok, true);
     assert.equal(progression.currentNode().key, 'investigation', '记录调查后仍等待用户手动前进');
     assert.equal(clickGenerated(currentMarkup(ctx), ctx), true);

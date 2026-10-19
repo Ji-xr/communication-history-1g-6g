@@ -96,8 +96,10 @@ test('剧情模式优先级从对白语义推导，旧type字段与关联对白�
 
 test('手动章节导航不直接操纵澜的显示位置或模式', () => {
   const navigation = between(appSource, 'function navigateChapterNext(', '\nfunction chapterNavigationMarkup(');
+  const blocking = between(appSource, 'function chapterDialogueBlocking(', '\nfunction releaseChapterHint(');
   assert.doesNotMatch(navigation, /CommsArchiveLan\.(?:setDisplayMode|expandDialogue|hideDialogue)/);
-  assert.match(navigation, /debugSnapshot\?\.\(\)\.isPlaying/);
+  assert.match(blocking, /debugSnapshot\?\.\(\)/);
+  assert.match(blocking, /status\.isBlocking==='boolean'\?status\.isBlocking:!!status\.isPlaying/);
 });
 
 test('六代数据中的入口、任务关键节点、体验和归档由同一个中央分类器判定', () => {

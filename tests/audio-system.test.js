@@ -6,6 +6,7 @@ const vm = require('node:vm');
 
 const source = fs.readFileSync('assets/js/audio-system.js', 'utf8');
 const key = 'commsArchive.lanMemory.v1';
+const audioPrefsKey = 'commsArchive.audioPreferences.v2';
 
 class AudioNode {
   constructor() { this.gain = { value: 0, setTargetAtTime() {}, cancelScheduledValues() {}, setValueAtTime() {}, linearRampToValueAtTime() {}, exponentialRampToValueAtTime() {} }; this.frequency = { value: 0, setTargetAtTime() {} }; this.state = 'running'; this.events = {}; }
@@ -40,14 +41,15 @@ function createRuntime(storage = new Map(), audioSupported = true, demoManager =
   return { audio: window.AudioSystem, storage, panel, toggle, document: doc, brightnessVars };
 }
 
-test('音效设置持久化到LanMemory，并与已有进度字段共存', () => {
+test('音效设置保存在独立偏好键，保留已有LanMemory与进度字段', () => {
   const storage = new Map([[key, JSON.stringify({ visited: ['1G'], settings: { audio: { enabled: true, volume: 70 } } })]]);
   const runtime = createRuntime(storage);
   runtime.audio.setVolume(42);
   runtime.audio.setEnabled(false);
-  const saved = JSON.parse(storage.get(key));
-  assert.deepEqual(saved.visited, ['1G']);
-  assert.deepEqual(saved.settings.audio, { enabled: false, volume: 42 });
+  const legacy = JSON.parse(storage.get(key));
+  assert.deepEqual(legacy.visited, ['1G']);
+  assert.deepEqual(legacy.settings.audio, { enabled: true, volume: 70 });
+  assert.deepEqual(JSON.parse(storage.get(audioPrefsKey)), { version: 2, enabled: false, volume: 42 });
   const refreshed = createRuntime(storage);
   assert.equal(refreshed.audio.state.enabled, false);
   assert.equal(refreshed.audio.state.volume, 42);
@@ -80,14 +82,14 @@ test('不支持WebAudio时给出降级状态，接口不抛错', async () => {
   assert.equal(runtime.audio.playEffect('dialogue'), false);
 });
 
-test('演示模式音量使用独立LanMemory命名空间，退出后恢复日常设置', () => {
+test('演示模式音量使用独立音效偏好命名空间，退出后恢复日常设置', () => {
   const storage = new Map([[key, JSON.stringify({ settings: { audio: { enabled: true, volume: 42 } } })]]);
   let demoActive = true;
   const demoManager = { storageKey(value) { return demoActive ? `demoArchive::${value}` : value; } };
   const runtime = createRuntime(storage, true, demoManager);
   runtime.audio.setVolume(91);
   assert.equal(JSON.parse(storage.get(key)).settings.audio.volume, 42);
-  assert.equal(JSON.parse(storage.get(`demoArchive::${key}`)).settings.audio.volume, 91);
+  assert.equal(JSON.parse(storage.get(`demoArchive::${audioPrefsKey}`)).volume, 91);
   demoActive = false;
   runtime.audio.reloadSettings();
   assert.equal(runtime.audio.state.volume, 42);

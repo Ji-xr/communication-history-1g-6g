@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>详情弹窗关闭按钮布局验收</title>
+<style>body{font:16px system-ui;margin:16px}iframe{display:block;border:1px solid #999;margin-bottom:16px}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style>
+<h1>详情弹窗布局验收</h1><p>仅加载真实样式及modal/closeModal函数，不启动应用，不读写存档。</p>
+<pre id="results">加载中…</pre><div id="frames"></div>
+<script>
+(async()=>{
+ const report={status:'RUNNING',layouts:[],errors:[]};
+ try{
+  const [sourceResponse,indexResponse]=await Promise.all([fetch('../../app.js',{cache:'no-store'}),fetch('../../index.html',{cache:'no-store'})]);
+  if(!sourceResponse.ok||!indexResponse.ok)throw Error('源码/首页读取失败');
+  const source=await sourceResponse.text(),index=await indexResponse.text();
+  const functions=source.split(/\r?\n/).find(line=>line.startsWith('function modal(content)'));
+  if(!functions?.includes('function closeModal('))throw Error('未找到真实弹窗函数');
+  const parsed=new DOMParser().parseFromString(index,'text/html');
+  const styles=[...parsed.querySelectorAll('link[rel="stylesheet"]')].map(link=>'<link rel="stylesheet" href="'+new URL(link.getAttribute('href'),new URL('../../',location.href)).href+'">').join('');
+  for(const width of [320,360,390,430,1366]){
+   const frame=document.createElement('iframe');frame.title=width+'px真实样式';frame.style.width=width+'px';frame.style.height='768px';
+   const ready=new Promise(resolve=>frame.onload=resolve);document.getElementById('frames').append(frame);
+   frame.srcdoc='<!doctype html><meta charset="utf-8">'+styles+'<button id="trigger">打开测试弹窗</button><div id="modalRoot"></div>';await ready;
+   const w=frame.contentWindow,d=w.document;
+   w.eval("var modalTrigger=null,currentExhibitSource='search',currentExhibitId='1G',route='search';function pauseFlow(){}\n"+functions);
+   d.getElementById('trigger').focus();
+   const content='<h2>1G技术原理：覆盖、容量与移动中的无线链路</h2><p>长术语：CommunicationSensingIntegrationDemonstration</p>'+('<p>这是布局测试正文。覆盖与容量的资料应正常横向阅读，长篇内容可以滚动，不应把关闭按钮挤成竖排。</p>'.repeat(35));
+   w.modal(content);await new Promise(resolve=>w.requestAnimationFrame(()=>w.requestAnimationFrame(resolve)));
+   const modal=d.querySelector('.modal'),button=d.querySelector('.modal-head > .close'),body=d.querySelector('.modal-head > div');
+   const r=button.getBoundingClientRect(),m=modal.getBoundingClientRect(),b=body.getBoundingClientRect(),s=w.getComputedStyle(button);
+   const range=d.createRange();range.selectNodeContents(button);const lines=[...range.getClientRects()];
+   const hit=d.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+   const layout={width,viewport:w.innerWidth,label:button.textContent,whiteSpace:s.whiteSpace,writingMode:s.writingMode,button:{x:r.x,y:r.y,width:r.width,height:r.height},modal:{x:m.x,y:m.y,width:m.width,height:m.height},textLines:lines.length,clickable:button===hit||button.contains(hit),scrollable:modal.scrollHeight>modal.clientHeight,bodyFullWidth:Math.abs(b.width-d.querySelector('.modal-head').getBoundingClientRect().width)<2};
+   report.layouts.push(layout);
+   if(s.whiteSpace!=='nowrap'||s.writingMode!=='horizontal-tb'||lines.length!==1||r.height<44||!layout.clickable||!layout.bodyFullWidth||r.left<m.left||r.right>m.right+1||r.bottom>b.top+1||d.documentElement.scrollWidth>w.innerWidth+1)throw Error('布局未通过 '+width);
+   modal.scrollTop=100;if(!layout.scrollable||modal.scrollTop===0)throw Error('正文不能滚动 '+width);
+   modal.scrollTop=0;button.click();
+   if(d.getElementById('modalRoot').innerHTML||d.activeElement?.id!=='trigger')throw Error('关闭/返回焦点失败 '+width);
+  }
+  report.status='PASS';
+ }catch(error){report.status='FAIL';report.errors.push(String(error.stack||error))}
+ document.body.dataset.result=report.status;document.getElementById('results').textContent=JSON.stringify(report,null,2);
+})();
+</script></html>

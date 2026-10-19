@@ -5,6 +5,7 @@ const vm = require('node:vm');
 const Progress = require('../assets/js/progression-manager.js');
 
 const appSource = fs.readFileSync('app.js', 'utf8');
+const APP_VERSION = /^const APP_VERSION='([^']+)'/m.exec(appSource)?.[1];
 const ERA_IDS = ['1G', '2G', '3G', '4G', '5G', '6G'];
 
 function functionSource(name) {
@@ -39,7 +40,7 @@ function createHarness({ demo = false, state = {}, formalSave = null } = {}) {
     InteractionDebugger: { record: (...args) => calls.push(['trace', ...args]) },
   };
   const context = vm.createContext({
-    window, localStorage, state: currentState, eras, route: 'home',
+    window, localStorage, state: currentState, eras, route: 'home', APP_VERSION,
     reviewGuideActive: false, reviewGuideStage: 0, progression: { state: { currentEra: null } },
     defaultState: () => ({ visited: [], completed: [], order: [], logs: [], evidence: [], clues: {}, tasks: {} }),
     normalizeSavedState: (raw) => ({ ...context.defaultState(), ...raw }),

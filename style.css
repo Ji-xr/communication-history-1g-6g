@@ -65,3 +65,33 @@ body[data-current-era="6G"] .stars{opacity:0}
 .knowledge-page-list button{min-width:40px;min-height:40px;padding:6px}
 .knowledge-page-list button[aria-current="page"]{border:1px solid var(--cyan);color:#fff;background:#17314a}
 .knowledge-page-status{color:var(--muted);font-size:.82rem;white-space:nowrap}
+/* Keep the close control separate from full-width modal reading content. */
+.modal-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+.modal-head > div {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+  max-width: 100%;
+}
+.modal-head > .close {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: end;
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 76px;
+  min-height: 44px;
+  max-width: 100%;
+  white-space: nowrap;
+  writing-mode: horizontal-tb;
+  overflow-wrap: normal;
+  word-break: normal;
+  line-height: 1.25;
+}

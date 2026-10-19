@@ -26,9 +26,13 @@ function beginEra(era, { require6GEvidence = true } = {}) {
   assert.equal(manager.discoverExhibit(`exhibit-${era}`, era).ok, true);
   assert.equal(manager.completeScene().ok, true);
   assert.equal(manager.currentNode().key, 'investigation');
+  if (era === '6G') {
+    state.evidence.push(...REQUIRED_6G.map(evidenceId => ({ evidenceId, eraId: '6G' })));
+    manager.state.evidence.push(...REQUIRED_6G);
+  }
   assert.equal(manager.completeInvestigation().ok, true);
   state.evidence.push({ evidenceId: `evidence.${era.toLowerCase()}.investigation`, eraId: era });
-  manager.state.evidence = [`evidence.${era.toLowerCase()}.investigation`];
+  manager.state.evidence.push(`evidence.${era.toLowerCase()}.investigation`);
   if (era !== '6G') {
     state.evidence.push({ evidenceId: 'historical-evidence', eraId: era });
     manager.state.evidence.push('historical-evidence');
@@ -43,17 +47,14 @@ test('六个时代都只含五个正式节点，技术实验完成后等待用�
     assert.deepEqual(record.nodes.map(node => node.key), ['entry', 'scene', 'investigation', 'technology', 'archive']);
     assert.equal(record.nodes.some(node => node.key === 'life'), false);
     assert.equal(manager.currentNode().key, 'technology');
-    assert.equal(manager.completeTechnology({ holdCurrent: true }).ok, true);
+    const result = manager.completeTechnology({ holdCurrent: true });
+    assert.equal(result.ok, true, `${era}技术实验应可完成：${result.reason || ''}`);
     assert.equal(manager.currentNode().key, 'technology', `${era}仍停留在技术实验室，不能自动跳转`);
     assert.equal(manager.requestNode(era, nodeId(era, 'life')).ok, false);
     if (era === '6G') {
       const readiness = manager.getArchiveReadiness(era);
-      assert.equal(readiness.ok, false);
-      assert.deepEqual(readiness.missingEvidence, REQUIRED_6G);
-      assert.equal(record.nodes.find(node => node.key === 'archive').status, 'LOCKED');
-      state.evidence.push(...REQUIRED_6G.map(evidenceId => ({ evidenceId, eraId: '6G' })));
-      manager.state.evidence.push(...REQUIRED_6G);
-      manager.validateAndRepair();
+      assert.equal(readiness.ok, true, '6G研究检查应先于技术实验和档案出口完成');
+      assert.deepEqual(readiness.missingEvidence, []);
     }
     assert.equal(manager.getArchiveReadiness(era).ok, true, `${era}已有调查、技术及必要证据`);
     assert.equal(manager.requestNode(era, nodeId(era, 'archive')).ok, true);

@@ -12,8 +12,8 @@ test('答题选择立即判定并用状态类标记正误', () => {
 });
 
 test('默认约一秒自动切题，主动看答案会暂停并显示继续按钮', () => {
-  assert.match(app, /setTimeout\(\(\)=>\{if\(quizSession\?\.feedback&&!quizSession\.completed&&!quizSession\.showAnswer\)nextQuizQuestion\(\)\},1000\)/);
-  assert.match(app, /function revealQuizAnswer\(\)[\s\S]*?clearTimeout\(quizAutoTimer\)[\s\S]*?showAnswer=true/);
+  assert.match(app, /function scheduleQuizAdvance\(\)\{clearTimeout\(quizAutoTimer\);quizAutoTimer=setTimeout\(\(\)=>advanceQuizQuestion\('auto'\),1000\)\}/);
+  assert.match(app, /function revealQuizAnswer\(\)[\s\S]*?clearTimeout\(quizAutoTimer\)[\s\S]*?explanationExpanded=!quizSession\.explanationExpanded/);
   assert.match(app, /onclick="nextQuizQuestion\(\)">下一题/);
   assert.match(app, /查看每题正确答案与解析/);
   assert.match(app, /quizSession\.completed[\s\S]*?得分/);

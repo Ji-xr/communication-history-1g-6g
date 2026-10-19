@@ -31,11 +31,14 @@ function runtimeFor(era) {
   const evidenceId = `evidence.${era.toLowerCase()}.investigation`;
   const state = {
     visited: [era], completed: priorCompleted, order: [era], clues: {}, logs: [],
-    evidence: [{ evidenceId, eraId: era }],
+    evidence: [
+      { evidenceId, eraId: era },
+      ...(era === '6G' ? ['evidence_6g_delay', 'evidence_6g_sensor', 'evidence_6g_ai', 'evidence_6g_twin'].map(id => ({ evidenceId: id, eraId: '6G' })) : [])
+    ],
     tasks: { [era]: { selected: 0, step: 1, understandingCompleted: false } }
   };
   const progression = createProgression(state, { save: () => true });
-  progression.state.evidence = [evidenceId];
+  progression.state.evidence = [evidenceId, ...(era === '6G' ? ['evidence_6g_delay', 'evidence_6g_sensor', 'evidence_6g_ai', 'evidence_6g_twin'] : [])];
   const nodes = progression.state.eras[era].nodes;
   for (const node of nodes) {
     node.status = ({ entry: 'COMPLETED', scene: 'COMPLETED', investigation: 'COMPLETED', technology: 'ACTIVE', archive: 'LOCKED' })[node.key];

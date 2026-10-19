@@ -49,10 +49,10 @@ test('6G研究方案是可选想法，跳过想法仍可完成节点和归档', 
   manager.enterEra('6G'); manager.completeDialogue('lan.6g.chapter-entry');
   manager.markDiscoverable('twin-6g', '6G'); manager.discoverExhibit('twin-6g', '6G');
   manager.requestNode('6G', nodeId('6G', 'scene')); manager.completeScene();
-  manager.requestNode('6G', nodeId('6G', 'investigation')); manager.completeInvestigation();
   const ids = ['evidence_6g_delay', 'evidence_6g_sensor', 'evidence_6g_ai', 'evidence_6g_twin'];
   state.evidence.push(...ids.map(evidenceId => ({ evidenceId, eraId: '6G' })), { evidenceId: 'evidence.6g.investigation', eraId: '6G' });
   manager.state.evidence = ids.concat('evidence.6g.investigation');
+  manager.requestNode('6G', nodeId('6G', 'investigation')); manager.completeInvestigation();
   manager.requestNode('6G', nodeId('6G', 'technology'));
   assert.equal(manager.completeTechnology().ok, true);
   manager.requestNode('6G', nodeId('6G', 'archive'));

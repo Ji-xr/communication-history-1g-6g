@@ -93,6 +93,11 @@ test('旧存档已有必看展品记录时，进入章节渲染会安全补齐�
 test('1G—6G揭晓调查结果后立即完成建设调查、保存唯一证据并停留等待手动导航', () => {
   for (const era of eraIds) {
     const { state, progression, ctx, events } = runtimeFor(era, 'investigation');
+    if (era === '6G') {
+      const required = ['evidence_6g_delay', 'evidence_6g_sensor', 'evidence_6g_ai', 'evidence_6g_twin'];
+      state.evidence.push(...required.map(evidenceId => ({ evidenceId, eraId: '6G' })));
+      progression.state.evidence.push(...required);
+    }
     ctx.selected = 0;
     ctx.taskStep = 0;
     assert.equal(vm.runInContext('setTaskStep(1)', ctx), true, `${era}: result reveal succeeds`);

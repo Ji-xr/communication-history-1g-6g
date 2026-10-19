@@ -231,6 +231,8 @@ test('只有点击“进入历史现场”才触发已配置的现场观察对�
   assert.equal(runtime.lan.currentDialogue, null, '入口对白结束后等待手动章节操作');
 
   const navigationSource = between(appSource, 'function navigateChapterNext(', '\nfunction chapterNavigationMarkup(');
+  const dialogueBlockingSource = between(appSource, 'function chapterDialogueBlocking(', '\nfunction releaseChapterHint(');
+  const releaseHintSource = between(appSource, 'function releaseChapterHint(', '\nfunction chapterNodeBlockReason(');
   const window = { CommsArchiveLan: runtime.lan, InteractionDebugger: { record() {} }, DemoManager: { isActive: () => false } };
   const context = vm.createContext({
     window, state, progression, route: 'chapter', eraIndex: 0, eras: [{ id: '1G' }],
@@ -239,7 +241,7 @@ test('只有点击“进入历史现场”才触发已配置的现场观察对�
     progressionBlock(result) { throw new Error(result.reason); }, pendingRouteScrollRestore: null,
     render() {}, dispatchLanEvent(event, detail) { return runtime.lan.dispatchEvent(event, detail); }
   });
-  vm.runInContext(`${navigationSource}\nglobalThis.__navigateChapterNext=navigateChapterNext;`, context);
+  vm.runInContext(`${dialogueBlockingSource}\n${releaseHintSource}\n${navigationSource}\nglobalThis.__navigateChapterNext=navigateChapterNext;`, context);
   assert.equal(context.__navigateChapterNext(), true);
   assert.equal(progression.currentNode().key, 'scene');
   assert.equal(runtime.lan.currentDialogue?.id, 'lan_1g_observe_001');

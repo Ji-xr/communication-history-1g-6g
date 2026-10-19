@@ -100,6 +100,37 @@ test('B03 五种中文比较表达、英文vs和中文代际名称均返回对�
   assert.match(answer('4G vs 5G'),/4G：.*5G：/);
   assert.match(answer('5G和6G相比'),/6G：.*研究/);
 });
+
+test('知识搜索可返回搜索前页面并恢复时代与滚动位置',()=>{
+  const ctx=vm.createContext({
+    state:{completed:[]},route:'chapter',eraIndex:3,knowledgeSearchReturnContext:null,
+    archiveReturnContext:null,pendingRouteScrollRestore:null,transitionInProgress:false,
+    galleryActive:false,galleryReturn:false,travelTimer:null,reviewGuideActive:false,
+    eras:[{id:'4G'}],clearTimeout(){},close3DGallery(){},
+    window:{scrollY:845,InteractionDebugger:{record(){}},DemoManager:{saveView(){}},CommsArchiveLan:{dismissRouteDialogue(){}}},
+    renderSnapshots:[]
+  });
+  ctx.render=()=>ctx.renderSnapshots.push({route:ctx.route,eraIndex:ctx.eraIndex,scrollY:ctx.pendingRouteScrollRestore});
+  vm.runInContext(`${fn('go')}\n${fn('returnFromKnowledgeSearch')}`,ctx);
+  assert.equal(vm.runInContext("go('search')",ctx),true);
+  assert.equal(ctx.knowledgeSearchReturnContext.route,'chapter');
+  assert.equal(ctx.knowledgeSearchReturnContext.eraIndex,3);
+  assert.equal(ctx.knowledgeSearchReturnContext.scrollY,845);
+  assert.equal(vm.runInContext("go('ask');go('search')",ctx),true,'在搜索和问答之间切换时保留原始页面');
+  assert.equal(ctx.knowledgeSearchReturnContext.route,'chapter');
+  assert.equal(vm.runInContext('returnFromKnowledgeSearch()',ctx),true);
+  assert.equal(ctx.route,'chapter');
+  assert.equal(ctx.eraIndex,3);
+  assert.equal(ctx.pendingRouteScrollRestore,845);
+  assert.equal(ctx.knowledgeSearchReturnContext,null);
+  assert.equal(ctx.renderSnapshots.at(-1).route,'chapter');
+  ctx.route='archive';ctx.archiveReturnContext={route:'chapter',eraIndex:3,scrollY:412};
+  assert.equal(vm.runInContext("go('search')",ctx),true);
+  assert.equal(ctx.archiveReturnContext.route,'chapter','从档案馆进入搜索时保留档案馆自己的返回位置');
+  assert.equal(vm.runInContext('returnFromKnowledgeSearch()',ctx),true);
+  assert.equal(ctx.route,'archive');
+  assert.equal(ctx.archiveReturnContext.scrollY,412);
+});
 test('B03 单代问题即使带其他主题词，也不能被改答为另一代',()=>{
   assert.match(answer('4G工业应用有什么特点？'),/^4G/);
   assert.match(answer('2G与移动互联网有什么关系？'),/^2G/);

@@ -28,7 +28,7 @@ test('搜索页提供知识挑战入口，展品结果可直接打开详情', ()
   const api = window.CommsArchiveKnowledgeSearch;
   assert.match(api.renderPage(), /知识挑战/);
   assert.equal(api.openResult('exhibit.2g-phone', '2G'), true);
-  assert.equal(entered, 1);
+  assert.equal(entered, '', '直接打开搜索命中的展品详情不应切换时代或覆盖当前调查页面');
   assert.equal(exhibit, '2G:search:2g-phone');
 });
 
