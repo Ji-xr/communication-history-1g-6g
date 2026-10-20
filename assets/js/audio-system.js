@@ -1,4 +1,4 @@
-/* 《通信简史》可选短提示音；不创建持续播放的背景振荡器。 */
+/* Local interface effects; ExhibitionSoundtrack shares this audio context for optional music. */
 (function (root) {
   'use strict';
   const LEGACY_MEMORY_KEY = 'commsArchive.lanMemory.v1';
@@ -69,7 +69,7 @@
   function audioIsHidden() { return root.document?.visibilityState === 'hidden'; }
   function applyMasterLevel() { if (master && context) master.gain.setTargetAtTime(state.enabled ? state.volume / 100 : 0, context.currentTime, .015); }
   function createContext() {
-    if (!userGestureSeen || !state.enabled || audioIsHidden()) return null;
+    if (!userGestureSeen || (!state.enabled&&!root.ExhibitionSoundtrack?.state.enabled) || audioIsHidden()) return null;
     if (context) return context;
     const Context = root.AudioContext || root.webkitAudioContext;
     if (!Context) { setStatus('此浏览器不支持本地提示音；不影响探索。'); return null; }
@@ -79,7 +79,7 @@
     } catch (_) { context = null; master = null; setStatus('提示音不可用，不影响探索。'); return null; }
   }
   async function activate() {
-    if (!state.enabled || !userGestureSeen || audioIsHidden()) return false;
+    if ((!state.enabled&&!root.ExhibitionSoundtrack?.state.enabled) || !userGestureSeen || audioIsHidden()) return false;
     const audio = createContext(); if (!audio) return false;
     try { if (audio.state === 'suspended') await audio.resume(); applyMasterLevel(); setStatus('短提示音已开启。'); return true; }
     catch (_) { setStatus('提示音不可用，不影响探索。'); return false; }
@@ -97,7 +97,7 @@
   }
   function setEnabled(enabled) {
     state.enabled = !!enabled; persist();
-    if (!state.enabled) { stopActiveEffects(); applyMasterLevel(); if (context?.state === 'running') context.suspend().catch(() => {}); setStatus('提示音已关闭。'); }
+    if (!state.enabled) { stopActiveEffects(); applyMasterLevel(); if (!root.ExhibitionSoundtrack?.state.enabled&&context?.state === 'running') context.suspend().catch(() => {}); setStatus('提示音已关闭。'); }
     else if (userGestureSeen) activate();
     else setStatus('提示音已开启；首次点击后播放。');
     syncControls();
@@ -108,6 +108,7 @@
   function setEra(era) {
     state.era = /^([1-6])G$/.test(String(era || '')) ? String(era).toUpperCase() : null;
     state.currentTrack = state.era ? `era_${state.era.toLowerCase()}` : 'archive_hall';
+    root.ExhibitionSoundtrack?.setEra(state.era);
   }
   function emitEffect(audio, notes) {
     if (audio !== context || !state.enabled || audioIsHidden() || audio.state !== 'running') return false;
@@ -127,7 +128,7 @@
     } catch (_) { stopActiveEffects(); setStatus('提示音不可用；不影响探索。'); return false; }
   }
   function playEffect(kind = 'click', options = {}) {
-    if (!userGestureSeen || !state.enabled || audioIsHidden()) return false;
+    if (!userGestureSeen || (!state.enabled&&!root.ExhibitionSoundtrack?.state.enabled) || audioIsHidden()) return false;
     const patterns = { dialogue: [523.25, 659.25], exhibit: [392, 523.25], complete: [523.25, 659.25, 783.99], archive: [659.25, 783.99, 987.77], click: [440] };
     const name = patterns[kind] ? kind : 'click', now = Date.now(), key = typeof options?.key === 'string' ? options.key : '';
     if (key && playedKeys.has(key)) return false;
@@ -157,7 +158,7 @@
     if (panel || !root.document?.body) return;
     panel = root.document.createElement('section'); panel.id = 'audioSettings'; panel.className = 'audio-settings'; panel.hidden = true;
     panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true'); panel.setAttribute('aria-labelledby', 'audioSettingsTitle');
-    panel.innerHTML = `<div class="audio-settings-card"><button type="button" class="audio-settings-close" aria-label="关闭体验设置">×</button><span class="eyebrow">EXPERIENCE SETTINGS</span><h2 id="audioSettingsTitle">体验设置</h2><section class="settings-group"><h3>声音</h3><label class="audio-toggle"><input id="audioEnabled" type="checkbox"><span>开启短提示音</span></label><label class="audio-volume-label" for="audioVolume">音量 <output id="audioVolumeValue">70%</output></label><input id="audioVolume" type="range" min="0" max="100" step="1"><p class="audio-note">首次访问默认静音。提示音由浏览器实时合成，不是历史现场录音；只在启用后播放短音效。</p></section><section class="settings-group"><h3>显示与陪伴</h3><label class="audio-volume-label" for="displayBrightness">网站亮度 <output id="displayBrightnessValue">100%</output></label><input id="displayBrightness" type="range" min="80" max="120" step="1"><label class="setting-select-label" for="lanDisplayMode">澜显示模式</label><select id="lanDisplayMode"><option value="auto">自动</option><option value="always">始终陪伴</option><option value="minimal">简洁模式</option></select><label class="audio-toggle setting-hints-toggle"><input id="operationHints" type="checkbox"><span>显示操作提示</span></label></section><p id="audioStatus" class="audio-status" role="status" aria-live="polite"></p></div>`;
+    panel.innerHTML = `<div class="audio-settings-card"><button type="button" class="audio-settings-close" aria-label="关闭体验设置">×</button><span class="eyebrow">EXPERIENCE SETTINGS</span><h2 id="audioSettingsTitle">体验设置</h2><section class="settings-group"><h3>展厅配乐</h3><label class="audio-toggle"><input id="musicEnabled" type="checkbox"><span>开启安静科技展厅配乐</span></label><label class="audio-volume-label" for="musicVolume">配乐音量 <output id="musicVolumeValue">22%</output></label><input id="musicVolume" type="range" min="0" max="50" step="1"><p id="musicStatus" class="audio-status" role="status"></p><p class="audio-note">本地合成的原创氛围配乐，随时代变化。首次点击后才可播放；对白时降低音量，页面转到后台时暂停。</p></section><section class="settings-group"><h3>操作提示音</h3><label class="audio-toggle"><input id="audioEnabled" type="checkbox"><span>开启短提示音</span></label><label class="audio-volume-label" for="audioVolume">音量 <output id="audioVolumeValue">70%</output></label><input id="audioVolume" type="range" min="0" max="100" step="1"><p class="audio-note">首次访问默认静音。提示音由浏览器实时合成，不是历史现场录音；只在启用后播放短音效。</p></section><section class="settings-group"><h3>显示与陪伴</h3><label class="audio-volume-label" for="displayBrightness">网站亮度 <output id="displayBrightnessValue">100%</output></label><input id="displayBrightness" type="range" min="80" max="120" step="1"><label class="setting-select-label" for="lanDisplayMode">澜显示模式</label><select id="lanDisplayMode"><option value="auto">自动</option><option value="always">始终陪伴</option><option value="minimal">简洁模式</option></select><label class="audio-toggle setting-hints-toggle"><input id="operationHints" type="checkbox"><span>显示操作提示</span></label></section><p id="audioStatus" class="audio-status" role="status" aria-live="polite"></p></div>`;
     root.document.body.append(panel); statusNode = panel.querySelector('#audioStatus');
     panel.querySelector('.audio-settings-close').addEventListener('click', closeSettings);
     panel.addEventListener('click', event => { if (event.target === panel) closeSettings(); });
@@ -186,13 +187,14 @@
     root.addEventListener?.('pagehide', suspendForBackground);
   }
   function reloadSettings() {
+    root.ExhibitionSoundtrack?.reloadSettings?.();
     state = readSettings(); uiPrefs = readUiPrefs(); applyUiPrefs();
-    if (!state.enabled) { stopActiveEffects(); if (context?.state === 'running') context.suspend().catch(() => {}); }
+    if (!state.enabled) { stopActiveEffects(); if (!root.ExhibitionSoundtrack?.state.enabled&&context?.state === 'running') context.suspend().catch(() => {}); }
     else if (context && userGestureSeen && !audioIsHidden() && context.state === 'suspended') context.resume().then(applyMasterLevel).catch(() => {});
     else applyMasterLevel();
     return { ...state, ...uiPrefs };
   }
-  const AudioSystem = { init, openSettings, closeSettings, setEnabled, setVolume, setEra, playEffect, reloadSettings, setBrightness, setLanMode, setOperationHints,
+  const AudioSystem = { acquireContext:createContext, init, openSettings, closeSettings, setEnabled, setVolume, setEra, playEffect, reloadSettings, setBrightness, setLanMode, setOperationHints,
     get state() { return { ...state, ...uiPrefs }; } };
   root.AudioSystem = AudioSystem;
   if (root.document?.readyState === 'loading') root.document.addEventListener('DOMContentLoaded', init, { once: true }); else init();

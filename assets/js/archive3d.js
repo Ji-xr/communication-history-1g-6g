@@ -36,6 +36,7 @@ threeModulePromise.catch(() => {});
 window.CommunicationsHistory3D = {
   status: 'loading',
   async mount(options) {
+    this.status = 'loading';
     const instanceId = ++nextGalleryInstanceId;
     activeInstanceId = instanceId;
     console.info('ARCHIVE3D_INIT_START', { stage: 'renderer-create' });
@@ -48,6 +49,7 @@ window.CommunicationsHistory3D = {
       reportRuntimeStage('THREE_CHECK', { instanceId, threeLoaded: !!THREE?.WebGLRenderer, threeRevision: THREE?.REVISION || null });
       activeGallery = createGallery(THREE, options, instanceId);
       if (!await activeGallery.firstFrameReady) throw new Error(runtimeDiagnostics.reason || 'Three.js 首帧未能完成渲染。');
+      if (instanceId !== activeInstanceId || !activeGallery) throw new Error(`展厅初始化实例 ${instanceId} 已被关闭或替代。`);
       this.status = 'ready';
       window.CommsArchive3DStatus = { ...window.CommsArchive3DStatus, status: 'ready', reason: null, stage: 'first-frame-rendered', frameCount: activeGallery.debugSnapshot().frameCount, animationRunning: true };
       console.info('ARCHIVE3D_INIT_SUCCESS', { stage: 'first-frame-rendered', instanceId, frameCount: window.CommsArchive3DStatus.frameCount });
@@ -71,6 +73,16 @@ window.CommunicationsHistory3D = {
   enterSelected(index) {
     if (activeGallery && Number.isInteger(index)) activeGallery.enter(index);
   },
+  dispose() {
+    // Also invalidate an in-flight mount whose first frame has not completed.
+    activeInstanceId = ++nextGalleryInstanceId;
+    activeGallery?.dispose();
+    activeGallery = null;
+    selectedIndex = null;
+    selectedExhibitId = null;
+    this.status = 'idle';
+    window.CommsArchive3DStatus = { ...window.CommsArchive3DStatus, status: 'idle', stage: 'disposed', reason: null, animationRunning: false };
+  },
   debugSnapshot() {
     return activeGallery?.debugSnapshot?.() || { available: false, inputEnabled: false };
   }
@@ -89,6 +101,8 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
   reportRuntimeStage('CONTAINER_CHECK', { width: Math.round(initialRect.width), height: Math.round(initialRect.height), connected: container.isConnected });
   if (initialRect.width <= 0 || initialRect.height <= 0) throw new Error(`3D展厅容器尺寸无效：${Math.round(initialRect.width)}×${Math.round(initialRect.height)}。`);
   const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false;
+  selectedIndex = null;
+  selectedExhibitId = null;
   const narrowDevice = window.innerWidth < 700;
   const lowMemory = typeof navigator !== 'undefined' && typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 4;
   const lowPower = narrowDevice || lowMemory;
@@ -212,9 +226,15 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
     group.add(sign);
     labelTextures.push(sign.material.map);
     const exhibitRoot = new THREE.Group();
+    // Keep each artifact's origin at its display position: focus and proximity
+    // checks use this root, while makeArtifact builds its meshes in local space.
+    exhibitRoot.position.set(x, 0, z);
+    // The handset screens are modeled on their -Z side; face the entrance,
+    // where the initial camera and close-up views sit on the +Z side.
+    if (index < 4) exhibitRoot.rotation.y = Math.PI;
     exhibitRoot.userData.eraIndex = index;
     exhibitRoot.userData.exhibitId = era.exhibitIds?.[0] || `exhibit.${era.id.toLowerCase()}.primary`;
-    makeArtifact(THREE, exhibitRoot, era, index, x, z, color, animated);
+    makeArtifact(THREE, exhibitRoot, era, index, 0, 0, color, animated);
     exhibitRoot.traverse(obj => { if (obj.isMesh) { obj.userData.isExhibit = true; obj.userData.exhibitId = exhibitRoot.userData.exhibitId; } });
     group.add(exhibitRoot);
     exhibitRoots.push(exhibitRoot);
@@ -239,6 +259,11 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
   function updateCamera() {
     const sinPhi = Math.sin(phi);
     camera.position.set(target.x + radius * sinPhi * Math.sin(theta), target.y + radius * Math.cos(phi), target.z + radius * sinPhi * Math.cos(theta));
+    // The corridor is enclosed. Orbit/zoom must keep the near plane inside its
+    // walls, floor and ceiling, otherwise a small drag hides every exhibit.
+    camera.position.x = THREE.MathUtils.clamp(camera.position.x, -6.3, 6.3);
+    camera.position.y = THREE.MathUtils.clamp(camera.position.y, 0.6, 9.1);
+    camera.position.z = THREE.MathUtils.clamp(camera.position.z, -78, 10.5);
     camera.lookAt(target);
   }
   updateCamera();
@@ -250,8 +275,8 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
   let pointerDown = null;
   let frame = 0;
   let disposed = false;
+  let renderFailed = false;
   let instanceFrameCount = 0;
-  let lastTap = 0;
   let pinchDistance = 0;
   let hoveredEra = -1;
   let hoveredExhibitId = null;
@@ -329,8 +354,9 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
     cameraMotion = { from: viewSnapshot(), to, start: performance.now(), duration };
   }
   function focusExhibit(index, exhibitId) {
+    if (disposed || renderFailed || !Number.isInteger(index) || index < 0 || index >= eras.length) return;
     const root = (exhibitId && exhibitObjectRoots.get(exhibitId)) || exhibitRoots[index];
-    if (!root) return;
+    if (!root || root.userData.eraIndex !== index) return;
     selectedIndex = index;
     selectedExhibitId = exhibitId || root.userData.exhibitId || null;
     if (!savedView) savedView = viewSnapshot();
@@ -338,7 +364,7 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
     tweenView({ target: new THREE.Vector3(position.x, position.y + 1.15, position.z), theta: 0.12, phi: 1.42, radius: 7.8 });
   }
   function returnView() {
-    if (!savedView) return;
+    if (disposed || !savedView) return;
     const oldView = savedView;
     savedView = null;
     tweenView(oldView);
@@ -356,6 +382,9 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
     if (t >= 1) cameraMotion = null;
   }
   listen(canvas, 'pointerdown', event => {
+    if (renderFailed) return;
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    canvas.focus({ preventScroll: true });
     canvas.setPointerCapture(event.pointerId);
     activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (activePointers.size === 1) pointerDown = { x: event.clientX, y: event.clientY, id: event.pointerId, moved: false };
@@ -366,6 +395,7 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
     }
   });
   listen(canvas, 'pointermove', event => {
+    if (renderFailed) return;
     if (!activePointers.has(event.pointerId) || !pointerDown) {
       if (event.pointerType === 'mouse') hoverAt(event.clientX, event.clientY);
       return;
@@ -379,7 +409,7 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
       const d = Math.hypot(a.x - b.x, a.y - b.y);
       if (pinchDistance && d) radius = THREE.MathUtils.clamp(radius + (pinchDistance - d) * 0.055, 6.5, 67);
       pinchDistance = d;
-    } else if (event.buttons) {
+    } else if (event.buttons || event.pointerType === 'touch') {
       const dx = event.clientX - previous.x, dy = event.clientY - previous.y;
       if (Math.hypot(event.clientX - pointerDown.x, event.clientY - pointerDown.y) > 4) pointerDown.moved = true;
       theta -= dx * 0.005;
@@ -391,11 +421,30 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
     const wasSingleTap = activePointers.size === 1 && pointerDown && pointerDown.id === event.pointerId && !pointerDown.moved;
     activePointers.delete(event.pointerId);
     if (wasSingleTap) selectAt(event.clientX, event.clientY);
-    if (!activePointers.size) { pointerDown = null; pinchDistance = 0; }
+    finishPointer(event.pointerId);
   });
-  listen(canvas, 'pointercancel', event => { activePointers.delete(event.pointerId); pointerDown = null; pinchDistance = 0; });
-  listen(canvas, 'wheel', event => { event.preventDefault(); cameraMotion = null; radius = THREE.MathUtils.clamp(radius + event.deltaY * 0.025, 6.5, 67); updateCamera(); }, { passive: false });
+  function finishPointer(pointerId) {
+    activePointers.delete(pointerId);
+    pinchDistance = 0;
+    if (activePointers.size === 1) {
+      const [id, point] = [...activePointers.entries()][0];
+      // A remaining finger continues dragging, but the pinch can never turn
+      // into an unintended click when it is finally released.
+      pointerDown = { ...point, id, moved: true };
+    } else if (!activePointers.size) pointerDown = null;
+    else {
+      const [a, b] = [...activePointers.values()];
+      pinchDistance = Math.hypot(a.x - b.x, a.y - b.y);
+    }
+  }
+  listen(canvas, 'pointercancel', event => finishPointer(event.pointerId));
+  listen(canvas, 'lostpointercapture', event => {
+    if (activePointers.has(event.pointerId)) finishPointer(event.pointerId);
+  });
+  listen(canvas, 'pointerleave', () => { if (!activePointers.size) setHovered(-1); });
+  listen(canvas, 'wheel', event => { event.preventDefault(); if (renderFailed) return; cameraMotion = null; radius = THREE.MathUtils.clamp(radius + event.deltaY * 0.025, 6.5, 67); updateCamera(); }, { passive: false });
   listen(canvas, 'keydown', event => {
+    if (renderFailed) return;
     const step = event.shiftKey ? 0.22 : 0.1;
     if (event.key === 'ArrowLeft') theta -= step;
     else if (event.key === 'ArrowRight') theta += step;
@@ -468,8 +517,27 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
   let resolveFirstFrame;
   const firstFrameReady = new Promise(resolve => { resolveFirstFrame = resolve; });
   let firstFrameRendered = false;
+  function failRender(reason, error) {
+    if (disposed || renderFailed) return;
+    renderFailed = true;
+    activePointers.clear();
+    pointerDown = null;
+    cameraMotion = null;
+    runtimeDiagnostics.animationRunning = false;
+    window.CommunicationsHistory3D.status = 'failed';
+    window.CommsArchive3DStatus = { ...window.CommsArchive3DStatus, status: 'failed', reason, stage: 'render', frameCount: instanceFrameCount, animationRunning: false };
+    reportRuntimeStage('FAILED', { instanceId, reason, error: error?.stack || String(error || reason), frameCount: instanceFrameCount });
+    resolveFirstFrame(false);
+    window.dispatchEvent(new CustomEvent('comms-archive-gallery-error'));
+  }
+  listen(canvas, 'webglcontextlost', event => {
+    event.preventDefault();
+    cancelAnimationFrame(frame);
+    failRender('图形上下文已丢失，请重新进入三维展厅或继续二维浏览。');
+  });
   function animate(ms) {
     if (disposed || instanceId !== activeInstanceId) return;
+    if (renderFailed) return;
     frame = requestAnimationFrame(animate);
     const time = ms * 0.001;
     updateViewMotion(ms);
@@ -503,11 +571,8 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
     } catch (error) {
       cancelAnimationFrame(frame);
       const reason = `渲染失败（第 ${instanceFrameCount + 1} 帧）：${error?.message || String(error)}`;
-      runtimeDiagnostics.animationRunning = false;
-      window.CommsArchive3DStatus = { ...window.CommsArchive3DStatus, status: 'failed', reason, stage: 'render', frameCount: instanceFrameCount, animationRunning: false };
       console.error('ARCHIVE3D_RENDER_FAILED', { instanceId, frameCount: instanceFrameCount, error: error?.stack || String(error) });
-      reportRuntimeStage('FAILED', { instanceId, reason, error: error?.stack || String(error), frameCount: instanceFrameCount });
-      resolveFirstFrame(false);
+      failRender(reason, error);
     }
   }
   console.info('ARCHIVE3D_ANIMATION_START', { instanceId, frameCount: instanceFrameCount });
@@ -516,11 +581,11 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
   frame = requestAnimationFrame(animate);
   return {
     firstFrameReady,
-    enter(index) { if (Number.isInteger(index) && index >= 0 && index < eras.length) onEnter(index); },
+    enter(index) { if (!disposed && !renderFailed && Number.isInteger(index) && index >= 0 && index < eras.length) onEnter(index); },
     debugSnapshot() {
       const rect = canvas.getBoundingClientRect();
       const style = getComputedStyle(canvas);
-      return { available: !disposed, inputEnabled: !disposed && canvas.isConnected, instanceId, canvasFocused: document.activeElement === canvas, cameraMoving: !!cameraMotion, cameraPosition: camera.position.toArray(), cameraRotation: camera.rotation.toArray(), cameraTarget: target.toArray(), playerPosition: null, currentEra: eras[selectedIndex]?.id || null, currentExhibit: selectedExhibitId, hoveredEraIndex: hoveredEra, hoveredExhibitId, activePointers: activePointers.size, sceneObjects: scene.children.length, cameraAspect: camera.aspect, frameCount: instanceFrameCount, animationRunning: !disposed && instanceId === activeInstanceId && !window.CommsArchive3DStatus?.reason, canvasMounted: canvas.isConnected, canvasSize: { width: Math.round(rect.width), height: Math.round(rect.height) }, canvasVisibility: { display: style.display, visibility: style.visibility, opacity: style.opacity, zIndex: style.zIndex } };
+      return { available: !disposed && !renderFailed, inputEnabled: !disposed && !renderFailed && canvas.isConnected, instanceId, canvasFocused: document.activeElement === canvas, cameraMoving: !!cameraMotion, cameraPosition: camera.position.toArray(), cameraRotation: camera.rotation.toArray(), cameraTarget: target.toArray(), playerPosition: null, currentEra: eras[selectedIndex]?.id || null, currentExhibit: selectedExhibitId, hoveredEraIndex: hoveredEra, hoveredExhibitId, activePointers: activePointers.size, sceneObjects: scene.children.length, cameraAspect: camera.aspect, frameCount: instanceFrameCount, animationRunning: !disposed && instanceId === activeInstanceId && !window.CommsArchive3DStatus?.reason, canvasMounted: canvas.isConnected, canvasSize: { width: Math.round(rect.width), height: Math.round(rect.height) }, canvasVisibility: { display: style.display, visibility: style.visibility, opacity: style.opacity, zIndex: style.zIndex } };
     },
     focusExhibit,
     returnView,
@@ -528,6 +593,10 @@ function createGallery(THREE, { container, eras, onSelect, onEnter, onExhibit = 
       if (disposed) return;
       disposed = true;
       cancelAnimationFrame(frame);
+      resolveFirstFrame(false);
+      activePointers.clear();
+      pointerDown = null;
+      cameraMotion = null;
       if (window.CommsArchive3DStatus?.instanceId === instanceId) window.CommsArchive3DStatus.animationRunning = false;
       if (window.CommsArchive3DRuntime?.instanceId === instanceId) {
         runtimeDiagnostics.animationRunning = false;

@@ -1,0 +1,3836 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "320进入2G"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 2G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "2G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.2g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 8.77332592010498,
+          "top": 223.7550048828125,
+          "width": 287.12005615234375,
+          "height": 413.5433349609375,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -148, -204.64)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "2G对白不横向越界",
+      "detail": {
+        "left": 8.77332592010498,
+        "right": 295.89338207244873,
+        "width": 320
+      }
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 draft"
+    },
+    {
+      "ok": true,
+      "label": "2G超长emoji按可见字符截断且界面一致"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 draft"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 send"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 console"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 config"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 test"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 phone"
+    },
+    {
+      "ok": true,
+      "label": "2G切换控制台后中文和emoji保持完整"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 send"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 inbox"
+    },
+    {
+      "ok": true,
+      "label": "2G读取真实回复"
+    },
+    {
+      "ok": true,
+      "label": "320px无横向溢出 2G",
+      "detail": {
+        "scrollWidth": 305,
+        "innerWidth": 320
+      }
+    },
+    {
+      "ok": true,
+      "label": "320px操作反馈没有替代字符或孤立代理项 2G"
+    },
+    {
+      "ok": true,
+      "label": "320px触控高度 2G"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "2G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "2G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "2G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "2G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "2G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "2G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "2G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "320进入3G"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 3G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "3G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.3g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 8.77332592010498,
+          "top": 223.7550048828125,
+          "width": 287.12005615234375,
+          "height": 413.5433349609375,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -148, -204.64)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "3G对白不横向越界",
+      "detail": {
+        "left": 8.77332592010498,
+        "right": 295.89338207244873,
+        "width": 320
+      }
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 cities"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 city"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 weather"
+    },
+    {
+      "ok": true,
+      "label": "3G天气显示"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 back"
+    },
+    {
+      "ok": true,
+      "label": "3G键盘方向键"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 ok"
+    },
+    {
+      "ok": true,
+      "label": "3G确认键与点击一致"
+    },
+    {
+      "ok": true,
+      "label": "320px无横向溢出 3G",
+      "detail": {
+        "scrollWidth": 305,
+        "innerWidth": 320
+      }
+    },
+    {
+      "ok": true,
+      "label": "320px操作反馈没有替代字符或孤立代理项 3G"
+    },
+    {
+      "ok": true,
+      "label": "320px触控高度 3G"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "3G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "3G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "3G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "3G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "3G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "3G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "3G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "320进入4G"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 4G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "4G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.4g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 8.77332592010498,
+          "top": 210.73501586914062,
+          "width": 287.12005615234375,
+          "height": 440.70330810546875,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -148, -218.08)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "4G对白不横向越界",
+      "detail": {
+        "left": 8.77332592010498,
+        "right": 295.89338207244873,
+        "width": 320
+      }
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "4G视频可解码"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 play"
+    },
+    {
+      "ok": true,
+      "label": "4G实际播放"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 seek"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 volume"
+    },
+    {
+      "ok": true,
+      "label": "4G进度拖动"
+    },
+    {
+      "ok": true,
+      "label": "4G音量"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 pause"
+    },
+    {
+      "ok": true,
+      "label": "4G暂停"
+    },
+    {
+      "ok": true,
+      "label": "320px无横向溢出 4G",
+      "detail": {
+        "scrollWidth": 305,
+        "innerWidth": 320
+      }
+    },
+    {
+      "ok": true,
+      "label": "320px操作反馈没有替代字符或孤立代理项 4G"
+    },
+    {
+      "ok": true,
+      "label": "320px触控高度 4G"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "4G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "4G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "4G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "4G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "4G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "4G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "4G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "320进入5G"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 5G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "5G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.5g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 8.77332592010498,
+          "top": 223.7550048828125,
+          "width": 287.12005615234375,
+          "height": 413.5433349609375,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -148, -204.64)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "5G对白不横向越界",
+      "detail": {
+        "left": 8.77332592010498,
+        "right": 295.89338207244873,
+        "width": 320
+      }
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 forward"
+    },
+    {
+      "ok": true,
+      "label": "5G移动"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 right"
+    },
+    {
+      "ok": true,
+      "label": "5G转向"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 stop"
+    },
+    {
+      "ok": true,
+      "label": "5G实际日志"
+    },
+    {
+      "ok": true,
+      "label": "320px无横向溢出 5G",
+      "detail": {
+        "scrollWidth": 305,
+        "innerWidth": 320
+      }
+    },
+    {
+      "ok": true,
+      "label": "320px操作反馈没有替代字符或孤立代理项 5G"
+    },
+    {
+      "ok": true,
+      "label": "320px触控高度 5G"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "5G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "5G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "5G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "5G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "5G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "5G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "5G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "320进入6G"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 6G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "6G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.6g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 8.77332592010498,
+          "top": 210.73501586914062,
+          "width": 287.12005615234375,
+          "height": 440.70330810546875,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -148, -218.08)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "6G对白不横向越界",
+      "detail": {
+        "left": 8.77332592010498,
+        "right": 295.89338207244873,
+        "width": 320
+      }
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 green"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 apply"
+    },
+    {
+      "ok": true,
+      "label": "6G模型改善"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 junction"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 green"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 apply"
+    },
+    {
+      "ok": true,
+      "label": "6G另一方案无需改善"
+    },
+    {
+      "ok": true,
+      "label": "320px无横向溢出 6G",
+      "detail": {
+        "scrollWidth": 305,
+        "innerWidth": 320
+      }
+    },
+    {
+      "ok": true,
+      "label": "320px操作反馈没有替代字符或孤立代理项 6G"
+    },
+    {
+      "ok": true,
+      "label": "320px触控高度 6G"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "320对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "6G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "6G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "6G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "6G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "6G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "6G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "6G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "360进入2G"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 2G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "2G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.2g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 9.373332023620605,
+          "top": 223.38687133789062,
+          "width": 325.9200134277344,
+          "height": 414.311279296875,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -168, -205.02)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "2G对白不横向越界",
+      "detail": {
+        "left": 9.373332023620605,
+        "right": 335.293345451355,
+        "width": 360
+      }
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 draft"
+    },
+    {
+      "ok": true,
+      "label": "2G超长emoji按可见字符截断且界面一致"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 draft"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 send"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 console"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 config"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 test"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 phone"
+    },
+    {
+      "ok": true,
+      "label": "2G切换控制台后中文和emoji保持完整"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 send"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 inbox"
+    },
+    {
+      "ok": true,
+      "label": "2G读取真实回复"
+    },
+    {
+      "ok": true,
+      "label": "360px无横向溢出 2G",
+      "detail": {
+        "scrollWidth": 345,
+        "innerWidth": 360
+      }
+    },
+    {
+      "ok": true,
+      "label": "360px操作反馈没有替代字符或孤立代理项 2G"
+    },
+    {
+      "ok": true,
+      "label": "360px触控高度 2G"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "2G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "2G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "2G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "2G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "2G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "2G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "2G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "360进入3G"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 3G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "3G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.3g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 9.373332023620605,
+          "top": 223.38687133789062,
+          "width": 325.9200134277344,
+          "height": 414.311279296875,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -168, -205.02)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "3G对白不横向越界",
+      "detail": {
+        "left": 9.373332023620605,
+        "right": 335.293345451355,
+        "width": 360
+      }
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 cities"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 city"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 weather"
+    },
+    {
+      "ok": true,
+      "label": "3G天气显示"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 back"
+    },
+    {
+      "ok": true,
+      "label": "3G键盘方向键"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 ok"
+    },
+    {
+      "ok": true,
+      "label": "3G确认键与点击一致"
+    },
+    {
+      "ok": true,
+      "label": "360px无横向溢出 3G",
+      "detail": {
+        "scrollWidth": 345,
+        "innerWidth": 360
+      }
+    },
+    {
+      "ok": true,
+      "label": "360px操作反馈没有替代字符或孤立代理项 3G"
+    },
+    {
+      "ok": true,
+      "label": "360px触控高度 3G"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "3G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "3G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "3G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "3G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "3G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "3G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "3G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "360进入4G"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 4G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "4G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.4g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 9.373332023620605,
+          "top": 223.38687133789062,
+          "width": 325.9200134277344,
+          "height": 414.311279296875,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -168, -205.02)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "4G对白不横向越界",
+      "detail": {
+        "left": 9.373332023620605,
+        "right": 335.293345451355,
+        "width": 360
+      }
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "4G视频可解码"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 play"
+    },
+    {
+      "ok": true,
+      "label": "4G实际播放"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 seek"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 volume"
+    },
+    {
+      "ok": true,
+      "label": "4G进度拖动"
+    },
+    {
+      "ok": true,
+      "label": "4G音量"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 pause"
+    },
+    {
+      "ok": true,
+      "label": "4G暂停"
+    },
+    {
+      "ok": true,
+      "label": "360px无横向溢出 4G",
+      "detail": {
+        "scrollWidth": 345,
+        "innerWidth": 360
+      }
+    },
+    {
+      "ok": true,
+      "label": "360px操作反馈没有替代字符或孤立代理项 4G"
+    },
+    {
+      "ok": true,
+      "label": "360px触控高度 4G"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "4G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "4G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "4G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "4G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "4G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "4G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "4G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "360进入5G"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 5G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "5G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.5g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 9.373332023620605,
+          "top": 223.38687133789062,
+          "width": 325.9200134277344,
+          "height": 414.311279296875,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -168, -205.02)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "5G对白不横向越界",
+      "detail": {
+        "left": 9.373332023620605,
+        "right": 335.293345451355,
+        "width": 360
+      }
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 forward"
+    },
+    {
+      "ok": true,
+      "label": "5G移动"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 right"
+    },
+    {
+      "ok": true,
+      "label": "5G转向"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 stop"
+    },
+    {
+      "ok": true,
+      "label": "5G实际日志"
+    },
+    {
+      "ok": true,
+      "label": "360px无横向溢出 5G",
+      "detail": {
+        "scrollWidth": 345,
+        "innerWidth": 360
+      }
+    },
+    {
+      "ok": true,
+      "label": "360px操作反馈没有替代字符或孤立代理项 5G"
+    },
+    {
+      "ok": true,
+      "label": "360px触控高度 5G"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "5G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "5G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "5G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "5G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "5G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "5G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "5G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "360进入6G"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 6G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "6G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.6g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 9.373332023620605,
+          "top": 223.38687133789062,
+          "width": 325.9200134277344,
+          "height": 414.311279296875,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -168, -205.02)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "6G对白不横向越界",
+      "detail": {
+        "left": 9.373332023620605,
+        "right": 335.293345451355,
+        "width": 360
+      }
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 green"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 apply"
+    },
+    {
+      "ok": true,
+      "label": "6G模型改善"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 junction"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 green"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 apply"
+    },
+    {
+      "ok": true,
+      "label": "6G另一方案无需改善"
+    },
+    {
+      "ok": true,
+      "label": "360px无横向溢出 6G",
+      "detail": {
+        "scrollWidth": 345,
+        "innerWidth": 360
+      }
+    },
+    {
+      "ok": true,
+      "label": "360px操作反馈没有替代字符或孤立代理项 6G"
+    },
+    {
+      "ok": true,
+      "label": "360px触控高度 6G"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "360对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "6G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "6G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "6G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "6G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "6G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "6G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "6G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "390进入2G"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 2G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "2G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.2g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 9.823324203491211,
+          "top": 234.6824951171875,
+          "width": 355.02001953125,
+          "height": 390.74835205078125,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -183, -193.36)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "2G对白不横向越界",
+      "detail": {
+        "left": 9.823324203491211,
+        "right": 364.8433437347412,
+        "width": 390
+      }
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 draft"
+    },
+    {
+      "ok": true,
+      "label": "2G超长emoji按可见字符截断且界面一致"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 draft"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 send"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 console"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 config"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 test"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 phone"
+    },
+    {
+      "ok": true,
+      "label": "2G切换控制台后中文和emoji保持完整"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 send"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 inbox"
+    },
+    {
+      "ok": true,
+      "label": "2G读取真实回复"
+    },
+    {
+      "ok": true,
+      "label": "390px无横向溢出 2G",
+      "detail": {
+        "scrollWidth": 375,
+        "innerWidth": 390
+      }
+    },
+    {
+      "ok": true,
+      "label": "390px操作反馈没有替代字符或孤立代理项 2G"
+    },
+    {
+      "ok": true,
+      "label": "390px触控高度 2G"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "2G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "2G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "2G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "2G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "2G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "2G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "2G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "390进入3G"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 3G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "3G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.3g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 9.823324203491211,
+          "top": 234.6824951171875,
+          "width": 355.02001953125,
+          "height": 390.74835205078125,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -183, -193.36)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "3G对白不横向越界",
+      "detail": {
+        "left": 9.823324203491211,
+        "right": 364.8433437347412,
+        "width": 390
+      }
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 cities"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 city"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 weather"
+    },
+    {
+      "ok": true,
+      "label": "3G天气显示"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 back"
+    },
+    {
+      "ok": true,
+      "label": "3G键盘方向键"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 ok"
+    },
+    {
+      "ok": true,
+      "label": "3G确认键与点击一致"
+    },
+    {
+      "ok": true,
+      "label": "390px无横向溢出 3G",
+      "detail": {
+        "scrollWidth": 375,
+        "innerWidth": 390
+      }
+    },
+    {
+      "ok": true,
+      "label": "390px操作反馈没有替代字符或孤立代理项 3G"
+    },
+    {
+      "ok": true,
+      "label": "390px触控高度 3G"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "3G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "3G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "3G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "3G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "3G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "3G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "3G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "390进入4G"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 4G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "4G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.4g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 9.823324203491211,
+          "top": 221.3573455810547,
+          "width": 355.02001953125,
+          "height": 418.544921875,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -183, -207.115)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "4G对白不横向越界",
+      "detail": {
+        "left": 9.823324203491211,
+        "right": 364.8433437347412,
+        "width": 390
+      }
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "4G视频可解码"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 play"
+    },
+    {
+      "ok": true,
+      "label": "4G实际播放"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 seek"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 volume"
+    },
+    {
+      "ok": true,
+      "label": "4G进度拖动"
+    },
+    {
+      "ok": true,
+      "label": "4G音量"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 pause"
+    },
+    {
+      "ok": true,
+      "label": "4G暂停"
+    },
+    {
+      "ok": true,
+      "label": "390px无横向溢出 4G",
+      "detail": {
+        "scrollWidth": 375,
+        "innerWidth": 390
+      }
+    },
+    {
+      "ok": true,
+      "label": "390px操作反馈没有替代字符或孤立代理项 4G"
+    },
+    {
+      "ok": true,
+      "label": "390px触控高度 4G"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "4G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "4G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "4G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "4G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "4G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "4G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "4G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "390进入5G"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 5G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "5G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.5g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 9.823324203491211,
+          "top": 221.3573455810547,
+          "width": 355.02001953125,
+          "height": 418.544921875,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -183, -207.115)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "5G对白不横向越界",
+      "detail": {
+        "left": 9.823324203491211,
+        "right": 364.8433437347412,
+        "width": 390
+      }
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 forward"
+    },
+    {
+      "ok": true,
+      "label": "5G移动"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 right"
+    },
+    {
+      "ok": true,
+      "label": "5G转向"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 stop"
+    },
+    {
+      "ok": true,
+      "label": "5G实际日志"
+    },
+    {
+      "ok": true,
+      "label": "390px无横向溢出 5G",
+      "detail": {
+        "scrollWidth": 375,
+        "innerWidth": 390
+      }
+    },
+    {
+      "ok": true,
+      "label": "390px操作反馈没有替代字符或孤立代理项 5G"
+    },
+    {
+      "ok": true,
+      "label": "390px触控高度 5G"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "5G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "5G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "5G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "5G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "5G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "5G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "5G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "390进入6G"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 6G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "6G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.6g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 9.823324203491211,
+          "top": 221.3573455810547,
+          "width": 355.02001953125,
+          "height": 418.544921875,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -183, -207.115)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "6G对白不横向越界",
+      "detail": {
+        "left": 9.823324203491211,
+        "right": 364.8433437347412,
+        "width": 390
+      }
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 green"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 apply"
+    },
+    {
+      "ok": true,
+      "label": "6G模型改善"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 junction"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 green"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 apply"
+    },
+    {
+      "ok": true,
+      "label": "6G另一方案无需改善"
+    },
+    {
+      "ok": true,
+      "label": "390px无横向溢出 6G",
+      "detail": {
+        "scrollWidth": 375,
+        "innerWidth": 390
+      }
+    },
+    {
+      "ok": true,
+      "label": "390px操作反馈没有替代字符或孤立代理项 6G"
+    },
+    {
+      "ok": true,
+      "label": "390px触控高度 6G"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "390对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "6G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "6G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "6G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "6G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "6G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "6G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "6G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "430进入2G"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 2G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "2G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.2g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 10.423319816589355,
+          "top": 231.71812438964844,
+          "width": 393.82000732421875,
+          "height": 396.93212890625,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -203, -196.42)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "2G对白不横向越界",
+      "detail": {
+        "left": 10.423319816589355,
+        "right": 404.2433271408081,
+        "width": 430
+      }
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 draft"
+    },
+    {
+      "ok": true,
+      "label": "2G超长emoji按可见字符截断且界面一致"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 draft"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 send"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 console"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 config"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 test"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 phone"
+    },
+    {
+      "ok": true,
+      "label": "2G切换控制台后中文和emoji保持完整"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 send"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 inbox"
+    },
+    {
+      "ok": true,
+      "label": "2G读取真实回复"
+    },
+    {
+      "ok": true,
+      "label": "430px无横向溢出 2G",
+      "detail": {
+        "scrollWidth": 415,
+        "innerWidth": 430
+      }
+    },
+    {
+      "ok": true,
+      "label": "430px操作反馈没有替代字符或孤立代理项 2G"
+    },
+    {
+      "ok": true,
+      "label": "430px触控高度 2G"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "2G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "2G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "2G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "2G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "2G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "2G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "2G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "430进入3G"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 3G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "3G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.3g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 10.423319816589355,
+          "top": 231.71812438964844,
+          "width": 393.82000732421875,
+          "height": 396.93212890625,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -203, -196.42)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "3G对白不横向越界",
+      "detail": {
+        "left": 10.423319816589355,
+        "right": 404.2433271408081,
+        "width": 430
+      }
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 cities"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 city"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 weather"
+    },
+    {
+      "ok": true,
+      "label": "3G天气显示"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 back"
+    },
+    {
+      "ok": true,
+      "label": "3G键盘方向键"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 ok"
+    },
+    {
+      "ok": true,
+      "label": "3G确认键与点击一致"
+    },
+    {
+      "ok": true,
+      "label": "430px无横向溢出 3G",
+      "detail": {
+        "scrollWidth": 415,
+        "innerWidth": 430
+      }
+    },
+    {
+      "ok": true,
+      "label": "430px操作反馈没有替代字符或孤立代理项 3G"
+    },
+    {
+      "ok": true,
+      "label": "430px触控高度 3G"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "3G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "3G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "3G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "3G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "3G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "3G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "3G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "430进入4G"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 4G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "4G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.4g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 10.423319816589355,
+          "top": 217.65672302246094,
+          "width": 393.82000732421875,
+          "height": 426.2644958496094,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -203, -210.935)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "4G对白不横向越界",
+      "detail": {
+        "left": 10.423319816589355,
+        "right": 404.2433271408081,
+        "width": 430
+      }
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "4G视频可解码"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 play"
+    },
+    {
+      "ok": true,
+      "label": "4G实际播放"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 seek"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 volume"
+    },
+    {
+      "ok": true,
+      "label": "4G进度拖动"
+    },
+    {
+      "ok": true,
+      "label": "4G音量"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 pause"
+    },
+    {
+      "ok": true,
+      "label": "4G暂停"
+    },
+    {
+      "ok": true,
+      "label": "430px无横向溢出 4G",
+      "detail": {
+        "scrollWidth": 415,
+        "innerWidth": 430
+      }
+    },
+    {
+      "ok": true,
+      "label": "430px操作反馈没有替代字符或孤立代理项 4G"
+    },
+    {
+      "ok": true,
+      "label": "430px触控高度 4G"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "4G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "4G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "4G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "4G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "4G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "4G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "4G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "430进入5G"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 5G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "5G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.5g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 10.423319816589355,
+          "top": 231.71812438964844,
+          "width": 393.82000732421875,
+          "height": 396.93212890625,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -203, -196.42)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "5G对白不横向越界",
+      "detail": {
+        "left": 10.423319816589355,
+        "right": 404.2433271408081,
+        "width": 430
+      }
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 forward"
+    },
+    {
+      "ok": true,
+      "label": "5G移动"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 right"
+    },
+    {
+      "ok": true,
+      "label": "5G转向"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 stop"
+    },
+    {
+      "ok": true,
+      "label": "5G实际日志"
+    },
+    {
+      "ok": true,
+      "label": "430px无横向溢出 5G",
+      "detail": {
+        "scrollWidth": 415,
+        "innerWidth": 430
+      }
+    },
+    {
+      "ok": true,
+      "label": "430px操作反馈没有替代字符或孤立代理项 5G"
+    },
+    {
+      "ok": true,
+      "label": "430px触控高度 5G"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "5G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "5G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "5G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "5G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "5G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "5G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "5G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "430进入6G"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 6G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "6G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.6g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 10.423319816589355,
+          "top": 217.65672302246094,
+          "width": 393.82000732421875,
+          "height": 426.2644958496094,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -203, -210.935)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "6G对白不横向越界",
+      "detail": {
+        "left": 10.423319816589355,
+        "right": 404.2433271408081,
+        "width": 430
+      }
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 green"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 apply"
+    },
+    {
+      "ok": true,
+      "label": "6G模型改善"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 junction"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 green"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 apply"
+    },
+    {
+      "ok": true,
+      "label": "6G另一方案无需改善"
+    },
+    {
+      "ok": true,
+      "label": "430px无横向溢出 6G",
+      "detail": {
+        "scrollWidth": 415,
+        "innerWidth": 430
+      }
+    },
+    {
+      "ok": true,
+      "label": "430px操作反馈没有替代字符或孤立代理项 6G"
+    },
+    {
+      "ok": true,
+      "label": "430px触控高度 6G"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "430对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "6G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "6G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "6G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "6G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "6G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "6G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "6G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "1366进入2G"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 2G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "2G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.2g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 306.73333740234375,
+          "top": 213.29734802246094,
+          "width": 737.2000732421875,
+          "height": 435.3582458496094,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -380, -215.435)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "2G对白不横向越界",
+      "detail": {
+        "left": 306.73333740234375,
+        "right": 1043.9334106445312,
+        "width": 1366
+      }
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 draft"
+    },
+    {
+      "ok": true,
+      "label": "2G超长emoji按可见字符截断且界面一致"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 draft"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 send"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 console"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 config"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 test"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 phone"
+    },
+    {
+      "ok": true,
+      "label": "2G切换控制台后中文和emoji保持完整"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 send"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 inbox"
+    },
+    {
+      "ok": true,
+      "label": "2G读取真实回复"
+    },
+    {
+      "ok": true,
+      "label": "1366px无横向溢出 2G",
+      "detail": {
+        "scrollWidth": 1351,
+        "innerWidth": 1366
+      }
+    },
+    {
+      "ok": true,
+      "label": "1366px操作反馈没有替代字符或孤立代理项 2G"
+    },
+    {
+      "ok": true,
+      "label": "1366px触控高度 2G"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "2G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "2G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "2G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "2G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "2G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "2G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "2G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "1366进入3G"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 3G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "3G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.3g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 306.73333740234375,
+          "top": 213.29734802246094,
+          "width": 737.2000732421875,
+          "height": 435.3582458496094,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -380, -215.435)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "3G对白不横向越界",
+      "detail": {
+        "left": 306.73333740234375,
+        "right": 1043.9334106445312,
+        "width": 1366
+      }
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 cities"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 city"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 weather"
+    },
+    {
+      "ok": true,
+      "label": "3G天气显示"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 back"
+    },
+    {
+      "ok": true,
+      "label": "3G键盘方向键"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 ok"
+    },
+    {
+      "ok": true,
+      "label": "3G确认键与点击一致"
+    },
+    {
+      "ok": true,
+      "label": "1366px无横向溢出 3G",
+      "detail": {
+        "scrollWidth": 1351,
+        "innerWidth": 1366
+      }
+    },
+    {
+      "ok": true,
+      "label": "1366px操作反馈没有替代字符或孤立代理项 3G"
+    },
+    {
+      "ok": true,
+      "label": "1366px触控高度 3G"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "3G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "3G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "3G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "3G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "3G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "3G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "3G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "1366进入4G"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 4G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "4G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.4g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 306.73333740234375,
+          "top": 213.29734802246094,
+          "width": 737.2000732421875,
+          "height": 435.3582458496094,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -380, -215.435)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "4G对白不横向越界",
+      "detail": {
+        "left": 306.73333740234375,
+        "right": 1043.9334106445312,
+        "width": 1366
+      }
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "4G视频可解码"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 play"
+    },
+    {
+      "ok": true,
+      "label": "4G实际播放"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 seek"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 volume"
+    },
+    {
+      "ok": true,
+      "label": "4G进度拖动"
+    },
+    {
+      "ok": true,
+      "label": "4G音量"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 pause"
+    },
+    {
+      "ok": true,
+      "label": "4G暂停"
+    },
+    {
+      "ok": true,
+      "label": "1366px无横向溢出 4G",
+      "detail": {
+        "scrollWidth": 1351,
+        "innerWidth": 1366
+      }
+    },
+    {
+      "ok": true,
+      "label": "1366px操作反馈没有替代字符或孤立代理项 4G"
+    },
+    {
+      "ok": true,
+      "label": "1366px触控高度 4G"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "4G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "4G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "4G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "4G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "4G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "4G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "4G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "1366进入5G"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 5G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "5G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.5g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 306.73333740234375,
+          "top": 213.29734802246094,
+          "width": 737.2000732421875,
+          "height": 435.3582458496094,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -380, -215.435)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "5G对白不横向越界",
+      "detail": {
+        "left": 306.73333740234375,
+        "right": 1043.9334106445312,
+        "width": 1366
+      }
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 forward"
+    },
+    {
+      "ok": true,
+      "label": "5G移动"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 right"
+    },
+    {
+      "ok": true,
+      "label": "5G转向"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 stop"
+    },
+    {
+      "ok": true,
+      "label": "5G实际日志"
+    },
+    {
+      "ok": true,
+      "label": "1366px无横向溢出 5G",
+      "detail": {
+        "scrollWidth": 1351,
+        "innerWidth": 1366
+      }
+    },
+    {
+      "ok": true,
+      "label": "1366px操作反馈没有替代字符或孤立代理项 5G"
+    },
+    {
+      "ok": true,
+      "label": "1366px触控高度 5G"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "5G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "5G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "5G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "5G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "5G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "5G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "5G退出无残留输入锁"
+    },
+    {
+      "ok": true,
+      "label": "1366进入6G"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "主线真实互动入口 6G"
+    },
+    {
+      "ok": true,
+      "label": "进入互动路由"
+    },
+    {
+      "ok": true,
+      "label": "6G真实中央开场",
+      "detail": {
+        "isPlaying": true,
+        "isBlocking": true,
+        "activeDialogueId": "lan.independent.6g.enter",
+        "persistedCurrentDialogue": "",
+        "lineIndex": 0,
+        "queueLength": 1,
+        "displayMode": "dialogue",
+        "queueDisplayMode": "dialogue",
+        "domMode": "dialogue",
+        "dialogueSurface": "",
+        "domParent": "body",
+        "duplicateCount": 1,
+        "layout": {
+          "left": 306.73333740234375,
+          "top": 213.29734802246094,
+          "width": 737.2000732421875,
+          "height": 435.3582458496094,
+          "position": "fixed",
+          "transform": "matrix(0.97, 0, 0, 0.97, -380, -215.435)",
+          "zIndex": "90"
+        },
+        "lanControlsReleased": false,
+        "inputLock": true
+      }
+    },
+    {
+      "ok": true,
+      "label": "6G对白不横向越界",
+      "detail": {
+        "left": 306.73333740234375,
+        "right": 1043.9334106445312,
+        "width": 1366
+      }
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 green"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 apply"
+    },
+    {
+      "ok": true,
+      "label": "6G模型改善"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 junction"
+    },
+    {
+      "ok": true,
+      "label": "输入控件 green"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 apply"
+    },
+    {
+      "ok": true,
+      "label": "6G另一方案无需改善"
+    },
+    {
+      "ok": true,
+      "label": "1366px无横向溢出 6G",
+      "detail": {
+        "scrollWidth": 1351,
+        "innerWidth": 1366
+      }
+    },
+    {
+      "ok": true,
+      "label": "1366px操作反馈没有替代字符或孤立代理项 6G"
+    },
+    {
+      "ok": true,
+      "label": "1366px触控高度 6G"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 end"
+    },
+    {
+      "ok": true,
+      "label": "1366对白可结束"
+    },
+    {
+      "ok": true,
+      "label": "6G结束总结"
+    },
+    {
+      "ok": true,
+      "label": "实际控件 exit"
+    },
+    {
+      "ok": true,
+      "label": "6G返回主线"
+    },
+    {
+      "ok": true,
+      "label": "6G不修改主线存档"
+    },
+    {
+      "ok": true,
+      "label": "6G不修改节点证据"
+    },
+    {
+      "ok": true,
+      "label": "6G演示未污染正式存档"
+    },
+    {
+      "ok": true,
+      "label": "6G没有重复澜面板"
+    },
+    {
+      "ok": true,
+      "label": "6G退出无残留输入锁"
+    }
+  ],
+  "errors": []
+}

@@ -69,7 +69,7 @@ test('从app.js现有六代正文注册旧页面兼容数据与统一内容查�
   assert.equal(window.mediaAssets['6G'].photo, null, '6G继续使用已标注的CSS未来情境，不伪装成历史照片');
 });
 
-test('启动检查定位实际模块状态，并将比赛版二维浏览标为正常', () => {
+test('启动检查定位实际模块状态，区分三维接口就绪与首帧验证', () => {
   const { window } = makeExistingContentContext();
   const lan = window.CommsArchiveLan;
   window.CommsArchiveLan = { ...lan, trigger() {}, onTaskStart() {} };
@@ -82,26 +82,49 @@ test('启动检查定位实际模块状态，并将比赛版二维浏览标为�
     'app.js', 'lan-system.js', 'runtime-content.js', 'era-archive-data', '2D exhibition', 'localStorage'
   ]);
   assert.equal(result.checks.find(check => check.module === 'runtime-content.js').status, 'ready');
-  assert.equal(result.checks.find(check => check.module === '2D exhibition').label, '当前使用稳定二维浏览模式');
-  assert.match(result.checks.find(check => check.module === '2D exhibition').detail, /比赛版本不加载/);
+  assert.equal(result.checks.find(check => check.module === '2D exhibition').status, 'ready');
+  assert.match(result.checks.find(check => check.module === '2D exhibition').detail, /接口已注册/);
+  assert.match(result.checks.find(check => check.module === '2D exhibition').detail, /首帧.*进入长廊时验证/);
 });
 
-test('index.html加载二维页面与健康检查；正式版不加载体验模拟和三维模块', () => {
+test('三维启动检查如实报告加载中、模块失败、首帧完成和显式二维配置', () => {
+  const { window } = makeExistingContentContext();
+  const exhibition = () => window.SystemHealthCheck.inspect().checks.find(check => check.module === '2D exhibition');
+  delete window.CommunicationsHistory3D;
+  window.CommsArchive3DStatus = { status: 'loading', stage: 'startup' };
+  assert.equal(exhibition().status, 'pending');
+  window.CommsArchive3DStatus = { status: 'failed', reason: 'module unavailable' };
+  const failed = exhibition();
+  assert.equal(failed.status, 'ready', '三维失败时二维内容仍可用');
+  assert.equal(failed.note, true);
+  assert.equal(failed.reason, 'module unavailable');
+  window.CommunicationsHistory3D = { mount() {} };
+  window.CommsArchive3DStatus = { status: 'ready', stage: 'first-frame-rendered' };
+  assert.match(exhibition().detail, /已完成首帧/);
+  window.COMMS_ARCHIVE_3D_DISABLED = true;
+  assert.equal(exhibition().status, 'ready');
+  assert.match(exhibition().detail, /配置关闭/);
+});
+
+test('index.html加载独立体验和健康检查，不加载三维模块', () => {
   const html = read('index.html');
   const app = html.indexOf('src="app.js"');
   const runtime = html.indexOf('src="assets/js/runtime-content.js"');
   const health = html.indexOf('src="assets/js/system-health-check.js"');
   assert.ok(app >= 0 && runtime > app && health > runtime);
   assert.match(html, /COMMS_ARCHIVE_3D_DISABLED=true/);
-  assert.match(html, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=true/);
-  assert.doesNotMatch(html, /<script[^>]+src="assets\/js\/archive3d\.js"/);
-  assert.doesNotMatch(html, /<script[^>]+src="assets\/js\/(?:experience-story|experience-interactions|experience-1g-phone|[56]g-archive-ui)/);
-  assert.ok(fs.existsSync(path.join(rootDir, 'assets/js/experience-story-1g.js')), '旧体验源文件仍保留');
+  assert.match(html, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=false/);
+  assert.doesNotMatch(html, /<script[^>]+type="module"[^>]+src="assets\/js\/archive3d\.js"/);
+  assert.match(html, /<script[^>]+src="assets\/js\/experience-interactions\.js"/);
+  assert.match(html, /<script[^>]+src="assets\/js\/experience-1g-phone\.js"/);
+  assert.doesNotMatch(html, /<script[^>]+src="assets\/js\/[56]g-archive-ui/);
+  assert.ok(fs.existsSync(path.join(rootDir, 'assets/js/experience-story-1g.js')));
 });
 
-test('二维比赛版本不注册archive3d错误监听，3D文件由入口保持禁用', () => {
+test('三维默认启动状态为idle，实际模块负责登记加载与错误状态', () => {
   const html = read('index.html');
-  assert.match(html, /status:'disabled',mode:'2d',stage:'competition-2d'/);
-  assert.doesNotMatch(html, /reportArchive3DScriptError/);
-  assert.ok(fs.existsSync(path.join(rootDir, 'assets/js/archive3d.js')));
+  assert.match(html, /status:'idle',mode:'2d',stage:'startup'/);
+  const source = read('assets/js/archive3d.js');
+  assert.match(source, /comms-archive-three-module-error/);
+  assert.match(source, /CommsArchive3DStatus/);
 });

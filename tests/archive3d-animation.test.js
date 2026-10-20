@@ -41,7 +41,8 @@ test('dispose会取消当前帧请求并标记动画已停止', () => {
 test('render异常记录实例、失败帧数和具体错误，并停止RAF', () => {
   assert.match(animate, /catch \(error\) \{\s*cancelAnimationFrame\(frame\)/);
   assert.match(animate, /console\.error\('ARCHIVE3D_RENDER_FAILED'/);
-  assert.match(animate, /stage: 'render', frameCount: instanceFrameCount, animationRunning: false/);
-  assert.match(animate, /resolveFirstFrame\(false\)/);
+  assert.match(animate, /failRender\(reason, error\)/);
+  assert.match(source, /stage: 'render', frameCount: instanceFrameCount, animationRunning: false/);
+  assert.match(source, /resolveFirstFrame\(false\)/);
   assert.match(source, /if \(!await activeGallery\.firstFrameReady\) throw/);
 });

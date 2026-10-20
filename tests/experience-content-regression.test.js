@@ -86,12 +86,17 @@ function makeExperienceRuntime(era) {
   return { context, state, progression, memory, storage, window };
 }
 
-test('正式流程已移除六代体验入口；体验源文件和旧数据仍保留', () => {
+test('六代体验脚本与可选体验入口恢复，同时保留五节点主线', () => {
   const html = fs.readFileSync('index.html', 'utf8');
-  assert.match(html, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=true/);
-  assert.doesNotMatch(html, /<script[^>]+src="assets\/js\/(experience-story|experience-interactions|experience-1g-phone)/);
+  assert.match(html, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=false/);
+  for (const script of [...storyScripts, 'experience-interactions.js', 'experience-1g-phone.js']) {
+    assert.match(html, new RegExp(`<script[^>]+src="assets/js/${script.replace(/\./g, '\\.')}"`), `${script}应在正式页面加载`);
+    assert.ok(html.indexOf(`src="assets/js/${script}"`) < html.indexOf('src="app.js"'), `${script}在应用之前加载`);
+  }
   const guided = appSource.slice(appSource.indexOf('function guidedChapter('), appSource.indexOf('\nfunction guidedDiscoverExhibit('));
-  assert.doesNotMatch(guided, /renderExperienceStory|render[1-6]GExperience|recordGuidedExperience|体验者记录|进入用户体验区|记录时代影响/);
+  assert.match(guided, /openEraExperience/);
+  assert.match(appSource, /function openEraExperience\(/);
+  assert.match(appSource, /const guidedNodeOrder=\['entry','scene','investigation','technology','archive'\]/);
   for (const script of storyScripts.filter(file => !file.startsWith('lan-dialogue-'))) {
     assert.ok(fs.existsSync(`assets/js/${script}`), `${script}保留供未来恢复`);
   }

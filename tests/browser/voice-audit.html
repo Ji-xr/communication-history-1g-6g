@@ -1,0 +1,10 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>自然人声音频验收</title><style>body{font:16px system-ui;margin:24px;max-width:960px}button{padding:12px}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body><h1>自然人声音频验收</h1><p>检查随项目附带的全部音频能否被浏览器读取元数据，不修改探索存档，不调用在线合成。</p><button id="run">检查全部人声音频</button><p id="status" role="status">未运行</p><pre id="result"></pre><script src="../../assets/js/lan-voice-catalog.js"></script><script>
+document.querySelector('#run').onclick=async function(){
+ this.disabled=true;const entries=Object.entries(window.LanVoiceCatalog),report={status:'RUNNING',total:entries.length,decoded:0,duration:0,errors:[]};let next=0;
+ async function worker(){while(next<entries.length){const [text,src]=entries[next++];await new Promise(resolve=>{
+  const audio=new Audio(new URL('../../'+src,location.href));const timer=setTimeout(()=>finish('元数据读取超时'),12000);let settled=false;
+  function finish(error){if(settled)return;settled=true;clearTimeout(timer);if(error)report.errors.push({text,src,error});else{report.decoded++;report.duration+=audio.duration;}audio.removeAttribute('src');audio.load();document.querySelector('#status').textContent='已检查 '+(report.decoded+report.errors.length)+' / '+entries.length;resolve();}
+  audio.onloadedmetadata=()=>finish(Number.isFinite(audio.duration)&&audio.duration>0?null:'无有效时长');audio.onerror=()=>finish('浏览器无法读取音频');audio.preload='metadata';audio.load();
+ });}}
+ await Promise.all(Array.from({length:4},worker));report.status=report.errors.length?'FAIL':'PASS';report.duration=Math.round(report.duration*100)/100;document.querySelector('#result').textContent=JSON.stringify(report,null,2);this.disabled=false;
+};</script></body></html>

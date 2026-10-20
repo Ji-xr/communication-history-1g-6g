@@ -11,9 +11,9 @@ const lanCss = fs.readFileSync('assets/css/lan.css', 'utf8');
 const settings = fs.readFileSync('assets/js/audio-system.js', 'utf8');
 const search = fs.readFileSync('assets/js/knowledge-search.js', 'utf8');
 
-test('比赛页面默认启用二维模式且不请求Three.js模块', () => {
+test('比赛页面默认二维模式，保留三维源码', () => {
   assert.match(html, /COMMS_ARCHIVE_3D_DISABLED=true/);
-  assert.doesNotMatch(html, /<script[^>]+src="assets\/js\/archive3d\.js"/);
+  assert.doesNotMatch(html, /<script[^>]+type="module"[^>]+src="assets\/js\/archive3d\.js"/);
   assert.match(html, /id="archive3d"/);
   assert.ok(fs.existsSync('assets/js/archive3d.js'));
   assert.match(app, /当前使用稳定二维浏览模式/);

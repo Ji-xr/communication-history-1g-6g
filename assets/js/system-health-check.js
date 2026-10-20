@@ -78,7 +78,20 @@
   }
 
   function checkExhibition() {
-    return item('2D exhibition', 'ready', '当前使用稳定二维浏览模式', '六代章节、历史展品、任务、档案与澜系统可用；Three.js代码和资源保留，但比赛版本不加载。');
+    if (root.COMMS_ARCHIVE_3D_DISABLED === true) {
+      return item('2D exhibition', 'ready', '当前使用稳定二维浏览模式', '三维长廊已由页面配置关闭；二维章节、展品、任务与档案可继续使用。');
+    }
+    const status = root.CommsArchive3DStatus || {};
+    if (status.status === 'failed') {
+      return item('2D exhibition', 'ready', '三维长廊暂不可用，二维浏览可用', '三维加载或渲染发生错误；仍可使用时代航线进入二维章节。', status.reason || '三维模块未提供失败原因，请重试进入长廊。', true);
+    }
+    if (typeof root.CommunicationsHistory3D?.mount === 'function') {
+      if (status.stage === 'first-frame-rendered' && status.status === 'ready') {
+        return item('2D exhibition', 'ready', '三维时空长廊与二维浏览', '三维模块已注册，当前长廊已完成首帧渲染；二维章节与档案也可使用。');
+      }
+      return item('2D exhibition', 'ready', '三维长廊接口与二维浏览', '三维模块接口已注册；WebGL与首帧渲染将在进入长廊时验证，二维章节与档案可使用。');
+    }
+    return item('2D exhibition', 'pending', '三维长廊模块加载中', '正在等待三维模块注册；二维章节与档案可使用。', status.reason || null);
   }
 
   function checkStorage() {
@@ -131,7 +144,7 @@
     badge.textContent = `启动检查 · ${good}/${checks.length} 可用`;
     badge.classList.toggle('has-warning', checks.some(check => !check.ok || check.note));
     const allOperational = checks.every(check => check.ok);
-    panel.innerHTML = `<div class="health-panel-head"><div><span class="eyebrow">SYSTEM READY CHECK</span><h2>通信简史：从1G到6G启动检查</h2><p>${allOperational ? '核心内容已就绪；当前使用稳定二维浏览模式。' : '检查到初始化问题，详情列出了首要原因和受影响模块。'}</p></div><button type="button" class="health-close" aria-label="关闭">×</button></div><ul>${checks.map(check => `<li class="${check.ok ? (check.note ? 'note' : 'ready') : 'warning'}"><b>${check.ok ? (check.note ? '!' : '✓') : '!'}</b><span><strong>${escapeHtml(check.label)}</strong><small>${escapeHtml(check.detail)}</small>${check.reason ? `<small class="health-reason">原因：${escapeHtml(check.reason)}</small>` : ''}<small class="health-module">${escapeHtml(check.module)} · ${escapeHtml(check.status)}</small></span></li>`).join('')}</ul><div class="health-actions"><button type="button" class="btn secondary health-retry">重新检查</button><button type="button" class="quiet health-dismiss">关闭</button></div>`;
+    panel.innerHTML = `<div class="health-panel-head"><div><span class="eyebrow">SYSTEM READY CHECK</span><h2>通信简史：从1G到6G启动检查</h2><p>${allOperational ? '核心内容已就绪；展厅状态和三维验证阶段见下方检查。' : '部分模块仍在初始化或检查未通过，详情列出了状态和受影响模块。'}</p></div><button type="button" class="health-close" aria-label="关闭">×</button></div><ul>${checks.map(check => `<li class="${check.ok ? (check.note ? 'note' : 'ready') : 'warning'}"><b>${check.ok ? (check.note ? '!' : '✓') : '!'}</b><span><strong>${escapeHtml(check.label)}</strong><small>${escapeHtml(check.detail)}</small>${check.reason ? `<small class="health-reason">原因：${escapeHtml(check.reason)}</small>` : ''}<small class="health-module">${escapeHtml(check.module)} · ${escapeHtml(check.status)}</small></span></li>`).join('')}</ul><div class="health-actions"><button type="button" class="btn secondary health-retry">重新检查</button><button type="button" class="quiet health-dismiss">关闭</button></div>`;
     panel.querySelector('.health-close')?.addEventListener('click', close);
     panel.querySelector('.health-dismiss')?.addEventListener('click', close);
     panel.querySelector('.health-retry')?.addEventListener('click', inspect);
@@ -140,7 +153,7 @@
   const api = { run: inspect, inspect, refresh: inspect, get report() { return checks.map(check => ({ ...check })); } };
   root.SystemHealthCheck = api;
   const refreshOnModuleChange = () => inspect();
-  ['comms-archive-app-ready', 'comms-archive-app-failed', 'comms-archive-content-ready', 'comms-archive-content-failed'].forEach(type => root.addEventListener?.(type, refreshOnModuleChange));
+  ['comms-archive-app-ready', 'comms-archive-app-failed', 'comms-archive-content-ready', 'comms-archive-content-failed', 'comms-archive-three-api-ready', 'comms-archive-three-module-ready', 'comms-archive-three-script-error', 'comms-archive-three-module-error', 'comms-archive-gallery-ready', 'comms-archive-gallery-error'].forEach(type => root.addEventListener?.(type, refreshOnModuleChange));
   if (root.document?.readyState === 'loading') {
     root.addEventListener?.('load', () => setTimeout(inspect, 0), { once: true });
     root.document.addEventListener('DOMContentLoaded', () => setTimeout(inspect, 0), { once: true });

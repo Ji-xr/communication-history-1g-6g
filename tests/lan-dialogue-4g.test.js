@@ -118,15 +118,16 @@ test('4G归档需要建设者任务、全部体验节点和证据，且刷新后
   assert.deepEqual(Array.from(reload.lan.LanMemory.eraArchives[0].evidenceUnlocked), ['evidence.4g.investigation']);
 });
 
-test('应用页面直接接入4G技术实验和时代档案出口；体验模块仅保留源文件', () => {
+test('应用页面接入4G技术实验、时代档案出口与可选体验', () => {
   assert.match(htmlSource, /lan-dialogue-4g\.js/);
   assert.match(htmlSource, /era-archive-4g\.js/);
-  assert.doesNotMatch(htmlSource, /experience-story-4g\.js/);
+  assert.match(htmlSource, /src="assets\/js\/experience-story-4g\.js"/);
   assert.ok(fs.existsSync('assets/js/experience-story-4g.js'));
-  assert.match(htmlSource, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=true/);
+  assert.match(htmlSource, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=false/);
   assert.match(appSource, /completeEraArchive4G/);
   assert.match(appSource, /前往时代档案出口/);
   assert.match(appSource, /resumeEraArchive/);
   const guided = appSource.slice(appSource.indexOf('function guidedChapter('), appSource.indexOf('\nfunction guidedDiscoverExhibit('));
   assert.doesNotMatch(guided, /recordGuidedExperience|体验者记录|进入用户体验区/);
+  assert.match(guided, /openEraExperience/);
 });

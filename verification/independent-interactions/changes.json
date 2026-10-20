@@ -1,0 +1,98 @@
+[
+  {
+    "File": "app.js",
+    "Status": "modified"
+  },
+  {
+    "File": "index.html",
+    "Status": "modified"
+  },
+  {
+    "File": "serve.ps1",
+    "Status": "modified"
+  },
+  {
+    "File": "assets/js/lan-system.js",
+    "Status": "modified"
+  },
+  {
+    "File": "tests/archive3d-startup.test.js",
+    "Status": "modified"
+  },
+  {
+    "File": "tests/competition-2d-mode.test.js",
+    "Status": "modified"
+  },
+  {
+    "File": "tests/final-competition-check.test.js",
+    "Status": "modified"
+  },
+  {
+    "File": "tests/lan-dialogue-flow.test.js",
+    "Status": "modified"
+  },
+  {
+    "File": "tests/startup-health-debug.test.js",
+    "Status": "modified"
+  },
+  {
+    "File": "INTERACTION-IMPLEMENTATION-20261020.md",
+    "Status": "new"
+  },
+  {
+    "File": "assets\\css\\independent-interactions.css",
+    "Status": "new"
+  },
+  {
+    "File": "assets\\js\\independent-interactions.js",
+    "Status": "new"
+  },
+  {
+    "File": "assets\\media\\video\\CC0-1.0.txt",
+    "Status": "new"
+  },
+  {
+    "File": "assets\\media\\video\\flower.mp4",
+    "Status": "new"
+  },
+  {
+    "File": "assets\\media\\video\\SOURCES.md",
+    "Status": "new"
+  },
+  {
+    "File": "tests\\check-interaction-resources.cjs",
+    "Status": "new"
+  },
+  {
+    "File": "tests\\independent-interactions.test.js",
+    "Status": "new"
+  },
+  {
+    "File": "tests\\interaction-http.test.js",
+    "Status": "new"
+  },
+  {
+    "File": "tests\\browser\\independent-interactions.html",
+    "Status": "new"
+  },
+  {
+    "File": "tests\\browser\\run-independent-interactions.cjs",
+    "Status": "new"
+  },
+  {
+    "File": "verification\\independent-interactions\\all-tests.log",
+    "Status": "new"
+  },
+  {
+    "File": "verification\\independent-interactions\\check-results.json",
+    "Status": "new"
+  },
+  {
+    "File": "verification\\independent-interactions\\launch-or-run-error.txt",
+    "Status": "new"
+  },
+  {
+    "File": "verification\\independent-interactions\\static-checks.json",
+    "Status": "new"
+  }
+]

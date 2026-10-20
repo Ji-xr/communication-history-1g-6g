@@ -116,7 +116,8 @@ test('不在正式首次探索中的序章事件不会进入1G，比赛演示时
 });
 
 test('时代入口仍使用统一进度校验，1G开场对白和五节点手动导航保持接入', () => {
-  assert.match(app, /function enterSelectedEra\(i\)[\s\S]*?return !!enterEra\(i\)/);
+  const galleryEntry = functionSource('enterSelectedEra');
+  assert.match(galleryEntry, /const entered=!!enterEra\(i\);if\(entered&&galleryActive\)close3DGallery\(false\);return entered/);
   assert.match(app, /function enterEra\(i\)\{[\s\S]*?progression\.enterEra\(eras\[i\]\.id\)/);
   assert.equal([...app.matchAll(/progression\.enterEra\(eras\[i\]\.id\)/g)].length, 1);
   assert.match(lan, /else if \(route === 'chapter' && era\)/);

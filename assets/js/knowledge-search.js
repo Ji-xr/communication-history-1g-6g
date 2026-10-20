@@ -5,6 +5,7 @@
   if (root) root.CommsArchiveKnowledgeSearch = api;
 })(typeof window !== 'undefined' ? window : null, function (root) {
   'use strict';
+  const text=root?.CommsText || (typeof require==='function'?require('./unicode-text.js'):{limit:(v,n)=>Array.from(String(v??'')).slice(0,n).join(''),dropLast:v=>Array.from(String(v??'')).slice(0,-1).join(''),length:v=>Array.from(String(v??'')).length});
   const CATEGORIES = ['全部分类', '技术原理', '设备展品', '历史资料', '应用场景'];
   const PAGE_SIZE = 7;
   const MAX_QUERY_LENGTH = 80;
@@ -125,7 +126,7 @@
   function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]); }
   function escapeRegex(value) { return String(value).replace(/[.*+?^$()|[\]\\{}]/g, '\\$&'); }
   function queryGroups(query) {
-    let remainder = normalize(String(query).slice(0, MAX_QUERY_LENGTH));
+    let remainder = normalize(text.limit(query, MAX_QUERY_LENGTH));
     const groups = [];
     const aliases = SYNONYM_GROUPS.flatMap(group => group.terms.map(term => ({ group, term }))).sort((a, b) => b.term.length - a.term.length);
     for (const { group, term } of aliases) {
@@ -158,7 +159,7 @@
     return text.includes(term);
   }
   function search(model, { query = '', era = '', category = '' } = {}) {
-    const cleanQuery = String(query).slice(0, MAX_QUERY_LENGTH), groups = queryGroups(cleanQuery), fullQuery = normalize(cleanQuery);
+    const cleanQuery = text.limit(query, MAX_QUERY_LENGTH), groups = queryGroups(cleanQuery), fullQuery = normalize(cleanQuery);
     return records(model).map((item, index) => {
       if ((era && item.eraId !== era) || (category && category !== '全部分类' && item.category !== category)) return null;
       const title = normalize(item.title), summary = normalize(item.summary), all = normalize(item.title + ' ' + item.summary + ' ' + item.searchText);
@@ -238,7 +239,7 @@
     const categories = CATEGORIES.map(item => '<option value="' + escapeHtml(item) + '"' + selected(item, viewState.category) + '>' + escapeHtml(item) + '</option>').join('');
     const eraOptions = eras.map(item => '<option value="' + escapeHtml(item.eraId || item.id) + '"' + selected(item.eraId || item.id, viewState.era) + '>' + escapeHtml(item.eraId || item.id) + ' · ' + escapeHtml(item.title) + '</option>').join('');
     const count = results.length + ' 条资料' + (viewState.query ? ' · 关键词“' + escapeHtml(viewState.query) + '”' : '');
-    const markup = '<section class="page knowledge-search-page"><div class="eyebrow">LOCAL ARCHIVE SEARCH</div><h2>通信知识搜索</h2><p class="lead">搜索六代历史资料、展品和技术原理。内容来自现有通信简史资料库，可离线使用。</p><div class="card knowledge-search-panel"><form class="knowledge-search-form" onsubmit="CommsArchiveKnowledgeSearch.submitSearch(event)"><label for="knowledgeSearchInput">关键词</label><div class="knowledge-search-input-row"><input id="knowledgeSearchInput" type="search" maxlength="' + MAX_QUERY_LENGTH + '" value="' + escapeHtml(viewState.query) + '" placeholder="试试：短信、基站、LTE、数字孪生" autocomplete="off" oninput="CommsArchiveKnowledgeSearch.updateResults()"><button class="btn secondary" type="submit">搜索</button></div></form><div id="knowledgeSuggestions" class="knowledge-suggestions" aria-label="推荐问题">' + recommendationMarkup(viewState.query) + '</div><div class="knowledge-search-filters"><label>时代<select id="knowledgeEraFilter" onchange="CommsArchiveKnowledgeSearch.updateResults()"><option value="">全部时代</option>' + eraOptions + '</select></label><label>分类<select id="knowledgeCategoryFilter" onchange="CommsArchiveKnowledgeSearch.updateResults()">' + categories + '</select></label></div><p id="knowledgeSearchCount" class="muted" role="status">' + count + '</p><div id="knowledgeResults" class="knowledge-results">' + resultsMarkup(results, viewState.page) + '</div><p id="knowledgeSearchNotice" class="knowledge-search-notice" role="status"></p></div><section class="knowledge-challenge-entry"><div><span class="eyebrow">知识巩固</span><h3>知识挑战</h3><p class="muted">完成现有10题问答，查看得分、徽章与历史记录。</p></div><button class="btn secondary" onclick="go(\'quiz\')">进入知识挑战 →</button></section><div class="actions"><button class="btn ghost" onclick="go(\'ask\')">打开离线问答</button><button class="btn ghost" onclick="go(\'eras\')">前往时代航线</button></div></section>';
+    const markup = '<section class="page knowledge-search-page"><div class="eyebrow">LOCAL ARCHIVE SEARCH</div><h2>通信知识搜索</h2><p class="lead">搜索六代历史资料、展品和技术原理。内容来自现有通信简史资料库，可离线使用。</p><div class="card knowledge-search-panel"><form class="knowledge-search-form" onsubmit="CommsArchiveKnowledgeSearch.submitSearch(event)"><label for="knowledgeSearchInput">关键词</label><div class="knowledge-search-input-row"><input id="knowledgeSearchInput" type="search" value="' + escapeHtml(viewState.query) + '" placeholder="试试：短信、基站、LTE、数字孪生" autocomplete="off" oninput="if(!event.isComposing)CommsArchiveKnowledgeSearch.updateResults()" oncompositionend="CommsArchiveKnowledgeSearch.updateResults()"><button class="btn secondary" type="submit">搜索</button></div></form><div id="knowledgeSuggestions" class="knowledge-suggestions" aria-label="推荐问题">' + recommendationMarkup(viewState.query) + '</div><div class="knowledge-search-filters"><label>时代<select id="knowledgeEraFilter" onchange="CommsArchiveKnowledgeSearch.updateResults()"><option value="">全部时代</option>' + eraOptions + '</select></label><label>分类<select id="knowledgeCategoryFilter" onchange="CommsArchiveKnowledgeSearch.updateResults()">' + categories + '</select></label></div><p id="knowledgeSearchCount" class="muted" role="status">' + count + '</p><div id="knowledgeResults" class="knowledge-results">' + resultsMarkup(results, viewState.page) + '</div><p id="knowledgeSearchNotice" class="knowledge-search-notice" role="status"></p></div><section class="knowledge-challenge-entry"><div><span class="eyebrow">知识巩固</span><h3>知识挑战</h3><p class="muted">完成现有10题问答，查看得分、徽章与历史记录。</p></div><button class="btn secondary" onclick="go(\'quiz\')">进入知识挑战 →</button></section><div class="actions"><button class="btn ghost" onclick="go(\'ask\')">打开离线问答</button><button class="btn ghost" onclick="go(\'eras\')">前往时代航线</button></div></section>';
     if (viewState.restoreScroll) {
       const y = viewState.scrollY; viewState.restoreScroll = false;
       root?.setTimeout?.(() => root.scrollTo?.(0, y), 80);
@@ -249,7 +250,7 @@
     const document = root?.document, input = document?.querySelector('#knowledgeSearchInput');
     const era = document?.querySelector('#knowledgeEraFilter')?.value || '';
     const category = document?.querySelector('#knowledgeCategoryFilter')?.value || '';
-    if (input && input.value.length > MAX_QUERY_LENGTH) input.value = input.value.slice(0, MAX_QUERY_LENGTH);
+    if (input && input.value.length > MAX_QUERY_LENGTH) input.value = text.limit(input.value, MAX_QUERY_LENGTH);
     const query = input?.value || '';
     if (query !== viewState.query || era !== viewState.era || category !== viewState.category) viewState.page = 1;
     Object.assign(viewState, { query, era, category });

@@ -43,6 +43,23 @@ test('自由演示直接进入任意时代，普通存档不参与解锁', () =>
   assert.equal(vm.runInContext('state.completed.includes("5G")', h.context), true);
 });
 
+test('重启演示清除同一命名空间内的体验缓存，不残留上一次的设备输入',()=>{
+ const h=createHarness();h.window.document.querySelector=()=>null;h.window.startDemoMode('free');
+ vm.runInContext(fs.readFileSync('assets/js/era-workbench.js','utf8'),h.context);
+ const api=h.window.CommsEraExperience;
+ api.edit('2G','draft','上一次演示的短信');
+ assert.equal(api.getState('2G').draft,'上一次演示的短信');
+ h.window.startDemoMode('free');
+ assert.equal(api.getState('2G').draft,'');
+});
+
+test('设备体验停留时不弹出无关的调查提示，章节演示仍保留原有提示',()=>{
+ const h=createHarness();h.window.startDemoMode('free');let hints=0;
+ h.window.DemoAppActions.lanHint=()=>{hints++;};
+ vm.runInContext("route='experience'",h.context);h.window.DemoAppActions.onIdle();assert.equal(hints,0);
+ vm.runInContext("route='chapter'",h.context);h.window.DemoAppActions.onIdle();assert.equal(hints,1);
+});
+
 test('随机路线保留去重后的时代，并允许演示中改线与记录当前位置', () => {
   const h = createHarness();
   h.window.startDemoMode('random', ['2G', '5G', '2G']);

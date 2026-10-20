@@ -1,11 +1,13 @@
+param([int]$Port = 8765)
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path -LiteralPath $PSScriptRoot).Path
 $stopFile = Join-Path $root '.stop-server'
-$listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 8765)
+$listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, $Port)
 $types = @{
   '.html'='text/html; charset=utf-8'; '.css'='text/css; charset=utf-8'; '.js'='text/javascript; charset=utf-8'
   '.json'='application/json; charset=utf-8'; '.svg'='image/svg+xml'; '.png'='image/png'; '.jpg'='image/jpeg'
   '.jpeg'='image/jpeg'; '.webp'='image/webp'; '.ico'='image/x-icon'; '.txt'='text/plain; charset=utf-8'
+  '.mp3'='audio/mpeg'; '.wav'='audio/wav'; '.mp4'='video/mp4'; '.webm'='video/webm'; '.vtt'='text/vtt; charset=utf-8'
 }
 try {
   $listener.Start()
@@ -17,10 +19,14 @@ try {
       $stream = $client.GetStream()
       $reader = [System.IO.StreamReader]::new($stream, [System.Text.Encoding]::ASCII, $false, 1024, $true)
       $requestLine = $reader.ReadLine()
-      while ($reader.ReadLine() -ne '') { }
+      $rangeHeader = $null
+      while (($requestHeader = $reader.ReadLine()) -ne '' -and $null -ne $requestHeader) {
+        if ($requestHeader -match '^Range:\s*(.+)$') { $rangeHeader = $Matches[1] }
+      }
       $status = '200 OK'
       $bytes = [byte[]]@()
       $contentType = 'text/plain; charset=utf-8'
+      $extraHeaders = ''
       try {
         $parts = $requestLine.Split(' ')
         if ($parts.Count -lt 2 -or ($parts[0] -ne 'GET' -and $parts[0] -ne 'HEAD')) { throw 'Not found' }
@@ -34,16 +40,32 @@ try {
         $extension = [System.IO.Path]::GetExtension($path).ToLowerInvariant()
         if ($types.ContainsKey($extension)) { $contentType = $types[$extension] }
         $bytes = [System.IO.File]::ReadAllBytes($path)
-        if ($parts[0] -eq 'HEAD') { $bytes = [byte[]]@() }
+        if ($extension -in '.mp4', '.webm') {
+          $extraHeaders = "Accept-Ranges: bytes`r`n"
+          if ($rangeHeader -match '^bytes=(\d+)-(\d*)$') {
+            $total = $bytes.Length
+            $start = [long]$Matches[1]
+            $end = if ($Matches[2]) { [Math]::Min([long]$Matches[2], $total - 1) } else { $total - 1 }
+            if ($start -ge $total -or $start -gt $end) {
+              $status = '416 Range Not Satisfiable'
+              $extraHeaders += "Content-Range: bytes */$total`r`n"
+              $bytes = [byte[]]@()
+            } else {
+              $status = '206 Partial Content'
+              $extraHeaders += "Content-Range: bytes $start-$end/$total`r`n"
+              $bytes = [byte[]]$bytes[$start..$end]
+            }
+          }
+        }
       } catch {
         $status = '404 Not Found'
         $contentType = 'text/plain; charset=utf-8'
         $bytes = [System.Text.Encoding]::UTF8.GetBytes('Not found')
       }
-      $header = "HTTP/1.1 $status`r`nContent-Type: $contentType`r`nContent-Length: $($bytes.Length)`r`nConnection: close`r`nX-Content-Type-Options: nosniff`r`n`r`n"
+      $header = "HTTP/1.1 $status`r`nContent-Type: $contentType`r`nContent-Length: $($bytes.Length)`r`n${extraHeaders}Connection: close`r`nX-Content-Type-Options: nosniff`r`n`r`n"
       $headerBytes = [System.Text.Encoding]::ASCII.GetBytes($header)
       $stream.Write($headerBytes, 0, $headerBytes.Length)
-      if ($bytes.Length -gt 0) { $stream.Write($bytes, 0, $bytes.Length) }
+      if ($bytes.Length -gt 0 -and $parts[0] -ne 'HEAD') { $stream.Write($bytes, 0, $bytes.Length) }
       $stream.Flush()
       $reader.Dispose()
     } finally { $client.Dispose() }

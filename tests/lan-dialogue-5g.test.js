@@ -51,9 +51,9 @@ test('5G任务完成进入归档对白，完成归档后触发6G解锁与时代�
   assert.ok(rt.lan.LanMemory.completedTriggers.includes('UNLOCK_6G'));
 });
 
-test('5G对白和档案数据加载；体验模拟与归档包装器不进入正式页面',()=>{
+test('5G对白、档案与可选体验数据加载；旧归档包装器不进入正式页面',()=>{
   const app=fs.readFileSync('app.js','utf8'),html=fs.readFileSync('index.html','utf8'),ui=fs.readFileSync('assets/js/5g-archive-ui.js','utf8'),lan=fs.readFileSync('assets/js/lan-dialogue-5g.js','utf8');
-  assert.match(html,/lan-dialogue-5g\.js/);assert.doesNotMatch(html,/experience-story-5g\.js|5g-archive-ui\.js/);assert.match(html,/era-archive-5g\.js/);
+  assert.match(html,/lan-dialogue-5g\.js/);assert.match(html,/experience-story-5g\.js/);assert.doesNotMatch(html,/5g-archive-ui\.js/);assert.match(html,/era-archive-5g\.js/);
   assert.ok(fs.existsSync('assets/js/experience-story-5g.js'));assert.ok(fs.existsSync('assets/js/5g-archive-ui.js'));
   assert.match(app,/technologyLabActions/);assert.match(app,/前往时代档案出口/);const guided=app.slice(app.indexOf('function guidedChapter('),app.indexOf('\nfunction guidedDiscoverExhibit('));assert.doesNotMatch(guided,/recordGuidedExperience|体验者记录|进入用户体验区/);
   assert.match(ui,/experienceInteractionMarkup\('5G',node,done\.has\(node\.trigger\)\)/);assert.match(lan,/联网设备可以交换状态并协同工作/);

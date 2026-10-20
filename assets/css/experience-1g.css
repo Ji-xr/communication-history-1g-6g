@@ -40,6 +40,7 @@
 .oneg-recording{margin-top:20px;padding:16px;border:1px solid rgba(230,190,110,.25);border-radius:14px}
 .oneg-recording h5{margin:0}
 .oneg-recording audio{display:block;width:100%;margin-top:12px}
+.oneg-recording audio[hidden]{display:none}
 .oneg-summary ul{padding-left:1.3rem;line-height:1.7}
 .technical-challenge{margin-top:20px;padding:16px;border:1px solid rgba(105,207,255,.28);border-radius:14px;background:rgba(9,24,40,.52)}
 .technical-challenge summary{cursor:pointer;color:#b9e9ff;font-weight:700}

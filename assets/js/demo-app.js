@@ -111,6 +111,7 @@
     clean.reviewGuideActive = false; clean.reviewGuideDismissed = true;
     const isRecommended = mode === 'recommended';
     root.DemoManager.start(clean, isRecommended ? 'prologue' : 'eras', { routeMode: isRecommended ? 'recommended' : mode, routeIds });
+    root.CommsEraExperience?.reset?.();root.CommsArchiveExperience?.reset?.();root.CommsArchive1GPhone?.reset?.();
     state = clean; route = isRecommended ? 'prologue' : 'eras'; eraIndex = 0; taskStep = 0; selected = null; secondSelected = null; understandingSelected = null; designResponse = '';
     reviewGuideActive = false; reviewGuideStage = 0;
     rebindProgression(); root.CommsArchiveLan?.reloadStorageContext?.(); root.AudioSystem?.reloadSettings?.();
@@ -171,7 +172,7 @@
       const mode = ['recommended', 'random', 'free'].includes(session.routeMode) ? session.routeMode : 'recommended';
       return startDemoMode(mode, session.routeIds || []);
     },
-    onIdle() { this.lanHint(); say('如果演示停滞，可点“重启演示”从本次路线开头重新开始；日常探索记录不会受影响。'); },
+    onIdle() { if(route==='experience'){say('可继续操作当前设备，或回看上一项体验；结果会显示在设备旁的反馈区。');return;}this.lanHint(); say('如果演示停滞，可点“重启演示”从本次路线开头重新开始；日常探索记录不会受影响。'); },
     enterDemoEra,
     enterRouteEra(id) { if (!ERA_IDS.includes(id)) return false; const result = enterDemoEra(id, 'entry'); if (result) say(`已抵达${id}时代入口。先阅读澜的开场介绍，再使用页面按钮继续。演示存档与普通进度隔离。`); return result; },
     toggleRouteEra(id, enabled) { if (!ERA_IDS.includes(id)) return; pendingRouteIds = enabled ? [...new Set([...pendingRouteIds, id])] : pendingRouteIds.filter(item => item !== id); renderRoutePicker(); },

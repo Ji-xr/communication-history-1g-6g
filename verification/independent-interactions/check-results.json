@@ -1,0 +1,37 @@
+{
+  "http": {
+    "resources": 48,
+    "failures": [],
+    "rangeStatus": 206,
+    "rangeBytes": 32
+  },
+  "static": {
+    "syntaxFiles": 41,
+    "utf8Files": 56,
+    "cssFiles": 10,
+    "resourceReferences": 49,
+    "failures": []
+  },
+  "automated": {
+    "total": 476,
+    "passed": 476,
+    "failed": 0,
+    "baseline": 458,
+    "added": 18
+  },
+  "powershellSyntax": "PASS",
+  "browser": {
+    "status": "NOT_VERIFIED",
+    "reason": "Firefox graphics framebuffer launch failure; Chrome/Edge not revalidated this task",
+    "viewports": [
+      320,
+      360,
+      390,
+      430,
+      1366
+    ]
+  },
+  "formalStorage": "No real browser profile or formal storage read/written; tests use memory or isolated fixture",
+  "git": "No .git in project; no git write operations",
+  "preview": "http://127.0.0.1:18820/"
+}

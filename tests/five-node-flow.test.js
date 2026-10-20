@@ -76,12 +76,14 @@ test('缺少历史现场、建设调查或技术理解时仍不能归档', () =>
   assert.equal(state.completed.length, 0);
 });
 
-test('正式入口停止加载六代体验模拟，但源文件和旧日志字段仍存在', () => {
+test('六代体验作为可选入口恢复，旧日志兼容且不加载旧归档包装器', () => {
   const html = fs.readFileSync('index.html', 'utf8');
-  assert.match(html, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=true/);
-  assert.doesNotMatch(html, /<script[^>]+src="assets\/js\/(?:experience-story|experience-interactions|experience-1g-phone|[56]g-archive-ui)/);
+  assert.match(html, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=false/);
+  assert.match(html, /<script[^>]+src="assets\/js\/experience-interactions\.js"/);
+  assert.doesNotMatch(html, /<script[^>]+src="assets\/js\/[56]g-archive-ui/);
   for (const file of ['experience-story-1g.js', 'experience-story-2g.js', 'experience-story-4g.js', 'experience-story-5g.js', 'experience-story-6g.js', 'experience-interactions.js', 'experience-1g-phone.js']) {
-    assert.ok(fs.existsSync(`assets/js/${file}`), `${file}保留以便未来恢复`);
+    assert.ok(fs.existsSync(`assets/js/${file}`), `${file}文件存在`);
+    assert.ok(html.includes(`src="assets/js/${file}"`), `${file}已在页面加载`);
   }
   const source = fs.readFileSync('assets/js/progression-manager.js', 'utf8');
   assert.match(source, /completedExperienceNodes|recordExperience/);

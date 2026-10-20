@@ -61,3 +61,14 @@ body.lan-dialogue-active::before{content:"";position:fixed;inset:0;z-index:89;ba
 /* 展品讲解与详情弹层同屏时，澜的中央讲解需要位于详情弹层之上。 */
 #lanCompanion[data-mode="dialogue"][data-dialogue-surface="exhibit"]{z-index:120}
 #lanCompanion[data-mode="dialogue"][data-dialogue-surface="modal"]{z-index:120}
+.lan-voice-settings{margin-top:14px;padding-top:10px;border-top:1px solid #7996bd45;font-size:.8rem;color:#cbd9e8;cursor:auto}
+.lan-voice-settings summary{cursor:pointer;padding:8px 0;color:#a8eaf3;min-height:36px}
+.lan-voice-fields{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0}
+.lan-voice-fields label{display:grid;gap:6px;flex:1 1 140px;min-width:0}
+.lan-voice-fields select{width:100%;min-width:0;min-height:44px;border:1px solid #7996bd70;border-radius:8px;background:#10243a;color:#edf5ff;padding:8px;font:inherit}
+.lan-voice-buttons{display:flex;flex-wrap:wrap;gap:8px}
+.lan-voice-buttons button{min-height:44px;padding:8px 12px;color:#edf5ff;background:#17354a;border:1px solid #7996bd70;border-radius:8px;cursor:pointer}
+.lan-voice-settings p,.lan-voice-settings small{line-height:1.6;overflow-wrap:anywhere}
+.lan-voice-settings :focus-visible{outline:2px solid #8feaff;outline-offset:3px}
+.lan-voice-settings :disabled{opacity:.55;cursor:not-allowed}
+.lan-companion[data-mode="companion"] .lan-voice-settings,.lan-companion.is-collapsed .lan-voice-settings{display:none}

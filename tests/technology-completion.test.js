@@ -118,8 +118,8 @@ test('实验结论阅读状态独立保存；正式入口不再加载用户体�
   assert.equal(state.tasks['1G'].technologyConclusionViewed, true);
   assert.equal(progression.currentNode().key, 'technology', 'reading the conclusion does not navigate');
   const html = fs.readFileSync('index.html', 'utf8');
-  assert.match(html, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=true/);
-  assert.doesNotMatch(html, /<script[^>]+src="assets\/js\/(experience-story|experience-interactions|experience-1g-phone)/);
+  assert.match(html, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=false/);
+  assert.match(html, /<script[^>]+src="assets\/js\/experience-interactions\.js"/);
   assert.doesNotMatch(app, /onclick="enterExperienceZone\(\)"/);
 });
 

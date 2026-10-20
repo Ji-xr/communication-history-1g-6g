@@ -75,7 +75,7 @@ test('gallery canvas clicks are not intercepted by hidden status panels; UI laye
   assert.match(galleryCss, /\.review-timeline\{position:absolute;z-index:3/);
   assert.match(galleryCss, /\.gallery-status\{position:absolute;z-index:3/);
   assert.match(app, /status\.hidden=false;status\.innerHTML='<div class="transit-message"/);
-  assert.match(app, /status\.hidden=true;window\.InteractionDebugger\?\.record\('GALLERY_READY'/);
+  assert.match(app, /status\.hidden=true;\s*window\.InteractionDebugger\?\.record\('GALLERY_READY'/);
 });
 
 test('debug snapshots expose the current era access table in the browser console', () => {

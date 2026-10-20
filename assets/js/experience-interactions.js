@@ -41,11 +41,19 @@
   const storageName = 'commsArchiveExperienceProgress.v1';
   let activeStorageKey = '', progress = new Map();
   function currentStorageKey() { return root.DemoManager?.storageKey?.(storageName) || storageName; }
+  function normalizeProgress(id, item) {
+    const separator = id.indexOf(':'), scenario = scenarios[id.slice(0, separator)]?.[id.slice(separator + 1)];
+    if (!scenario || !item || !Number.isInteger(item.step) || !Array.isArray(item.feedback)) return null;
+    const step = Math.max(0, Math.min(scenario.actions.length, item.step));
+    // Recover interrupted/older writes from the action count, rather than trusting a
+    // stale completion flag that could leave a finished scenario impossible to resume.
+    return { step, feedback: scenario.responses.slice(0, step), complete: step === scenario.actions.length };
+  }
   function readProgress(key) {
     try {
       const value = JSON.parse(root.localStorage?.getItem(key) || '{}');
       if (!value || typeof value !== 'object' || Array.isArray(value)) return new Map();
-      return new Map(Object.entries(value).filter(([, item]) => item && Number.isInteger(item.step) && Array.isArray(item.feedback)).map(([id, item]) => [id, { step: Math.max(0, item.step), feedback: item.feedback.map(String), complete: item.complete === true }]));
+      return new Map(Object.entries(value).map(([id, item]) => [id, normalizeProgress(id, item)]).filter(([, item]) => item));
     } catch (_) { return new Map(); }
   }
   function ensureScope() {

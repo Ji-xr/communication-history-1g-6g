@@ -56,7 +56,7 @@ function createDialogueRuntime() {
     history: [], model: null,
     makeRoot: () => box,
     updateWidget(entry) { context.lastDisplayedLine = entry.dialogue; context.setDisplayMode(context.queue.length ? context.queueDisplayMode : (context.priorityDialogue(entry) ? 'dialogue' : 'companion')); caption.textContent = entry.dialogue; },
-    persistHistory(entry) { context.history.push(entry); }, refreshHistory() {}, saveMemory() {},
+    persistHistory(entry) { context.history.push(entry); }, refreshHistory() {}, saveMemory() {}, stopSpeechForPageHide() {},
     isEraLine() { return false; }, progressionEntryId() { return null; }, find() { return null; },
     recordDialogueAction() {}, syncCardPrompt() {}, syncCollapseControl() {},
     priorityDialogue() {}, setDisplayMode() {}, setDialoguePhase() {}
@@ -65,6 +65,17 @@ function createDialogueRuntime() {
   vm.runInContext(dialogueFunctions, context, { filename: 'lan-system.js:dialogue-flow' });
   return { context, box, bodyModes, modes, caption, slot, body };
 }
+
+test('独立互动使用同一个澜面板：开场居中、短反馈陪伴、结束不写主线记忆也不导航',()=>{
+ const {context,box}=createDialogueRuntime(),before=JSON.stringify(context.memory);
+ vm.runInContext("showInteractionFeedback({era:'6G',event:'enter',text:'未来研究情境。',story:true})",context);
+ assert.equal(box.dataset.mode,'dialogue');assert.equal(context.history.length,0);
+ assert.equal(vm.runInContext("showInteractionFeedback({era:'6G',event:'apply',text:'刚应用参数。'})",context),false,'不能打断正在阅读的正式对白');
+ vm.runInContext('next()',context);assert.equal(context.queue.length,0);assert.equal(box.dataset.mode,'companion');
+ vm.runInContext("showInteractionFeedback({era:'6G',event:'apply',text:'参数已应用。'})",context);assert.equal(box.dataset.mode,'companion');
+ vm.runInContext("showInteractionFeedback({era:'6G',event:'end',text:'模型比较结束。',story:true})",context);assert.equal(box.dataset.mode,'dialogue');
+ vm.runInContext('skip()',context);assert.equal(context.queue.length,0);assert.equal(box.dataset.mode,'companion');assert.equal(JSON.stringify(context.memory),before);assert.equal(context.progressionRefreshCount||0,0);
+});
 
 test('重要体验对白即使是optional也进入中央模式，普通展品补充仍为陪伴卡片', () => {
   const runtime = createDialogueRuntime(), { context } = runtime;

@@ -8,11 +8,12 @@ const { createProgression } = require('../assets/js/progression-manager.js');
 const appSource = fs.readFileSync('app.js', 'utf8');
 const html = fs.readFileSync('index.html', 'utf8');
 
-test('正式章节没有用户体验区与时代影响提交入口', () => {
-  assert.match(html, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=true/);
-  assert.doesNotMatch(html, /<script[^>]+src="assets\/js\/(?:experience-story|experience-interactions|experience-1g-phone)/);
+test('正式章节提供可选体验入口，主线继续使用技术与档案节点', () => {
+  assert.match(html, /COMMS_ARCHIVE_EXPERIENCE_ZONES_DISABLED=false/);
+  assert.match(html, /<script[^>]+src="assets\/js\/experience-interactions\.js"/);
   const guided = appSource.slice(appSource.indexOf('function guidedChapter('), appSource.indexOf('\nfunction guidedDiscoverExhibit('));
   assert.doesNotMatch(guided, /renderExperienceStory|recordGuidedExperience|体验者记录|进入用户体验区|记录时代影响/);
+  assert.match(guided, /openEraExperience/);
   assert.match(guided, /technologyLabActions/);
   assert.match(guided, /archiveExitContent/);
 });
