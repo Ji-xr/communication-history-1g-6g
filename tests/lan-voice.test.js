@@ -1,94 +1,36 @@
 'use strict';
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const vm = require('node:vm');
-const source = fs.readFileSync('assets/js/lan-voice.js','utf8');
-function runtime(supported = true, natural = false) {
-  const events = {}, spoken = [], timers = new Map(), storage = new Map(), ducks = new Set();
-  let list = [], count = 0, demo = false, paused = 0, resumed = 0;
-  const synth = {getVoices:()=>list, cancel(){}, speak(u){spoken.push(u);u.onstart?.();},pause(){paused++;},resume(){resumed++;},addEventListener(name,fn){events[name]=fn;}};
-  const window = { document:{visibilityState:'visible',addEventListener(name,fn){events[name]=fn;}},
-    addEventListener(name,fn){events[name]=fn;}, setTimeout(fn){timers.set(++count,fn);return count;},clearTimeout(id){timers.delete(id);},
-    localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},
-    DemoManager:{isActive:()=>demo,dialogueSpeed:1.7,storageKey:k=>demo?'demo.'+k:k},
-    ExhibitionSoundtrack:{setDucked(value,reason){if(value)ducks.add(reason);else ducks.delete(reason);}} };
-  const audios=[];
-  if(natural){window.LanVoiceCatalog={'你好。':'assets/media/voice/test.mp3'};window.Audio=class{
-    constructor(src){this.src=src;this.plays=0;this.pauses=0;audios.push(this);}play(){this.plays++;this.onplaying?.();return Promise.resolve();}pause(){this.pauses++;}
-  };}
-  if(supported){window.speechSynthesis=synth;window.SpeechSynthesisUtterance=class{constructor(text){this.text=text;}};}
-  vm.runInNewContext(source,{window});
-  return {api:window.LanVoice,spoken,timers,storage,ducks,window,events,audios,
-    setVoices(v){list=v;events.voiceschanged?.();},demo(v){demo=v;},
-    end(){spoken.at(-1).onend();},tick(){const callbacks=[...timers.values()];timers.clear();callbacks.forEach(fn=>fn());},
-    hidden(v){window.document.visibilityState=v?'hidden':'visible';events.visibilitychange();},
-    get paused(){return paused;},get resumed(){return resumed;} };
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const source=fs.readFileSync('assets/js/lan-voice.js','utf8');
+function runtime({natural=true,mode='normal',initial={}}={}){
+ const events={},timers=new Map(),storage=new Map(Object.entries(initial)),ducks=new Set(),audios=[];let id=0,demo=false,systemCalls=0;
+ const window={document:{visibilityState:'visible',addEventListener:(n,f)=>events[n]=f},addEventListener:(n,f)=>events[n]=f,
+ setTimeout:(fn,delay)=>{timers.set(++id,{fn,delay});return id;},clearTimeout:n=>timers.delete(n),
+ localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v)},DemoManager:{storageKey:k=>demo?'demo.'+k:k},
+ speechSynthesis:{cancel(){},speak(){systemCalls++;}},ExhibitionSoundtrack:{setDucked(v,r){if(v)ducks.add(r);else ducks.delete(r)}}};
+ if(natural){window.LanVoiceCatalog={'你好。':'voice/hello.mp3','下一句。':'voice/next.mp3','第三句。':'voice/third.mp3'};for(let n=0;n<10;n++)window.LanVoiceCatalog['第'+n+'句。']='voice/'+n+'.mp3';
+ window.Audio=class{constructor(src){this.src=src;this.currentTime=0;this.paused=true;this.plays=0;this.loads=0;this.error=null;audios.push(this);}load(){this.loads++;}pause(){this.paused=true;}removeAttribute(){this.src='';}play(){this.plays++;if(mode==='blocked')return Promise.reject({name:'NotAllowedError'});if(mode==='stall')return new Promise(()=>{});this.paused=false;this.onplaying?.();return Promise.resolve();}};}
+ vm.runInNewContext(source,{window});return{api:window.LanVoice,window,events,timers,storage,ducks,audios,demo:v=>demo=v,systemCalls:()=>systemCalls,
+ tick(){const entry=[...timers.entries()].sort((a,b)=>a[1].delay-b[1].delay)[0];if(entry){timers.delete(entry[0]);entry[1].fn();}},hidden(v){window.document.visibilityState=v?'hidden':'visible';events.visibilitychange();}};
 }
-const zh={voiceURI:'cn',name:'Xiaoxiao Natural',lang:'zh-CN',localService:false};
-test('Chinese voice choice honors preference and skips default English',()=>{
-  const r=runtime();r.setVoices([{voiceURI:'en',name:'English',lang:'en-US',default:true},zh,{voiceURI:'tw',name:'Chinese',lang:'zh-TW'}]);
-  r.api.speak('你好。');assert.equal(r.spoken[0].voice,zh);
-  r.storage.set('commsArchive.lanVoice.v1',JSON.stringify({voice:'tw'}));r.api.speak('你好。');assert.equal(r.spoken.at(-1).voice.voiceURI,'tw');
-});
-test('voices arriving asynchronously are used by the next utterance',()=>{
-  const r=runtime();r.api.speak('先听听。再看看？');assert.equal(r.spoken[0].lang,'zh-CN');
-  r.setVoices([zh]);r.end();r.tick();assert.equal(r.spoken[1].voice,zh);
-});
-test('delivery varies with emotion while demo speed stays conversational',()=>{
-  const r=runtime();r.api.speak('我们再看看。',{emotion:'nostalgia'});const slow=r.spoken.at(-1).rate;
-  r.demo(true);r.api.speak('准备好了吗？',{emotion:'curious'});assert.ok(r.spoken.at(-1).rate>slow);assert.ok(r.spoken.at(-1).rate<=1.16);
-  assert.ok(r.spoken.at(-1).pitch>1);
-});
-test('spoken terminology is normalized without changing captions',()=>{
-  const r=runtime(),caption='1G到6G，AI与LTE。';r.api.speak(caption);assert.equal(caption,'1G到6G，AI与LTE。');
-  assert.match(r.spoken[0].text,/一代移动通信到六代移动通信/);assert.match(r.spoken[0].text,/人工智能与L T E/);
-  assert.ok([...r.api.segments('声'.repeat(350))].every(s=>s.length<=110));
-});
-test('cancel and late callbacks cannot revive an old dialogue or release new speech ducking',()=>{
-  const r=runtime();r.api.speak('旧的一句。还有一句。');const old=r.spoken[0];r.end();assert.equal(r.timers.size,1);
-  r.api.speak('新的一句。');old.onend();old.onerror({error:'interrupted'});r.tick();assert.equal(r.spoken.length,2);assert.ok(r.ducks.has('speech'));
-  r.api.cancel();r.spoken.at(-1).onend();r.tick();assert.equal(r.spoken.length,2);assert.equal(r.ducks.size,0);
-});
-test('pause and resume during utterance and between sentences retain the queue',()=>{
-  const r=runtime();r.api.speak('第一句。第二句。');r.hidden(true);assert.equal(r.paused,1);assert.equal(r.ducks.size,0);
-  r.hidden(false);assert.equal(r.resumed,1);assert.ok(r.ducks.has('speech'));
-  r.end();r.hidden(true);r.tick();assert.equal(r.spoken.length,1);r.hidden(false);assert.equal(r.spoken.length,2);
-  r.end();assert.equal(r.api.state.status,'done');assert.equal(r.ducks.size,0);
-});
-test('speech finishing while hidden resumes remaining sentences without deadlock',()=>{
-  const r=runtime();r.api.speak('第一句。第二句。');r.hidden(true);r.end();assert.equal(r.timers.size,0);r.hidden(false);assert.equal(r.spoken.length,2);
-});
-test('error, autoplay rejection, unsupported browser and pagehide release speech',()=>{
-  const r=runtime();r.api.speak('听听。');r.spoken[0].onerror({error:'not-allowed'});assert.equal(r.api.state.status,'blocked');assert.equal(r.ducks.size,0);
-  r.api.speak('听听。');r.events.pagehide();r.end();assert.equal(r.api.state.playing,false);
-  const missing=runtime(false);assert.equal(missing.api.speak('你好'),false);assert.equal(missing.api.state.status,'unsupported');
-});
-test('voice preferences stay scoped to formal and demo mode',()=>{
-  const r=runtime();r.storage.set('commsArchive.lanVoice.v1',JSON.stringify({style:'calm',speed:.9}));
-  assert.equal(r.api.state.preferences.style,'calm');r.demo(true);assert.equal(r.api.state.preferences.style,'conversation');assert.equal(r.api.state.preferences.speed,1);
-});
-test('malformed stored settings fall back to validated preferences',()=>{
-  const r=runtime();r.storage.set('commsArchive.lanVoice.v1','{');assert.equal(r.api.state.preferences.speed,1);
-  r.storage.set('commsArchive.lanVoice.v1',JSON.stringify({speed:20,style:'bad',voice:42}));assert.equal(r.api.state.preferences.speed,1);assert.equal(r.api.state.preferences.voice,'');
-});
-test('default neural audio plays locally without invoking mechanical synthesis',()=>{
- const r=runtime(true,true);assert.equal(r.api.speak('你好。'),true);assert.equal(r.spoken.length,0);assert.equal(r.audios[0].src,'assets/media/voice/test.mp3');assert.equal(r.api.state.status,'speaking');
- r.hidden(true);assert.equal(r.audios[0].pauses,1);assert.equal(r.ducks.size,0);r.hidden(false);assert.equal(r.audios[0].plays,2);assert.ok(r.ducks.has('speech'));
- r.audios[0].onended();assert.equal(r.api.state.status,'done');assert.equal(r.ducks.size,0);
-});
-test('neural audio works without a system TTS implementation',()=>{
- const r=runtime(false,true);assert.equal(r.api.supported,true);assert.equal(r.api.speak('你好。'),true);r.api.cancel();assert.equal(r.audios[0].pauses,1);
-});
-test('missing audio remains visible as a recoverable status and never silently becomes system TTS',()=>{
- const r=runtime(true,true);assert.equal(r.api.speak('未收录'),false);assert.equal(r.api.state.status,'missing');assert.equal(r.spoken.length,0);
- r.storage.set('commsArchive.lanVoice.v1',JSON.stringify({voice:'system'}));assert.equal(r.api.speak('未收录'),true);assert.equal(r.spoken.length,1);
-});
-test('switching neural lines ignores late callbacks and media failures restore music',()=>{
- const r=runtime(true,true);r.api.speak('你好。');const oldEnd=r.audios[0].onended;r.api.speak('你好。');oldEnd();assert.ok(r.api.state.playing);assert.equal(r.audios[0].pauses,1);
- r.audios[1].onerror();assert.equal(r.api.state.status,'audioerror');assert.equal(r.ducks.size,0);
-});
-test('neural speech autoplay rejection has a retry message and clears ducking',async()=>{
- const r=runtime(true,true);r.window.Audio.prototype.play=function(){return Promise.reject({name:'NotAllowedError'});};
- r.api.speak('你好。');await new Promise(resolve=>setImmediate(resolve));assert.equal(r.api.state.status,'blocked');assert.equal(r.ducks.size,0);
+const settle=()=>new Promise(resolve=>setImmediate(resolve));
+test('仅使用澜的内置人声；旧系统声线偏好不再调用系统朗读',()=>{const r=runtime({initial:{'commsArchive.lanVoice.v1':JSON.stringify({voice:'system',style:'calm',speed:1})}});assert.equal(r.api.speak('你好。'),true);assert.equal(r.systemCalls(),0);assert.equal(r.api.state.preferences.voice,'lan');assert.equal(r.audios[0].src,'voice/hello.mp3');});
+test('标准、轻快和倍速实际写入播放器，保留音高且即时生效',()=>{const r=runtime();r.api.speak('你好。');const a=r.audios[0];assert.equal(a.playbackRate,1);r.api.setSpeed(1.25);assert.equal(a.playbackRate,1.25);assert.equal(a.preservesPitch,true);r.api.setSpeed(2);assert.equal(a.playbackRate,2);assert.equal(a.plays,1,'修改倍速不重播当前句');assert.equal(r.api.setSpeed(9),false);assert.equal(a.playbackRate,2);});
+test('旧轻快1.1迁移到1.25；旧设置损坏时使用标准，不删除其他存储',()=>{const r=runtime({initial:{'commsArchive.lanVoice.v1':JSON.stringify({voice:'cn',speed:1.1}),'commsArchive':'KEEP','quizHistory':'KEEP'}});assert.equal(r.api.state.preferences.speed,1.25);r.api.setSpeed(1.5);assert.equal(JSON.parse(r.storage.get('commsArchive.lanVoice.v1')).speed,1.5);assert.equal(r.storage.get('commsArchive'),'KEEP');assert.equal(r.storage.get('quizHistory'),'KEEP');const bad=runtime({initial:{'commsArchive.lanVoice.v1':'{'}});assert.equal(bad.api.state.preferences.speed,1);});
+test('正式和演示倍速互不污染，重建运行时保留已保存倍速',()=>{const r=runtime();r.api.setSpeed(1.5);r.demo(true);assert.equal(r.api.state.preferences.speed,1);r.api.setSpeed(2);r.demo(false);assert.equal(r.api.state.preferences.speed,1.5);const restored=runtime({initial:Object.fromEntries(r.storage)});assert.equal(restored.api.state.preferences.speed,1.5);});
+test('预加载未来句子但不播放；正式朗读复用已加载音频，不重复下载',()=>{const r=runtime();r.api.prepare(['你好。',{dialogue:'下一句。'},'第三句。']);assert.equal(r.audios.length,3);assert.ok(r.audios.every(a=>a.plays===0));assert.equal(r.api.speak('下一句。'),true);assert.equal(r.audios.length,3);assert.equal(r.audios[1].plays,1);assert.equal(r.audios[1].loads,1);});
+test('音频缓存有界；空白差异可以命中原录音，未收录文本不能冒充已读',()=>{const r=runtime();for(let n=0;n<10;n++)r.api.prepare(['第'+n+'句。']);assert.ok(r.api.state.cached<=6);assert.equal(r.api.speak(' 你 好。\n'),true);assert.equal(r.api.speak('未收录的动态内容'),false);assert.equal(r.api.state.status,'missing');assert.equal(r.systemCalls(),0);assert.equal(r.api.state.playing,false);assert.equal(r.ducks.size,0);});
+test('切句与停止使迟到回调失效，不关闭新一句的配乐压低',()=>{const r=runtime();r.api.speak('你好。');const oldEnd=r.audios[0].onended,oldError=r.audios[0].onerror;r.api.speak('下一句。');oldEnd();oldError();assert.equal(r.api.state.status,'speaking');assert.ok(r.ducks.has('speech'));const end=r.audios[1].onended;r.api.cancel();end();assert.equal(r.api.state.playing,false);assert.equal(r.ducks.size,0);assert.equal(r.timers.size,0);});
+test('加载失败只自动重试一次，失败后状态明确且释放音频',()=>{const r=runtime();r.api.speak('你好。');r.audios[0].onerror();assert.equal(r.api.state.status,'retrying');assert.equal(r.audios.length,2);r.tick();assert.equal(r.audios[1].plays,1);r.audios[1].onerror();assert.equal(r.api.state.status,'audioerror');assert.equal(r.api.state.playing,false);assert.equal(r.ducks.size,0);assert.equal(r.timers.size,0);});
+test('加载悬挂不会永远无声等待：超时重试，仍无响应则明确超时',()=>{const r=runtime({mode:'stall'});r.api.speak('你好。');assert.equal(r.api.state.status,'loading');r.tick();assert.equal(r.api.state.status,'retrying');r.tick();assert.equal(r.audios[1].plays,1);r.tick();assert.equal(r.api.state.status,'timeout');assert.equal(r.ducks.size,0);});
+test('浏览器禁止自动播放时不循环重试，用户再次点击可重新请求',async()=>{const r=runtime({mode:'blocked'});r.api.speak('你好。');await settle();assert.equal(r.api.state.status,'blocked');assert.equal(r.ducks.size,0);assert.equal(r.timers.size,0);assert.equal(r.audios.length,1);r.api.speak('你好。');await settle();assert.equal(r.audios[0].plays,2);});
+test('页面隐藏暂停、回来从原位置继续，手动停止后不自动恢复',()=>{const r=runtime();r.api.speak('你好。');r.audios[0].currentTime=2.5;r.hidden(true);assert.equal(r.api.state.status,'paused');assert.equal(r.ducks.size,0);assert.equal(r.timers.size,0);r.hidden(false);assert.equal(r.audios[0].currentTime,2.5);assert.equal(r.audios[0].plays,2);r.hidden(true);r.api.cancel();r.hidden(false);assert.equal(r.audios[0].plays,2);});
+test('重试等待期间隐藏后仍可恢复，不残留取消后的计时器',()=>{const r=runtime();r.api.speak('你好。');r.audios[0].onerror();r.hidden(true);assert.equal(r.timers.size,0);r.hidden(false);assert.equal(r.audios[1].plays,1);r.events.pagehide();r.tick();assert.equal(r.api.state.playing,false);});
+test('预加载和朗读在后台不启动，缺少Audio也不退回其他声线',()=>{const r=runtime();r.hidden(true);r.api.prepare(['你好。']);assert.equal(r.api.speak('你好。'),false);assert.equal(r.audios.length,0);const missing=runtime({natural:false});assert.equal(missing.api.speak('你好。'),false);assert.equal(missing.api.state.status,'unsupported');assert.equal(missing.systemCalls(),0);});
+test('单句结束释放音频和配乐压低，不调用任何剧情回调',()=>{const r=runtime();r.api.speak('你好。');r.audios[0].onended();assert.equal(r.api.state.status,'done');assert.equal(r.api.state.playing,false);assert.equal(r.ducks.size,0);});
+test('人声设置只呈现一个声线和实际倍速，试听、重读、停止都可触发',()=>{
+ const r=runtime(),nodes=new Map(),events={};function node(selector){if(!nodes.has(selector))nodes.set(selector,{value:'1',textContent:'',disabled:false,addEventListener:(type,fn)=>events[selector+':'+type]=fn});return nodes.get(selector);}
+ const panel={innerHTML:'',setAttribute(){},querySelector:node,querySelectorAll:()=>[...nodes.values()],addEventListener:(type,fn)=>events['panel:'+type]=fn};r.window.document.createElement=()=>panel;
+ const box={querySelector:()=>null,append(){}};let read=0;r.window.CommsArchiveLan={readCurrent(){read++;}};r.api.mount(box);
+ assert.match(panel.innerHTML,/1.25倍 · 轻快/);assert.match(panel.innerHTML,/1.0倍 · 标准/);assert.doesNotMatch(panel.innerHTML,/data-voice-name|data-voice-style|系统中文朗读|安静讲述/);
+ node('[data-voice-speed]').value='1.5';events['panel:change']();assert.equal(r.api.state.preferences.speed,1.5);events['[data-voice-retry]:click']();assert.equal(read,1);r.api.speak('你好。');events['[data-voice-stop]:click']();assert.equal(r.api.state.playing,false);
 });

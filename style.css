@@ -95,3 +95,8 @@ body[data-current-era="6G"] .stars{opacity:0}
   word-break: normal;
   line-height: 1.25;
 }
+
+/* First-visit reading remains scrollable after the central dialogue closes. */
+.prologue-page[data-first-reading="true"]{padding-bottom:200px}
+.prologue-page[data-first-reading="true"] #prologueEnter1G{min-height:44px;white-space:normal}
+@media(max-width:767px){.prologue-page[data-first-reading="true"]{padding-bottom:230px}}

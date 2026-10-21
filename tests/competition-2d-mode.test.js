@@ -14,8 +14,8 @@ test('首页保留动态探索主入口，并恢复三维长廊次级入口', ()
   assert.match(html, /id="archiveNavButton" data-nav="archive"/);
   assert.match(html, /id="eraRouteButton" data-nav="eras"/);
   assert.match(home, /onclick="open3DGallery\(\)"/);
-  assert.match(app, /function prologue\(\)[\s\S]*?序章结束后将直接进入1G《失联的呼叫》/);
-  assert.match(app, /eraAction=firstFlow\?'':/);
+  assert.match(app, /function prologue\(\)[\s\S]*?阅读完毕，进入1G/);
+  assert.match(app, /eraAction=firstFlow\?`<button id="prologueEnter1G"/);
 });
 
 test('时代航线保留二维时代卡，并提供三维长廊入口', () => {

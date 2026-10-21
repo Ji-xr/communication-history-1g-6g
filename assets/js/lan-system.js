@@ -268,14 +268,13 @@
     box.dataset.era = entry.era || 'archive'; LanEmotionController.set(entry.emotion,box);
     const voiceButton = box.querySelector('#lanVoiceToggle'); voiceButton.textContent = `语音：${settings.voice ? '开' : '关'}`; voiceButton.setAttribute('aria-pressed', String(settings.voice));
     const note = box.querySelector('#lanVoiceNote');
-    note.textContent = (root.LanVoice?.supported || 'speechSynthesis' in window) ? '字幕始终显示；默认使用自然神经人声，可在下方试听或调整速度。' : '字幕始终显示；此浏览器不支持系统语音，语音控制不可用。';
+    note.textContent = root.LanVoice?.supported ? '字幕始终显示；只使用澜的自然人声，可在下方试听、调整倍速或重读当前句。' : '字幕始终显示；澜的人声暂不可用，请检查浏览器的音频播放支持。';
     root.LanVoice?.mount(box);
+    root.LanVoice?.prepare?.(queue.slice(queueIndex,queueIndex+3));
     if (shouldSpeak) { stopSpeechForPageHide(); if (settings.voice) speak(line, entry); }
   }
   function speak(text, meta = queue[queueIndex] || {}) {
-    if (root.LanVoice) { pausedSpeechIdentity=null; return root.LanVoice.speak(text, meta); }
-    if (!('speechSynthesis' in window) || !text || root.document?.visibilityState === 'hidden') return false;
-    pausedSpeechIdentity=null;window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'zh-CN'; utterance.rate = .96; window.speechSynthesis.speak(utterance);return true;
+    pausedSpeechIdentity=null;return root.LanVoice?.speak?.(text, meta) === true;
   }
   function handleSpeechVisibility(){if(!('speechSynthesis'in window))return;if(root.document?.visibilityState==='hidden'){const active=queue[queueIndex];pausedSpeechIdentity=active?`${active.id}:${active.lineIndex||0}`:null;if(pausedSpeechIdentity)window.speechSynthesis.pause();else window.speechSynthesis.cancel();return}const active=queue[queueIndex],identity=active?`${active.id}:${active.lineIndex||0}`:null;if(pausedSpeechIdentity&&settings.voice&&identity===pausedSpeechIdentity)window.speechSynthesis.resume();else if(pausedSpeechIdentity)window.speechSynthesis.cancel();pausedSpeechIdentity=null}
   function stopSpeechForPageHide(){pausedSpeechIdentity=null;if(root.LanVoice)root.LanVoice.cancel();else if('speechSynthesis'in window)window.speechSynthesis.cancel()}
@@ -296,6 +295,7 @@
       return false;
     }
     queue = lines.map((line, index) => ({ ...entry, dialogue: line, lineIndex: index }));
+    root.LanVoice?.prepare?.(queue.slice(0,3));
     const preservePresentation=options.preservePresentation===true||continueDialoguePresentation||(queue.length>0&&queueDisplayMode==='dialogue'&&LanDisplayMode.mode==='dialogue');
     continueDialoguePresentation=false;
     if(!preservePresentation)collapseAfterDialogue=false;
@@ -563,6 +563,7 @@
     }
     setDialoguePhase('talking',activeDialogue?.id||null);
     if (isEraLine(activeDialogue?.id)) { memory.currentDialogue=activeDialogue.id; memory.currentDialogueLine=queueIndex; memory.lastDialogue=activeDialogue.id; saveMemory(); }
+    root.LanVoice?.prepare?.(queue.slice(queueIndex,queueIndex+3));
     updateWidget(queue[queueIndex], true);
   }
   function continueDialogueAfter(activeDialogue,completedSequenceMode='companion',keepPresentation=false,following=null){
@@ -627,8 +628,8 @@
     else expandDialogue();
     return true;
   }
-  function toggleVoice() { settings.voice = !settings.voice; if(!settings.voice)stopSpeechForPageHide(); try { storageSet(PREF_KEY, JSON.stringify(settings)); } catch (_) {} updateWidget(queue[queueIndex] || { dialogue: '语音设置已更新。' }, false); }
-  function readCurrent() { const text = LanDisplayMode.mode==='history' ? historyLines[historyCursor]?.text : queue[queueIndex]?.dialogue || document.querySelector('#lanCaption')?.textContent; if (!(root.LanVoice?.supported || 'speechSynthesis' in window)) { document.querySelector('#lanVoiceNote').textContent = '此浏览器不支持系统语音，字幕仍可阅读。'; return; } speak(text); }
+  function toggleVoice() { settings.voice = !settings.voice; if(!settings.voice)stopSpeechForPageHide(); try { storageSet(PREF_KEY, JSON.stringify(settings)); } catch (_) {} const active=queue[queueIndex];updateWidget(active || { dialogue: '语音设置已更新。' }, false);if(settings.voice&&active)speak(active.dialogue,active); }
+  function readCurrent() { const text = LanDisplayMode.mode==='history' ? historyLines[historyCursor]?.text : queue[queueIndex]?.dialogue || document.querySelector('#lanCaption')?.textContent; if (!root.LanVoice?.supported) { const note=document.querySelector('#lanVoiceNote');if(note)note.textContent = '澜的人声暂不可用，字幕仍可阅读。'; return; } speak(text); }
   function openPrologue() { trigger('lan.prologue.first-travel'); }
   function onExhibit(era, exhibitId) { window.AudioSystem?.playEffect('exhibit');const context={era,exhibitId},rule=matchingEventRule('EXHIBIT_CLICK',context);if(rule)return dispatchEvent('EXHIBIT_CLICK',context);return freshCustom('lan.exhibit.open', era, 'exhibit', 'open-details', 'thinking', journeyLines.exhibit, { relatedExhibit: exhibitId, presentationMode:'companion' }); }
   function onTaskStart(era) { if((era==='2G'||era==='3G'||era==='4G'||era==='5G')&&matchingEventRule('TASK_START',{era})){dispatchEvent('TASK_START',{era});return}freshCustom('lan.task.start', era, 'task', 'start-investigation', 'thinking', journeyLines.taskStart, { relatedTask: `task.${String(era).toLowerCase()}.investigation` }); }

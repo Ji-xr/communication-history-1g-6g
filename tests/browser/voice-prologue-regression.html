@@ -1,0 +1,27 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>澜倍速与序章阅读验收</title>
+<style>body{font:16px system-ui;margin:16px}button,select{min-height:44px;margin:4px;padding:8px}iframe{display:block;height:844px;border:1px solid #789;margin:16px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style>
+<h1>澜倍速与首次序章阅读验收</h1><p>真实首页脚本，使用独立内存存储；不读取或重置你的正式存档。浏览器允许播放后，还需要你试听标准与轻快的差别。</p>
+<label>宽度<select id="width"><option>1366</option><option>390</option><option>320</option><option>360</option><option>430</option></select></label><button id="run">检查首次阅读流程</button><button id="standard" disabled>试听标准1.0倍</button><button id="quick" disabled>试听轻快1.25倍</button><button id="stop" disabled>停止人声</button><pre id="results">未运行</pre><div id="frameHost"></div>
+<script>
+let currentWindow=null;const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+document.getElementById('run').onclick=async function(){
+ const result={status:'RUNNING',checks:[],errors:[]};this.disabled=true;
+ const check=(ok,label,detail)=>{result.checks.push({ok:!!ok,label,detail});if(!ok)throw Error(label);};
+ try{
+  const response=await fetch('../../index.html',{cache:'no-store'});if(!response.ok)throw Error('首页读取失败');const original=await response.text(),base=new URL('../../',location.href).href;
+  const bootstrap='<script>function store(){const m=new Map();return{getItem:k=>m.get(k)||null,setItem:(k,v)=>m.set(String(k),String(v)),removeItem:k=>m.delete(k),key:i=>[...m.keys()][i]||null,get length(){return m.size}}}Object.defineProperty(window,"localStorage",{value:store()});Object.defineProperty(window,"sessionStorage",{value:store()});<\/script>';
+  currentWindow?.LanVoice?.cancel();document.getElementById('frameHost').replaceChildren();const frame=document.createElement('iframe');frame.style.width=document.getElementById('width').value+'px';frame.title='隔离首次探索';document.getElementById('frameHost').append(frame);frame.srcdoc=original.replace('<head>','<head><base href="'+base+'">'+bootstrap);
+  const w=frame.contentWindow;currentWindow=w;for(let n=0;n<160&&(!w.CommsArchiveApp||w.CommsArchiveApp.status!=='ready');n++)await wait(50);
+  check(w.CommsArchiveApp?.status==='ready','真实首页初始化');const drain=()=>{for(let n=0;n<60&&w.CommsArchiveLan.debugSnapshot().isPlaying;n++)w.CommsArchiveLan.skip();};drain();
+  check(w.document.querySelector('#homeContinueExplore').textContent.includes('开始探索'),'新存档开始探索');w.document.querySelector('#homeContinueExplore').click();drain();await wait(200);
+  check(w.CommsArchiveApp.getRoute()==='prologue','对白结束后仍停留阅读页');check(!w.CommsArchiveLan.debugSnapshot().inputLock,'无对白输入锁');const button=w.document.querySelector('#prologueEnter1G');check(button&&!button.disabled,'实际进入按钮可点击');
+  const article=w.document.querySelector('.prologue-page .archive-record');article.scrollIntoView({block:'center'});await wait(100);const r=article.getBoundingClientRect(),hit=w.document.elementFromPoint(r.left+Math.min(r.width/2,100),Math.max(0,r.top)+20);check(!!hit&&!w.document.querySelector('#lanCompanion')?.contains(hit),'档案缺口正文不被澜挡住');
+  const voiceBefore=JSON.stringify(w.eval('state'));w.LanVoice.setSpeed(1.25);check(JSON.stringify(w.eval('state'))===voiceBefore,'改倍速不修改探索进度');check(!w.document.querySelector('[data-voice-name]'),'没有其他声线选择');
+  button.click();check(w.CommsArchiveApp.getRoute()==='chapter','真实点击进入1G');check(w.CommsArchiveApp.getInteractionState().era==='1G','进入正确时代');drain();w.go('home');w.document.querySelector('#homeContinueExplore').click();check(w.CommsArchiveApp.getRoute()==='chapter','已有时代进度不再展示档案缺口页');
+  check(w.document.documentElement.scrollWidth<=w.innerWidth+1,'无横向溢出');result.status='PASS';for(const id of ['standard','quick','stop'])document.getElementById(id).disabled=false;
+ }catch(error){result.status='FAIL';result.errors.push(String(error.stack||error));}
+ document.body.dataset.result=result.status;document.getElementById('results').textContent=JSON.stringify(result,null,2);this.disabled=false;
+};
+function audition(speed){if(!currentWindow)return;currentWindow.LanVoice.setSpeed(speed);currentWindow.LanVoice.speak('你好，我是澜，来自未来通信文明档案馆的年轻科研人员。');setTimeout(()=>{document.getElementById('results').textContent+='\n试听实际状态：'+JSON.stringify(currentWindow.LanVoice.state);},1000);}
+document.getElementById('standard').onclick=()=>audition(1);document.getElementById('quick').onclick=()=>audition(1.25);document.getElementById('stop').onclick=()=>currentWindow?.LanVoice.cancel();
+</script></html>
